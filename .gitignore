@@ -1,0 +1,37 @@
+.gradle/
+.idea/
+*.iml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Android Studio
+*.apk
+*.ap_
+*.aab
+
+# Gradle
+.gradle/
+build/
+
+# Local configuration file
+local.properties
+
+# Log/OS Files
+*.log
+
+# Android Studio Navigation editor temp files
+.navigation/
+
+# Keystore files
+*.jks
+*.keystore
+
+# Google Services (if you want to ignore Firebase config)
+# app/google-services.json
+
+# Backup files
+*.bak
