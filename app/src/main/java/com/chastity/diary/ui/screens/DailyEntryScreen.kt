@@ -782,7 +782,7 @@ private fun DailyEntryTabContent(
                     YesNoToggle(
                         value = entry.hadEroticDream,
                         onValueChange = { onUpdate(entry.copy(hadEroticDream = it)) },
-                        label = "昨晚有春夢？"
+                        label = "昨晚有春夢？（在備註紀錄吧）"
                     )
                 }
             }
@@ -841,16 +841,31 @@ private fun DailyEntryTabContent(
                     }
                     // M10: Battery-style energy display
                     QuestionSection(title = "起床能量指數", subtitle = "1 = 極度疲憊   5 = 精力充沛") {
-                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            val batteryIcons = listOf("🪫", "🔋", "🔋", "🔋", "⚡")
-                            val batteryLabels = listOf("1", "2", "3", "4", "5")
+                        val batteryIcons = listOf("🪫", "🔋", "🔋", "🔋", "⚡")
+                        val batteryLabels = listOf("1", "2", "3", "4", "5")
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             batteryLabels.forEachIndexed { index, lbl ->
                                 val level = index + 1
-                                FilterChip(
-                                    selected = entry.morningEnergy == level,
-                                    onClick = { onUpdate(entry.copy(morningEnergy = level)) },
-                                    label = { Text("${batteryIcons[index]} $lbl") }
-                                )
+                                Box(modifier = Modifier.weight(1f)) {
+                                    FilterChip(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        selected = entry.morningEnergy == level,
+                                        onClick = { onUpdate(entry.copy(morningEnergy = level)) },
+                                        label = {
+                                            Column(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(vertical = 6.dp),
+                                                verticalArrangement = Arrangement.Center,
+                                                horizontalAlignment = Alignment.CenterHorizontally
+                                            ) {
+                                                Text(batteryIcons[index], maxLines = 1)
+                                                Spacer(Modifier.height(2.dp))
+                                                Text(lbl, style = MaterialTheme.typography.bodySmall)
+                                            }
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
