@@ -117,7 +117,7 @@ private fun ExposedLockQuestion(
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
     QuestionSection(
-        title = "裝置有在公共場合露出嗎？",
+        title = "鎖有在公共場合露出嗎？",
         subtitle = "記錄露出的地點"
     ) {
         YesNoToggle(
@@ -190,7 +190,7 @@ private fun CleaningQuestion(
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
     QuestionSection(
-        title = "今天如何清潔裝置？",
+        title = "今天如何清潔鎖？",
         subtitle = "選擇清潔方式"
     ) {
         val cleaningTypes = Constants.CLEANING_TYPES
@@ -207,7 +207,15 @@ private fun CleaningQuestion(
                             selected = entry.cleaningType == type,
                             onClick = { onEntryUpdate(entry.copy(cleaningType = type)) },
                             label = { Text(type) },
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                            ),
+                            border = FilterChipDefaults.filterChipBorder(
+                                borderColor = MaterialTheme.colorScheme.outline,
+                                selectedBorderColor = MaterialTheme.colorScheme.primary,
+                            ),
                         )
                     }
                     // Fill remaining

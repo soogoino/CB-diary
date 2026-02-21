@@ -2,8 +2,11 @@ package com.chastity.diary.ui.screens
 
 import android.Manifest
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
+import androidx.exifinterface.media.ExifInterface
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -19,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -51,35 +55,35 @@ private enum class RotatingQuestion(
     val isMaleOnly: Boolean = false
 ) {
     R1 ("R1",  "今日是否有分泌物洩漏？",                           "看來身體已經開始用最誠實的方式抗議了……清潔工作可別偷懶哦。"),
-    R2 ("R2",  "今日是否有主動頂撞/勃起？",                        "嗯？今天好像特別不甘心被關著呢……數一數有幾次試圖爭取自由吧。", isMaleOnly = true),
+    R2 ("R2",  "今日是否有主動頂鎖/摩擦，尋求快感？",                        "嗯？今天好像特別不甘心被關著呢……數一數有幾次試圖爭取自由吧。", isMaleOnly = true),
     R3 ("R3",  "今日是否進行邊緣訓練？",                           "走到懸崖邊又縮回來……這種欲拒還迎的把戲，到底誰在折磨誰？"),
     R4 ("R4",  "今日是否與Keyholder互動？",                        "今天有沒有乖乖報告？還是偷偷想留一點小秘密？溝通可是契約的氧氣。"),
-    R6 ("R6",  "今日是否帶著裝置進入公眾場合？",                   "在人群中帶著這個小秘密走動，緊張感是不是特別清晰？下次還敢嗎？"),
-    R7 ("R7",  "今日是否曾短暫解除裝置？",                         "手是不是有點癢？誠實交代解開的理由，否則下次可能更難熬哦。"),
-    R8 ("R8",  "今日是否有意展示或洩露裝置蹤跡？",                 "故意讓邊緣露出一點點？這種小壞壞的試探……真的只是不小心嗎？"),
+    R6 ("R6",  "今日是否帶著鎖進入公眾場合？",                   "在人群中帶著這個小秘密走動，緊張感是不是特別清晰？下次還敢嗎？"),
+    R7 ("R7",  "今日是否曾短暫解除鎖？",                         "手是不是有點癢？誠實交代解開的理由，否則下次可能更難熬哦。"),
+    R8 ("R8",  "今日是否有意展示或洩露鎖蹤跡？",                 "故意讓邊緣露出一點點？這種小壞壞的試探……真的只是不小心嗎？"),
     R9 ("R9",  "今日是否接觸成人內容？",                           "看了那些東西，卻只能乾瞪眼……意志力今天考了幾分？"),
     R10("R10", "今日是否解鎖或進行自慰？",                         "破戒的瞬間一定很爽……但現在後悔的感覺是不是更強烈？記下來，好好反省。"),
     R11("R11", "今日是否進行乳頭開發/玩弄？",                      "開始把快感往上轉移了？看來下半身已經學會求饒，胸口卻越來越誠實。"),
     R12("R12", "今日是否進行後庭開發/探索？",                      "後面也開始主動爭寵了？身體地圖正在被重新繪製……感覺如何？"),
-    R13("R13", "今天你有沒有感受到裝置帶來的不適或調整需求？",     "哪裡卡卡的？哪裡磨紅了？身體的小抱怨可不能忽視。"),
-    R14("R14", "今天佩戴裝置是否讓你感覺到內心的平靜或成就？",    "居然真的覺得安心……這算不算已經有點上癮的跡象了？"),
+    R13("R13", "今天你有沒有感受到鎖帶來的不適或調整需求？",     "哪裡卡卡的？哪裡磨紅了？身體的小抱怨可不能忽視。"),
+    R14("R14", "今天佩戴鎖是否讓你感覺到內心的平靜或成就？",    "居然真的覺得安心……這算不算已經有點上癮的跡象了？"),
     R15("R15", "今天有沒有想起Keyholder，並感受到連結的溫暖？",   "腦袋裡閃過那個人的臉時，心跳有沒有加速？這種思念也算是甜蜜的折磨。"),
-    R16("R16", "今天裝置是否已融入你的日常routine中，感覺自然？", "已經開始像內褲一樣理所當然了？恭喜，墮落進度又前進了一步。"),
+    R16("R16", "今天鎖是否已融入你的日常routine中，感覺自然？", "已經開始像內褲一樣理所當然了？恭喜，墮落進度又前進了一步。"),
     R17("R17", "今天有沒有將慾望轉向其他活動，如運動或創作？",    "把精力丟到別的地方……聰明的轉移戰術，但下半身真的被騙到了嗎？"),
     R18("R18", "今天在人群中，你有沒有特別注意到自己的隱密狀態？","每走一步都在提醒自己「裡面有東西」……這種隱秘的刺激，有沒有讓你偷偷嘴角上揚？"),
     R19("R19", "今天有沒有進行放鬆活動來緩解可能的壓力？",        "學會哄自己了？不過再怎麼放鬆，鎖還是鎖著，逃不掉的哦。"),
-    R20("R20", "今天醒來後，有沒有回想起與裝置相關的夢境？",      "連睡覺都在被管教……你的潛意識看來已經徹底投降了。"),
+    R20("R20", "今天醒來後，有沒有回想起與鎖相關的夢境？",      "連睡覺都在被管教……你的潛意識看來已經徹底投降了。"),
     R21("R21", "今天其他感官（如觸覺或聽覺）是否變得更敏銳？",    "碰一下衣服都像被撩撥……下半身被封印後，其他地方好像變得特別饑渴呢。"),
     R22("R22", "今天有沒有與Keyholder分享你的感受或想法？",       "今天敢不敢把心裡那些念頭說出來？還是只敢在腦袋裡演戲？"),
-    R23("R23", "今天在不同環境中，裝置帶來的感受如何？",          "坐著的時候、走路的時候、蹲下的時候……它無時無刻不在提醒你誰才是主人。"),
+    R23("R23", "今天在不同環境中，鎖帶來的感受如何？",          "坐著的時候、走路的時候、蹲下的時候……它無時無刻不在提醒你誰才是主人。"),
     R24("R24", "今天有沒有遇到讓你猶豫或掙扎的時刻？",           "差點就伸手了對吧？最後還是忍住了……這次算你贏，但下次呢？"),
     R25("R25", "今天佩戴是否帶來任何意外的正面體驗？",           "居然還能挖到一點甜頭？看來被關著也能找到快樂……真是個奇怪的小傢伙。"),
     R26("R26", "今天有沒有特別注意清潔或保濕等保養？",           "認真擦拭、抹乳液……對待牢籠比對待自己還細心，這算不算斯德哥爾摩？"),
     R27("R27", "今天有沒有透過寫作或藝術表達你的體驗？",         "把被鎖的感覺寫成詩、畫成圖……這種昇華的方式還挺優雅的病態。"),
-    R28("R28", "今天時間感覺過得快還是慢，受裝置影響？",         "時間明明過得慢，卻又忍不住想再熬久一點……這矛盾的癮頭還真有趣。"),
+    R28("R28", "今天時間感覺過得快還是慢，受鎖影響？",         "時間明明過得慢，卻又忍不住想再熬久一點……這矛盾的癮頭還真有趣。"),
     R29("R29", "今天有沒有在匿名社群分享或閱讀相關經驗？",       "偷偷看別人被鎖的慘況，是不是有一種「同是天涯淪落人」的暗爽？"),
     R30("R30", "今天有沒有在想萬一鎖取不下來該怎麼辦？",         "緊急預案想了幾套？安全是第一位的，恐慌可是最難看的樣子。"),
-    R31("R31", "今天情緒是否有起伏，與裝置相關？",               "一會兒覺得好色，一會兒又覺得好乖……這種心情過山車，玩得還開心嗎？"),
+    R31("R31", "今天情緒是否有起伏，與鎖相關？",               "一會兒覺得好色，一會兒又覺得好乖……這種心情過山車，玩得還開心嗎？"),
     R32("R32", "今天有沒有想像未來繼續佩戴的畫面？",             "腦中已經出現一年後的自己……看來你不只接受了，還開始期待了呢。"),
 }
 
@@ -126,15 +130,26 @@ fun DailyEntryScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    // Camera
+    // Camera – store the actual File so we can save its absolutePath (content:// URI path is not readable)
     var cameraImageUri by remember { mutableStateOf<Uri?>(null) }
+    var cameraImageFile by remember { mutableStateOf<File?>(null) }
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { ok ->
-        if (ok) cameraImageUri?.let { viewModel.updateEntry { e -> e.copy(photoPath = it.toString()) } }
+        if (ok) cameraImageFile?.let { file ->
+            if (file.exists()) viewModel.updateEntry { e -> e.copy(photoPath = file.absolutePath) }
+        }
     }
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        if (granted) { val u = createCameraImageUri(context); cameraImageUri = u; cameraLauncher.launch(u) }
+        if (granted) {
+            val ts = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val dir = File(context.getExternalFilesDir("Pictures"), "").also { it.mkdirs() }
+            val file = File(dir, "PHOTO_$ts.jpg")
+            cameraImageFile = file
+            val u = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+            cameraImageUri = u
+            cameraLauncher.launch(u)
+        }
     }
 
     LaunchedEffect(saveSuccess) {
@@ -315,6 +330,10 @@ private fun CoreQuestionsCard(
     onTakePhoto: () -> Unit,
     photoBlurEnabled: Boolean = true
 ) {
+    // rememberSaveable survives recomposition; LaunchedEffect resets only when photo actually changes
+    var photoRevealed by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(entry.photoPath) { photoRevealed = false }
+
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -327,23 +346,8 @@ private fun CoreQuestionsCard(
 
             Divider()
 
-            // C1+C6: Mood + Emotions merged
-            QuestionSection(title = "今天的心情狀態", subtitle = "選擇主要情緒和情緒標簽") {
-                MoodSelector(
-                    selectedMood = entry.mood,
-                    moods = Constants.MOODS,
-                    onMoodSelected = { onUpdate(entry.copy(mood = it)) }
-                )
-                Spacer(Modifier.height(8.dp))
-                MultiSelectChipGroup(
-                    options = Constants.EMOTIONS,
-                    selectedOptions = entry.emotions,
-                    onSelectionChange = { onUpdate(entry.copy(emotions = it)) }
-                )
-            }
-
-            // C2: Device worn (BRANCHING ROOT)
-            QuestionSection(title = "今天有佩戴裝置嗎？") {
+            // C2: Device worn (BRANCHING ROOT) — now first
+            QuestionSection(title = "今天有佩戴鎖嗎？") {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     val wearing = entry.deviceCheckPassed
                     if (wearing) {
@@ -363,6 +367,15 @@ private fun CoreQuestionsCard(
                 }
             }
 
+            // C1: Mood (merged, emoji+text, single-select)
+            QuestionSection(title = "今天的心情狀態", subtitle = "選一個最接近的情緒") {
+                MoodSelector(
+                    selectedMood = entry.mood,
+                    moods = Constants.MOODS,
+                    onMoodSelected = { onUpdate(entry.copy(mood = it)) }
+                )
+            }
+
             // C3: Desire level
             QuestionSection(title = "今日性慾強度", subtitle = "1 = 很低   10 = 很強烈") {
                 SliderWithLabel(entry.desireLevel?.toFloat() ?: 5f,
@@ -372,7 +385,7 @@ private fun CoreQuestionsCard(
 
             // C4: Comfort (只在佩戴時)
             AnimatedVisibility(visible = entry.deviceCheckPassed) {
-                QuestionSection(title = "佩戴舒適度", subtitle = "整天佩戴裝置的感受") {
+                QuestionSection(title = "佩戴舒適度", subtitle = "整天佩戴鎖的感受") {
                     StarRating(entry.comfortRating ?: 3,
                         { onUpdate(entry.copy(comfortRating = it)) }, label = "舒適度")
                 }
@@ -389,54 +402,124 @@ private fun CoreQuestionsCard(
 
             // Photo check-in
             Divider()
-            Row(Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically) {
-                Column {
-                    Text("打卡照片", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
-                    Text(
-                        if (entry.photoPath.isNullOrBlank()) "可選 · 視覺紀念" else "✓ 已拍攝",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = if (entry.photoPath.isNullOrBlank())
-                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                        else MaterialTheme.colorScheme.primary
-                    )
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text("打卡照片", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                        Text(
+                            if (entry.photoPath.isNullOrBlank()) "可選 · 視覺紀念" else "✓ 已拍攝",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (entry.photoPath.isNullOrBlank())
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                            else MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    if (entry.photoPath.isNullOrBlank()) {
+                        OutlinedButton(onClick = onTakePhoto) {
+                            Icon(Icons.Default.Camera, null, Modifier.size(16.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text("拍照")
+                        }
+                    }
                 }
-                OutlinedButton(onClick = onTakePhoto) {
-                    Icon(Icons.Default.Camera, null, Modifier.size(16.dp))
-                    Spacer(Modifier.width(4.dp))
-                    Text(if (entry.photoPath.isNullOrBlank()) "拍照" else "重拍")
-                }
-            }
-            if (!entry.photoPath.isNullOrBlank()) {
-                val bitmap = remember(entry.photoPath) {
-                    runCatching {
-                        val f = File(Uri.parse(entry.photoPath).path ?: entry.photoPath!!)
-                        if (f.exists()) BitmapFactory.decodeFile(f.absolutePath) else null
-                    }.getOrNull()
-                }
-                bitmap?.let { bmp ->
-                    var revealed by remember { mutableStateOf(false) }
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(180.dp)
-                            .clickable { if (photoBlurEnabled) revealed = !revealed }
-                    ) {
-                        Image(bmp.asImageBitmap(), "打卡照片",
-                            Modifier.matchParentSize(), contentScale = ContentScale.Crop)
-                        if (photoBlurEnabled && !revealed) {
-                            Box(
-                                Modifier
-                                    .matchParentSize()
-                                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.88f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Icon(Icons.Default.Lock, null, tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
-                                    Text("點擊查看照片", style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+
+                if (!entry.photoPath.isNullOrBlank()) {
+                    val bitmap = remember(entry.photoPath) {
+                        runCatching {
+                            val f = File(entry.photoPath!!)
+                            if (!f.exists()) return@runCatching null
+                            val raw = BitmapFactory.decodeFile(f.absolutePath) ?: return@runCatching null
+                            // Correct orientation using EXIF data (Android camera often saves rotated)
+                            val exif = ExifInterface(f.absolutePath)
+                            val degrees = when (exif.getAttributeInt(
+                                ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
+                            )) {
+                                ExifInterface.ORIENTATION_ROTATE_90  -> 90f
+                                ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+                                ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+                                else -> 0f
+                            }
+                            if (degrees == 0f) raw
+                            else Bitmap.createBitmap(
+                                raw, 0, 0, raw.width, raw.height,
+                                Matrix().apply { postRotate(degrees) }, true
+                            )
+                        }.getOrNull()
+                    }
+                    // Aspect ratio from bitmap; 默認 4:3 (portrait = < 1, landscape = > 1)
+                    val photoAspectRatio = bitmap?.let { it.width.toFloat() / it.height.toFloat() } ?: (4f / 3f)
+
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        // Photo preview with blur overlay — respects portrait / landscape
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(photoAspectRatio)
+                                .clickable { photoRevealed = !photoRevealed }
+                        ) {
+                            if (bitmap != null) {
+                                Image(
+                                    bitmap.asImageBitmap(), "打卡照片",
+                                    Modifier.matchParentSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                            if (photoBlurEnabled && !photoRevealed) {
+                                Box(
+                                    Modifier
+                                        .matchParentSize()
+                                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.88f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Icon(
+                                            Icons.Default.Lock, null,
+                                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                                            modifier = Modifier.size(28.dp)
+                                        )
+                                        Spacer(Modifier.height(4.dp))
+                                        Text(
+                                            "點擊查看照片",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                                        )
+                                    }
                                 }
+                            }
+                        }
+
+                        // Action buttons below photo
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            OutlinedButton(
+                                onClick = onTakePhoto,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(Icons.Default.Camera, null, Modifier.size(16.dp))
+                                Spacer(Modifier.width(4.dp))
+                                Text("重新拍攝")
+                            }
+                            OutlinedButton(
+                                onClick = { onUpdate(entry.copy(photoPath = null)) },
+                                modifier = Modifier.weight(1f),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.error
+                                ),
+                                border = ButtonDefaults.outlinedButtonBorder.copy(
+                                    brush = androidx.compose.ui.graphics.SolidColor(
+                                        MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
+                                    )
+                                )
+                            ) {
+                                Icon(Icons.Default.Delete, null, Modifier.size(16.dp))
+                                Spacer(Modifier.width(4.dp))
+                                Text("刪除照片")
                             }
                         }
                     }
@@ -461,7 +544,7 @@ private fun CoreQuestionsCard(
             }
 
             // E8: Cleaning (moved from extended to core)
-            QuestionSection(title = "今天是否清潔了貞操裝置？") {
+            QuestionSection(title = "今天是否清潔了貞操鎖？") {
                 MultiSelectChipGroup(
                     options = Constants.CLEANING_TYPES,
                     selectedOptions = entry.cleaningType?.let { listOf(it) } ?: emptyList(),
@@ -495,7 +578,7 @@ private fun RealtimeFeedbackCard(entry: DailyEntry, score: Int) {
         }
         entry.focusLevel?.let {
             when {
-                it <= 3 -> add("🧠 專注度 $it/10，裝置可能影響日常表現，留意調整。")
+                it <= 3 -> add("🧠 專注度 $it/10，鎖可能影響日常表現，留意調整。")
                 it >= 8 -> add("💡 高度專注！$it/10，習慣養成中。")
                 else -> {}
             }
@@ -572,7 +655,15 @@ private fun RotatingQuestionItem(q: RotatingQuestion, entry: DailyEntry, onUpdat
                     val newAnswers = entry.rotatingAnswers.toMutableMap().also { it[q.key] = "true" }
                     onUpdate(entry.copy(rotatingAnswers = newAnswers))
                 },
-                label = { Text("有") }
+                label = { Text("有") },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                ),
+                border = FilterChipDefaults.filterChipBorder(
+                    borderColor = MaterialTheme.colorScheme.outline,
+                    selectedBorderColor = MaterialTheme.colorScheme.primary,
+                ),
             )
             FilterChip(
                 selected = answered && !answerIsYes,
@@ -580,7 +671,15 @@ private fun RotatingQuestionItem(q: RotatingQuestion, entry: DailyEntry, onUpdat
                     val newAnswers = entry.rotatingAnswers.toMutableMap().also { it[q.key] = "false" }
                     onUpdate(entry.copy(rotatingAnswers = newAnswers))
                 },
-                label = { Text("沒有") }
+                label = { Text("沒有") },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                ),
+                border = FilterChipDefaults.filterChipBorder(
+                    borderColor = MaterialTheme.colorScheme.outline,
+                    selectedBorderColor = MaterialTheme.colorScheme.primary,
+                ),
             )
         }
 
@@ -767,17 +866,17 @@ private fun DailyEntryTabContent(
                         }
                     }
                     Divider()
-                    QuestionSection(title = "睡眠品質", subtitle = "整體睡眠感受") {
+                    QuestionSection(title = "睡眠品質") {
                         StarRating(
                             rating = entry.sleepQuality ?: 3,
                             onRatingChange = { onUpdate(entry.copy(sleepQuality = it)) },
-                            label = "睡眠品質"
+                            label = "昨晚有睡好嗎？"
                         )
                     }
                     YesNoToggle(
                         value = entry.wokeUpDueToDevice,
                         onValueChange = { onUpdate(entry.copy(wokeUpDueToDevice = it)) },
-                        label = "因佩戴裝置而醒來"
+                        label = "因佩戴鎖而醒來"
                     )
                     YesNoToggle(
                         value = entry.hadEroticDream,
@@ -808,7 +907,15 @@ private fun DailyEntryTabContent(
                                     FilterChip(
                                         selected = entry.nightErections == value,
                                         onClick = { onUpdate(entry.copy(nightErections = value)) },
-                                        label = { Text(label) }
+                                        label = { Text(label) },
+                                        colors = FilterChipDefaults.filterChipColors(
+                                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                        ),
+                                        border = FilterChipDefaults.filterChipBorder(
+                                            borderColor = MaterialTheme.colorScheme.outline,
+                                            selectedBorderColor = MaterialTheme.colorScheme.primary,
+                                        ),
                                     )
                                 }
                             }
@@ -851,6 +958,14 @@ private fun DailyEntryTabContent(
                                         modifier = Modifier.fillMaxWidth(),
                                         selected = entry.morningEnergy == level,
                                         onClick = { onUpdate(entry.copy(morningEnergy = level)) },
+                                        colors = FilterChipDefaults.filterChipColors(
+                                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                        ),
+                                        border = FilterChipDefaults.filterChipBorder(
+                                            borderColor = MaterialTheme.colorScheme.outline,
+                                            selectedBorderColor = MaterialTheme.colorScheme.primary,
+                                        ),
                                         label = {
                                             Column(
                                                 modifier = Modifier

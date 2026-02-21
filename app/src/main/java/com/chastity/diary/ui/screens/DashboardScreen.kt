@@ -83,7 +83,15 @@ fun DashboardScreen(
                                             }
                                         )
                                     },
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier.weight(1f),
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                    ),
+                                    border = FilterChipDefaults.filterChipBorder(
+                                        borderColor = MaterialTheme.colorScheme.outline,
+                                        selectedBorderColor = MaterialTheme.colorScheme.primary,
+                                    ),
                                 )
                             }
                         }

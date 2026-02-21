@@ -110,12 +110,12 @@ fun ProfileEditDialog(
                 OutlinedTextField(
                     value = deviceName,
                     onValueChange = { deviceName = it },
-                    label = { Text("貞操裝置名稱") },
+                    label = { Text("貞操鎖名稱") },
                     placeholder = { Text("例如: Holy Trainer V4") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     supportingText = { 
-                        Text("選填,記錄你正在使用的裝置") 
+                        Text("選填,記錄你正在使用的貞操鎖") 
                     }
                 )
             }

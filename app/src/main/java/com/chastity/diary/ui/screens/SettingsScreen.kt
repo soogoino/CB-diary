@@ -170,7 +170,15 @@ fun SettingsScreen(
                                 FilterChip(
                                     selected = userSettings.gender == gender,
                                     onClick = { viewModel.updateGender(gender) },
-                                    label = { Text(label) }
+                                    label = { Text(label) },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                    ),
+                                    border = FilterChipDefaults.filterChipBorder(
+                                        borderColor = MaterialTheme.colorScheme.outline,
+                                        selectedBorderColor = MaterialTheme.colorScheme.primary,
+                                    ),
                                 )
                             }
                         }
@@ -232,7 +240,7 @@ fun SettingsScreen(
                     
                     if (userSettings.currentDeviceName != null && userSettings.currentDeviceName!!.isNotBlank()) {
                         Text(
-                            text = "貞操裝置: ${userSettings.currentDeviceName}",
+                            text = "貞操鎖: ${userSettings.currentDeviceName}",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }

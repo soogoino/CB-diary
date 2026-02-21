@@ -245,7 +245,7 @@ private fun ReviewSection(
                 SummaryRow("舒適度", "${entry.comfortRating ?: "未填寫"} / 5")
                 SummaryRow("睡眠品質", "${entry.sleepQuality ?: "未填寫"} / 5")
                 SummaryRow("專注度", entry.focusLevel?.toString() ?: "未填寫")
-                SummaryRow("裝置檢查", if (entry.deviceCheckPassed == true) "✓ 正常" else if (entry.deviceCheckPassed == false) "✗ 異常" else "未檢查")
+                SummaryRow("貞操鎖檢查", if (entry.deviceCheckPassed == true) "✓ 正常" else if (entry.deviceCheckPassed == false) "✗ 異常" else "未檢查")
                 SummaryRow("自我評價", "${entry.selfRating ?: "未填寫"} / 5")
                 
                 if (entry.emotions.isNotEmpty()) {

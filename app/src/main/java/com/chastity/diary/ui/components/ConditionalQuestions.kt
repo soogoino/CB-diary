@@ -274,7 +274,15 @@ private fun LeakageQuestion(
                         selected = entry.leakageAmount == amount,
                         onClick = { onEntryUpdate(entry.copy(leakageAmount = amount)) },
                         label = { Text(amount) },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                        ),
+                        border = FilterChipDefaults.filterChipBorder(
+                            borderColor = MaterialTheme.colorScheme.outline,
+                            selectedBorderColor = MaterialTheme.colorScheme.primary,
+                        ),
                     )
                 }
             }
@@ -335,7 +343,7 @@ private fun RemovalQuestion(
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
     QuestionSection(
-        title = "7. 今天是否臨時取下裝置？",
+        title = "7. 今天是否臨時取下鎖？",
         subtitle = "如果有,記錄取下詳情"
     ) {
         YesNoToggle(

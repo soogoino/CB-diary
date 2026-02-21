@@ -107,6 +107,9 @@ dependencies {
     // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     
+    // ExifInterface (for reading photo orientation)
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
+
     // CameraX
     val cameraxVersion = "1.3.1"
     implementation("androidx.camera:camera-camera2:$cameraxVersion")

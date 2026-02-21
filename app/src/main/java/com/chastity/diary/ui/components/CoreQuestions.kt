@@ -78,7 +78,7 @@ fun CoreQuestionsSection(
         
         // Q3: Comfort Rating
         QuestionSection(
-            title = "3. 佩戴裝置的舒適度？",
+            title = "3. 佩戴鎖的舒適度？",
             subtitle = "評估整天佩戴的舒適程度"
         ) {
             StarRating(
@@ -94,7 +94,7 @@ fun CoreQuestionsSection(
         // Q4: Sleep Quality
         QuestionSection(
             title = "4. 昨晚的睡眠品質？",
-            subtitle = "裝置是否影響你的睡眠"
+            subtitle = "鎖是否影響你的睡眠"
         ) {
             StarRating(
                 rating = entry.sleepQuality ?: 3,
@@ -112,7 +112,7 @@ fun CoreQuestionsSection(
                 onValueChange = { woke ->
                     onEntryUpdate(entry.copy(wokeUpDueToDevice = woke))
                 },
-                label = "因為裝置而醒來"
+                label = "因為鎖而醒來"
             )
         }
         
@@ -134,8 +134,8 @@ fun CoreQuestionsSection(
         
         // Q6: Device Check
         QuestionSection(
-            title = "6. 裝置檢查",
-            subtitle = "檢查裝置是否正常佩戴、無損壞"
+            title = "6. 貞操鎖鎖檢查",
+            subtitle = "檢查貞操鎖是否正常佩戴、無損壞"
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),

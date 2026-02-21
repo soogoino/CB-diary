@@ -298,7 +298,15 @@ private fun ProfilePage(viewModel: OnboardingViewModel) {
                             Gender.OTHER -> "其他"
                         })
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primary,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        borderColor = MaterialTheme.colorScheme.outline,
+                        selectedBorderColor = MaterialTheme.colorScheme.primary,
+                    ),
                 )
             }
         }
@@ -363,12 +371,12 @@ private fun DevicePage(viewModel: OnboardingViewModel) {
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        PageHeader(Icons.Default.Lock, "貞操裝置", "記錄你的裝置資訊（可跳過此頁）")
+        PageHeader(Icons.Default.Lock, "貞操鎖", "記錄你的鎖資訊（可跳過此頁）")
 
         OutlinedTextField(
             value = deviceName,
             onValueChange = { viewModel.deviceName.value = it },
-            label = { Text("裝置名稱") },
+            label = { Text("鎖名稱") },
             placeholder = { Text("例如：CB-6000、Bon4 ...") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),

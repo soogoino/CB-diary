@@ -3,8 +3,10 @@ package com.chastity.diary.util
 object Constants {
     // Mood options
     val MOODS = listOf(
-        "😊 開心", "😌 平靜", "😐 普通", "😔 沮喪", 
-        "😰 焦慮", "😤 挫折", "🥰 興奮", "😴 無聊"
+        "😊 開心", "😌 平靜", "😐 普通", "😔 沮喪",
+        "😰 焦慮", "😤 挫折", "🥵 興奮", "😴 無聊", 
+        "😳 羞恥", "😎 自豪", "🤩 期待", "😬 緊張", 
+        "🧘 放鬆", "😕 困惑", "💪 充實", "😶 空虛"
     )
     
     // Exercise types
