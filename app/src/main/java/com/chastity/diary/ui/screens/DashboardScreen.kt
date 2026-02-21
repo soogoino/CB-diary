@@ -21,7 +21,8 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
-    viewModel: DashboardViewModel = viewModel()
+    viewModel: DashboardViewModel = viewModel(),
+    outerPadding: PaddingValues = PaddingValues()
 ) {
     val dashboardState by viewModel.dashboardState.collectAsState()
     val currentStreak by viewModel.currentStreak.collectAsState()
@@ -57,7 +58,10 @@ fun DashboardScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
-                            .padding(16.dp),
+                            .padding(
+                                start = 16.dp, end = 16.dp, top = 16.dp,
+                                bottom = outerPadding.calculateBottomPadding() + 16.dp
+                            ),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         // Time range selector

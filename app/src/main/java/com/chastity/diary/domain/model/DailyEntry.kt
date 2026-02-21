@@ -2,6 +2,7 @@ package com.chastity.diary.domain.model
 
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 /**
  * Domain model for daily entry
@@ -97,9 +98,17 @@ data class DailyEntry(
     // Q23: Self rating
     val selfRating: Int? = null, // 1-5
     
+    // Morning check-in (separate session)
+    val bedtime: LocalTime? = null,              // time went to bed
+    val wakeTime: LocalTime? = null,             // time woke up
+    val morningMood: String? = null,             // mood on waking
+    val morningEnergy: Int? = null,              // energy level 1-5
+    val morningErection: Boolean = false,        // morning erection
+    val morningCheckDone: Boolean = false,       // morning session submitted
+
     // Optional notes
     val notes: String? = null,
-    
+
     // Metadata
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val updatedAt: LocalDateTime = LocalDateTime.now()

@@ -67,7 +67,7 @@ object Constants {
     
     // Database
     const val DATABASE_NAME = "chastity_diary_db"
-    const val DATABASE_VERSION = 1
+    const val DATABASE_VERSION = 2
     
     // DataStore
     const val DATASTORE_NAME = "user_preferences"

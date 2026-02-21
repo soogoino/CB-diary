@@ -54,7 +54,14 @@ class DailyEntryViewModel(application: Application) : AndroidViewModel(applicati
     
     private val _deleteSuccess = MutableStateFlow(false)
     val deleteSuccess: StateFlow<Boolean> = _deleteSuccess.asStateFlow()
-    
+
+    // 0 = Morning ☀️, 1 = Evening 🌙
+    private val _currentTab = MutableStateFlow(0)
+    val currentTab: StateFlow<Int> = _currentTab.asStateFlow()
+
+    private val _morningSaveSuccess = MutableStateFlow(false)
+    val morningSaveSuccess: StateFlow<Boolean> = _morningSaveSuccess.asStateFlow()
+
     init {
         loadEntryForDate(LocalDate.now())
     }
@@ -175,6 +182,42 @@ class DailyEntryViewModel(application: Application) : AndroidViewModel(applicati
     
     fun clearSaveSuccess() {
         _saveSuccess.value = false
+    }
+
+    fun selectTab(index: Int) {
+        _currentTab.value = index
+    }
+
+    fun clearMorningSaveSuccess() {
+        _morningSaveSuccess.value = false
+    }
+
+    /** Save only the morning check-in fields and mark morningCheckDone = true */
+    fun saveMorningCheck() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _morningSaveSuccess.value = false
+            try {
+                val currentEntry = getCurrentEntry()
+                val entry = currentEntry.copy(
+                    morningCheckDone = true,
+                    updatedAt = LocalDateTime.now()
+                )
+                if (entry.id == 0L) {
+                    val newId = repository.insertEntry(entry)
+                    _entryState.value = EntryFormState.Loaded(entry.copy(id = newId))
+                } else {
+                    repository.updateEntry(entry)
+                    _entryState.value = EntryFormState.Loaded(entry)
+                }
+                streakRepository.updateStreak(entry.date)
+                _morningSaveSuccess.value = true
+            } catch (e: Exception) {
+                _errorMessage.value = "早晨記錄失敗: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
     
     fun deleteEntry() {

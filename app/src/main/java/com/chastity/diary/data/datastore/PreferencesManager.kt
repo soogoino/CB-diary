@@ -45,6 +45,11 @@ class PreferencesManager(private val context: Context) {
         val CURRENT_DEVICE_NAME = stringPreferencesKey("current_device_name")
         val NICKNAME = stringPreferencesKey("nickname")
 
+        // Morning reminder
+        val MORNING_REMINDER_ENABLED = booleanPreferencesKey("morning_reminder_enabled")
+        val MORNING_REMINDER_HOUR = intPreferencesKey("morning_reminder_hour")
+        val MORNING_REMINDER_MINUTE = intPreferencesKey("morning_reminder_minute")
+
         // Onboarding
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
     }
@@ -84,7 +89,12 @@ class PreferencesManager(private val context: Context) {
                 height = preferences[PreferencesKeys.HEIGHT],
                 weight = preferences[PreferencesKeys.WEIGHT],
                 currentDeviceName = preferences[PreferencesKeys.CURRENT_DEVICE_NAME],
-                nickname = preferences[PreferencesKeys.NICKNAME]
+                nickname = preferences[PreferencesKeys.NICKNAME],
+
+                // Morning reminder
+                morningReminderEnabled = preferences[PreferencesKeys.MORNING_REMINDER_ENABLED] ?: false,
+                morningReminderHour = preferences[PreferencesKeys.MORNING_REMINDER_HOUR] ?: 7,
+                morningReminderMinute = preferences[PreferencesKeys.MORNING_REMINDER_MINUTE] ?: 30
             )
         }
     
@@ -213,6 +223,14 @@ class PreferencesManager(private val context: Context) {
     suspend fun setOnboardingCompleted(completed: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.ONBOARDING_COMPLETED] = completed
+        }
+    }
+
+    suspend fun updateMorningReminderSettings(enabled: Boolean, hour: Int, minute: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.MORNING_REMINDER_ENABLED] = enabled
+            preferences[PreferencesKeys.MORNING_REMINDER_HOUR] = hour
+            preferences[PreferencesKeys.MORNING_REMINDER_MINUTE] = minute
         }
     }
 }

@@ -22,7 +22,12 @@ data class UserSettings(
     val nickname: String? = null,         // Display name
     val height: Int? = null,              // Height in cm (100-250)
     val weight: Float? = null,            // Weight in kg (30-200)
-    val currentDeviceName: String? = null // Chastity device name
+    val currentDeviceName: String? = null, // Chastity device name
+
+    // Morning check-in reminder
+    val morningReminderEnabled: Boolean = false,
+    val morningReminderHour: Int = 7,
+    val morningReminderMinute: Int = 30
 ) {
     /**
      * Calculate BMI if height and weight are available

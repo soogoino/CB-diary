@@ -18,6 +18,7 @@ import com.chastity.diary.util.CsvHelper
 import com.chastity.diary.util.TestDataGenerator
 import com.chastity.diary.utils.NotificationHelper
 import com.chastity.diary.worker.DailyReminderWorker
+import com.chastity.diary.worker.MorningReminderWorker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -96,6 +97,17 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             }
         }
     }
+
+    fun updateMorningReminderSettings(enabled: Boolean, hour: Int, minute: Int) {
+        viewModelScope.launch {
+            repository.updateMorningReminderSettings(enabled, hour, minute)
+            if (enabled) {
+                scheduleMorningReminder(hour, minute)
+            } else {
+                workManager.cancelUniqueWork("morning_reminder")
+            }
+        }
+    }
     
     private fun scheduleDailyReminder(hour: Int, minute: Int) {
         // Calculate initial delay
@@ -128,6 +140,23 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     
     private fun cancelDailyReminder() {
         workManager.cancelUniqueWork("daily_reminder")
+    }
+
+    private fun scheduleMorningReminder(hour: Int, minute: Int) {
+        val now = LocalTime.now()
+        val targetTime = LocalTime.of(hour, minute)
+        var initialDelayMinutes = java.time.Duration.between(now, targetTime).toMinutes()
+        if (initialDelayMinutes < 0) initialDelayMinutes += 24 * 60
+
+        val request = PeriodicWorkRequestBuilder<MorningReminderWorker>(1, TimeUnit.DAYS)
+            .setInitialDelay(initialDelayMinutes, TimeUnit.MINUTES)
+            .build()
+
+        workManager.enqueueUniquePeriodicWork(
+            "morning_reminder",
+            ExistingPeriodicWorkPolicy.UPDATE,
+            request
+        )
     }
     
     fun updateBiometricEnabled(enabled: Boolean) {

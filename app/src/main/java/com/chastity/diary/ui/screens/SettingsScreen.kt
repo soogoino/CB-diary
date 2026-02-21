@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.VpnKey
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,7 +38,8 @@ import com.chastity.diary.viewmodel.SettingsViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel = viewModel()
+    viewModel: SettingsViewModel = viewModel(),
+    outerPadding: PaddingValues = PaddingValues()
 ) {
     val context = LocalContext.current
     val userSettings by viewModel.userSettings.collectAsState()
@@ -125,7 +127,10 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .padding(
+                    start = 16.dp, end = 16.dp, top = 16.dp,
+                    bottom = outerPadding.calculateBottomPadding() + 16.dp
+                ),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // User preferences section
@@ -311,10 +316,69 @@ fun SettingsScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
+
+                    Divider()
+
+                    // Morning reminder
+                    var showMorningTimePicker by remember { mutableStateOf(false) }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(Icons.Default.WbSunny, "早晨 Check-in",
+                                tint = MaterialTheme.colorScheme.primary)
+                            Column {
+                                Text("☀️ 早晨 Check-in 提醒",
+                                    style = MaterialTheme.typography.bodyLarge)
+                                Text(
+                                    if (userSettings.morningReminderEnabled) "已啟用" else "已停用",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                        Switch(
+                            checked = userSettings.morningReminderEnabled,
+                            onCheckedChange = { enabled ->
+                                viewModel.updateMorningReminderSettings(
+                                    enabled,
+                                    userSettings.morningReminderHour,
+                                    userSettings.morningReminderMinute
+                                )
+                            }
+                        )
+                    }
+                    if (userSettings.morningReminderEnabled) {
+                        OutlinedButton(
+                            onClick = { showMorningTimePicker = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(Icons.Default.AccessTime, null, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("早晨提醒時間: ${String.format("%02d:%02d", userSettings.morningReminderHour, userSettings.morningReminderMinute)}")
+                        }
+                        Text("起床後記錄睡眠品質、晨勃狀況與精神狀態",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    if (showMorningTimePicker) {
+                        TimePickerDialog(
+                            onDismiss = { showMorningTimePicker = false },
+                            onConfirm = { h, m ->
+                                viewModel.updateMorningReminderSettings(true, h, m)
+                                showMorningTimePicker = false
+                            },
+                            initialHour = userSettings.morningReminderHour,
+                            initialMinute = userSettings.morningReminderMinute
+                        )
+                    }
                 }
             }
-            
-            // Security settings
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {

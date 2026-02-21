@@ -73,4 +73,8 @@ class SettingsRepository(private val preferencesManager: PreferencesManager) {
     suspend fun setOnboardingCompleted(completed: Boolean) {
         preferencesManager.setOnboardingCompleted(completed)
     }
+
+    suspend fun updateMorningReminderSettings(enabled: Boolean, hour: Int, minute: Int) {
+        preferencesManager.updateMorningReminderSettings(enabled, hour, minute)
+    }
 }

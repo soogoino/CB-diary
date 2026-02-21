@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 import com.chastity.diary.domain.model.DailyEntry
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 /**
  * Room entity for daily entries
@@ -64,7 +65,15 @@ data class DailyEntryEntity(
     
     // Optional
     val notes: String? = null,
-    
+
+    // Morning check-in
+    val bedtime: LocalTime? = null,
+    val wakeTime: LocalTime? = null,
+    val morningMood: String? = null,
+    val morningEnergy: Int? = null,
+    val morningErection: Boolean = false,
+    val morningCheckDone: Boolean = false,
+
     // Metadata
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val updatedAt: LocalDateTime = LocalDateTime.now()
@@ -119,6 +128,12 @@ fun DailyEntryEntity.toDomainModel(): DailyEntry {
         socialAnxiety = socialAnxiety,
         selfRating = selfRating,
         notes = notes,
+        bedtime = bedtime,
+        wakeTime = wakeTime,
+        morningMood = morningMood,
+        morningEnergy = morningEnergy,
+        morningErection = morningErection,
+        morningCheckDone = morningCheckDone,
         createdAt = createdAt,
         updatedAt = updatedAt
     )
@@ -173,7 +188,11 @@ fun DailyEntry.toEntity(): DailyEntryEntity {
         socialAnxiety = socialAnxiety,
         selfRating = selfRating,
         notes = notes,
-        createdAt = createdAt,
-        updatedAt = updatedAt
+        bedtime = bedtime,
+        wakeTime = wakeTime,
+        morningMood = morningMood,
+        morningEnergy = morningEnergy,
+        morningErection = morningErection,
+        morningCheckDone = morningCheckDone,
     )
 }

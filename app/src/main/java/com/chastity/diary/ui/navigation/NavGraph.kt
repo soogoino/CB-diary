@@ -23,11 +23,11 @@ fun NavGraph(navController: NavHostController, outerPadding: PaddingValues = Pad
         }
         
         composable(Screen.Dashboard.route) {
-            DashboardScreen()
+            DashboardScreen(outerPadding = outerPadding)
         }
         
         composable(Screen.Settings.route) {
-            SettingsScreen()
+            SettingsScreen(outerPadding = outerPadding)
         }
     }
 }

@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 /**
  * Type converters for Room database
@@ -47,4 +48,11 @@ class Converters {
             gson.fromJson(it, type)
         }
     }
+
+    // LocalTime converters
+    @TypeConverter
+    fun fromLocalTime(time: LocalTime?): String? = time?.toString()
+
+    @TypeConverter
+    fun toLocalTime(s: String?): LocalTime? = s?.let { LocalTime.parse(it) }
 }
