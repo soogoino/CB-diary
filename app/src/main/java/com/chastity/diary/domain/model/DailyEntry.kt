@@ -105,6 +105,10 @@ data class DailyEntry(
     val morningEnergy: Int? = null,              // energy level 1-5
     val morningErection: Boolean = false,        // morning erection
     val morningCheckDone: Boolean = false,       // morning session submitted
+    val hadEroticDream: Boolean = false,         // erotic dream (M5b)
+
+    // EAV rotating question answers (key = RotatingQuestion key, value = "true"/"false"/number string)
+    val rotatingAnswers: Map<String, String> = emptyMap(),
 
     // Optional notes
     val notes: String? = null,

@@ -23,7 +23,7 @@ import java.time.LocalDateTime
 class DailyEntryViewModel(application: Application) : AndroidViewModel(application) {
     
     private val database = AppDatabase.getInstance(application)
-    private val repository = EntryRepository(database.dailyEntryDao())
+    private val repository = EntryRepository(database.dailyEntryDao(), database.dailyEntryAttributeDao())
     private val preferencesManager = PreferencesManager(application)
     private val settingsRepository = SettingsRepository(preferencesManager)
     private val streakRepository = StreakRepository(preferencesManager)

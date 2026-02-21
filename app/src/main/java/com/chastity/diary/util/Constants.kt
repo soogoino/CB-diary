@@ -65,9 +65,16 @@ object Constants {
         5, 10, 15, 30, 45, 60, 90, 120, 180, 240
     )
     
+    // Night erection quick options (maps to nightErections: Int?)
+    val NIGHT_ERECTION_OPTIONS = listOf("無", "偶爾", "頻繁")
+    val NIGHT_ERECTION_VALUES = mapOf("無" to 0, "偶爾" to 5, "頻繁" to 10)
+
     // Database
     const val DATABASE_NAME = "chastity_diary_db"
-    const val DATABASE_VERSION = 2
+    const val DATABASE_VERSION = 3
+
+    // Photo
+    const val PREF_PHOTO_BLUR_ENABLED = "photo_blur_enabled"
     
     // DataStore
     const val DATASTORE_NAME = "user_preferences"

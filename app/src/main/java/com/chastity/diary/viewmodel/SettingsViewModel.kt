@@ -39,7 +39,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     private val preferencesManager = PreferencesManager(application)
     private val repository = SettingsRepository(preferencesManager)
     private val database = AppDatabase.getInstance(application)
-    private val entryRepository = EntryRepository(database.dailyEntryDao())
+    private val entryRepository = EntryRepository(database.dailyEntryDao(), database.dailyEntryAttributeDao())
     private val workManager = WorkManager.getInstance(application)
     
     private val encryptedPrefs: android.content.SharedPreferences by lazy {
@@ -264,6 +264,12 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     fun clearExportImportMessage() {
         _exportImportMessage.value = null
+    }
+
+    fun updatePhotoBlurEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            repository.updatePhotoBlurEnabled(enabled)
+        }
     }
 
     /**

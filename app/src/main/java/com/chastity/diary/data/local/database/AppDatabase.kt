@@ -5,8 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.chastity.diary.data.local.dao.DailyEntryAttributeDao
 import com.chastity.diary.data.local.dao.DailyEntryDao
 import com.chastity.diary.data.local.entity.Converters
+import com.chastity.diary.data.local.entity.DailyEntryAttributeEntity
 import com.chastity.diary.data.local.entity.DailyEntryEntity
 import com.chastity.diary.util.Constants
 
@@ -14,7 +16,7 @@ import com.chastity.diary.util.Constants
  * Main application database
  */
 @Database(
-    entities = [DailyEntryEntity::class],
+    entities = [DailyEntryEntity::class, DailyEntryAttributeEntity::class],
     version = Constants.DATABASE_VERSION,
     exportSchema = false
 )
@@ -22,6 +24,7 @@ import com.chastity.diary.util.Constants
 abstract class AppDatabase : RoomDatabase() {
     
     abstract fun dailyEntryDao(): DailyEntryDao
+    abstract fun dailyEntryAttributeDao(): DailyEntryAttributeDao
     
     companion object {
         @Volatile

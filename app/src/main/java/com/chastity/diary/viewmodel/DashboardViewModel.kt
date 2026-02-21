@@ -19,7 +19,7 @@ import java.time.temporal.ChronoUnit
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
     
     private val database = AppDatabase.getInstance(application)
-    private val repository = EntryRepository(database.dailyEntryDao())
+    private val repository = EntryRepository(database.dailyEntryDao(), database.dailyEntryAttributeDao())
     private val preferencesManager = PreferencesManager(application)
     private val streakRepository = StreakRepository(preferencesManager)
     

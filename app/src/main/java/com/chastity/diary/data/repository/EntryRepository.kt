@@ -1,6 +1,8 @@
 package com.chastity.diary.data.repository
 
+import com.chastity.diary.data.local.dao.DailyEntryAttributeDao
 import com.chastity.diary.data.local.dao.DailyEntryDao
+import com.chastity.diary.data.local.entity.DailyEntryAttributeEntity
 import com.chastity.diary.data.local.entity.toDomainModel
 import com.chastity.diary.data.local.entity.toEntity
 import com.chastity.diary.domain.model.DailyEntry
@@ -11,7 +13,10 @@ import java.time.LocalDate
 /**
  * Repository for daily entries
  */
-class EntryRepository(private val dao: DailyEntryDao) {
+class EntryRepository(
+    private val dao: DailyEntryDao,
+    private val attributeDao: DailyEntryAttributeDao
+) {
     
     fun getAllEntries(): Flow<List<DailyEntry>> {
         return dao.getAllEntries().map { entities ->
@@ -38,7 +43,10 @@ class EntryRepository(private val dao: DailyEntryDao) {
     }
     
     suspend fun getEntryByDate(date: LocalDate): DailyEntry? {
-        return dao.getByDate(date)?.toDomainModel()
+        val entity = dao.getByDate(date) ?: return null
+        val attrs = attributeDao.getForEntry(entity.id)
+        val rotatingAnswers = attrs.associate { it.attributeKey to it.attributeValue }
+        return entity.toDomainModel().copy(rotatingAnswers = rotatingAnswers)
     }
     
     fun getEntryByDateFlow(date: LocalDate): Flow<DailyEntry?> {
@@ -46,14 +54,27 @@ class EntryRepository(private val dao: DailyEntryDao) {
     }
     
     suspend fun insertEntry(entry: DailyEntry): Long {
-        return dao.insert(entry.toEntity())
+        val id = dao.insert(entry.toEntity())
+        if (entry.rotatingAnswers.isNotEmpty()) {
+            attributeDao.upsertAll(entry.rotatingAnswers.map { (k, v) ->
+                DailyEntryAttributeEntity(entryId = id, attributeKey = k, attributeValue = v)
+            })
+        }
+        return id
     }
     
     suspend fun updateEntry(entry: DailyEntry) {
         dao.update(entry.toEntity())
+        attributeDao.deleteForEntry(entry.id)
+        if (entry.rotatingAnswers.isNotEmpty()) {
+            attributeDao.upsertAll(entry.rotatingAnswers.map { (k, v) ->
+                DailyEntryAttributeEntity(entryId = entry.id, attributeKey = k, attributeValue = v)
+            })
+        }
     }
     
     suspend fun deleteEntry(entry: DailyEntry) {
+        attributeDao.deleteForEntry(entry.id)
         dao.delete(entry.toEntity())
     }
     

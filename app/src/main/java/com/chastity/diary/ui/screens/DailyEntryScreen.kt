@@ -10,6 +10,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -41,25 +43,52 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
-// ─── Rotating question pool ───────────────────────────────────────────────────
-private enum class RotatingQuestion(val title: String, val subtitle: String) {
-    LEAKAGE("今天是否有洩漏情況？", "體液/液體滲出"),
-    ERECTION("今天是否有勃起？", "男性限定"),
-
-    EDGING("今天是否進行邊緣訓練？", "包括任何刺激但未達高潮的行為"),
-    KEYHOLDER("今天與Keyholder/伴侶有互動嗎？", "可多選互動類型"),
-    CLEANING("今天是否清潔了貞操裝置？", "選擇清潔方式"),
-    SOCIAL("今天的社交活動", "在公開場合佩戴的感受"),
-    REMOVAL("今天是否短暫取下裝置？", "含原因與時長"),
+// ─── Rotating question pool (R1–R32, 31 total; EAV-backed) ──────────────────
+private enum class RotatingQuestion(
+    val key: String,
+    val title: String,
+    val feedback: String,
+    val isMaleOnly: Boolean = false
+) {
+    R1 ("R1",  "今日是否有分泌物洩漏？",                           "看來身體已經開始用最誠實的方式抗議了……清潔工作可別偷懶哦。"),
+    R2 ("R2",  "今日是否有主動頂撞/勃起？",                        "嗯？今天好像特別不甘心被關著呢……數一數有幾次試圖爭取自由吧。", isMaleOnly = true),
+    R3 ("R3",  "今日是否進行邊緣訓練？",                           "走到懸崖邊又縮回來……這種欲拒還迎的把戲，到底誰在折磨誰？"),
+    R4 ("R4",  "今日是否與Keyholder互動？",                        "今天有沒有乖乖報告？還是偷偷想留一點小秘密？溝通可是契約的氧氣。"),
+    R6 ("R6",  "今日是否帶著裝置進入公眾場合？",                   "在人群中帶著這個小秘密走動，緊張感是不是特別清晰？下次還敢嗎？"),
+    R7 ("R7",  "今日是否曾短暫解除裝置？",                         "手是不是有點癢？誠實交代解開的理由，否則下次可能更難熬哦。"),
+    R8 ("R8",  "今日是否有意展示或洩露裝置蹤跡？",                 "故意讓邊緣露出一點點？這種小壞壞的試探……真的只是不小心嗎？"),
+    R9 ("R9",  "今日是否接觸成人內容？",                           "看了那些東西，卻只能乾瞪眼……意志力今天考了幾分？"),
+    R10("R10", "今日是否解鎖或進行自慰？",                         "破戒的瞬間一定很爽……但現在後悔的感覺是不是更強烈？記下來，好好反省。"),
+    R11("R11", "今日是否進行乳頭開發/玩弄？",                      "開始把快感往上轉移了？看來下半身已經學會求饒，胸口卻越來越誠實。"),
+    R12("R12", "今日是否進行後庭開發/探索？",                      "後面也開始主動爭寵了？身體地圖正在被重新繪製……感覺如何？"),
+    R13("R13", "今天你有沒有感受到裝置帶來的不適或調整需求？",     "哪裡卡卡的？哪裡磨紅了？身體的小抱怨可不能忽視。"),
+    R14("R14", "今天佩戴裝置是否讓你感覺到內心的平靜或成就？",    "居然真的覺得安心……這算不算已經有點上癮的跡象了？"),
+    R15("R15", "今天有沒有想起Keyholder，並感受到連結的溫暖？",   "腦袋裡閃過那個人的臉時，心跳有沒有加速？這種思念也算是甜蜜的折磨。"),
+    R16("R16", "今天裝置是否已融入你的日常routine中，感覺自然？", "已經開始像內褲一樣理所當然了？恭喜，墮落進度又前進了一步。"),
+    R17("R17", "今天有沒有將慾望轉向其他活動，如運動或創作？",    "把精力丟到別的地方……聰明的轉移戰術，但下半身真的被騙到了嗎？"),
+    R18("R18", "今天在人群中，你有沒有特別注意到自己的隱密狀態？","每走一步都在提醒自己「裡面有東西」……這種隱秘的刺激，有沒有讓你偷偷嘴角上揚？"),
+    R19("R19", "今天有沒有進行放鬆活動來緩解可能的壓力？",        "學會哄自己了？不過再怎麼放鬆，鎖還是鎖著，逃不掉的哦。"),
+    R20("R20", "今天醒來後，有沒有回想起與裝置相關的夢境？",      "連睡覺都在被管教……你的潛意識看來已經徹底投降了。"),
+    R21("R21", "今天其他感官（如觸覺或聽覺）是否變得更敏銳？",    "碰一下衣服都像被撩撥……下半身被封印後，其他地方好像變得特別饑渴呢。"),
+    R22("R22", "今天有沒有與Keyholder分享你的感受或想法？",       "今天敢不敢把心裡那些念頭說出來？還是只敢在腦袋裡演戲？"),
+    R23("R23", "今天在不同環境中，裝置帶來的感受如何？",          "坐著的時候、走路的時候、蹲下的時候……它無時無刻不在提醒你誰才是主人。"),
+    R24("R24", "今天有沒有遇到讓你猶豫或掙扎的時刻？",           "差點就伸手了對吧？最後還是忍住了……這次算你贏，但下次呢？"),
+    R25("R25", "今天佩戴是否帶來任何意外的正面體驗？",           "居然還能挖到一點甜頭？看來被關著也能找到快樂……真是個奇怪的小傢伙。"),
+    R26("R26", "今天有沒有特別注意清潔或保濕等保養？",           "認真擦拭、抹乳液……對待牢籠比對待自己還細心，這算不算斯德哥爾摩？"),
+    R27("R27", "今天有沒有透過寫作或藝術表達你的體驗？",         "把被鎖的感覺寫成詩、畫成圖……這種昇華的方式還挺優雅的病態。"),
+    R28("R28", "今天時間感覺過得快還是慢，受裝置影響？",         "時間明明過得慢，卻又忍不住想再熬久一點……這矛盾的癮頭還真有趣。"),
+    R29("R29", "今天有沒有在匿名社群分享或閱讀相關經驗？",       "偷偷看別人被鎖的慘況，是不是有一種「同是天涯淪落人」的暗爽？"),
+    R30("R30", "今天有沒有在想萬一鎖取不下來該怎麼辦？",         "緊急預案想了幾套？安全是第一位的，恐慌可是最難看的樣子。"),
+    R31("R31", "今天情緒是否有起伏，與裝置相關？",               "一會兒覺得好色，一會兒又覺得好乖……這種心情過山車，玩得還開心嗎？"),
+    R32("R32", "今天有沒有想像未來繼續佩戴的畫面？",             "腦中已經出現一年後的自己……看來你不只接受了，還開始期待了呢。"),
 }
 
 private fun getRotatingQuestionsForDate(date: LocalDate, isMale: Boolean): List<RotatingQuestion> {
-    val pool = if (isMale) RotatingQuestion.entries
-               else RotatingQuestion.entries.filter { it != RotatingQuestion.ERECTION }
-    val seed = date.dayOfYear
-    val a = pool[seed % pool.size]
-    val b = pool[(seed + 3) % pool.size].let { if (it == a) pool[(seed + 5) % pool.size] else it }
-    return listOf(a, b)
+    val pool = RotatingQuestion.entries.filter { !it.isMaleOnly || isMale }
+    // Use a simple deterministic shuffle based on the date
+    val seed = date.toEpochDay()
+    val shuffled = pool.sortedBy { (seed * 2654435761L + it.key.hashCode()) and Long.MAX_VALUE }
+    return shuffled.take(2)
 }
 
 private fun coreCompletionScore(entry: DailyEntry): Int {
@@ -194,7 +223,8 @@ fun DailyEntryScreen(
                     onSave = { viewModel.saveMorningCheck() },
                     outerPadding = outerPadding,
                     isMorning = true,
-                    isMale = isMale
+                    isMale = isMale,
+                    photoBlurEnabled = userSettings.photoBlurEnabled
                 )
             } else {
                 // ── Evening Tab ────────────────────────────────────────────────
@@ -207,7 +237,8 @@ fun DailyEntryScreen(
                     isMale = isMale,
                     selectedDate = selectedDate,
                     isExisting = isExisting,
-                    onTakePhoto = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) }
+                    onTakePhoto = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) },
+                    photoBlurEnabled = userSettings.photoBlurEnabled
                 )
             }
         }
@@ -281,7 +312,8 @@ private fun DayStatusCard(entry: DailyEntry, selectedDate: LocalDate) {
 private fun CoreQuestionsCard(
     entry: DailyEntry,
     onUpdate: (DailyEntry) -> Unit,
-    onTakePhoto: () -> Unit
+    onTakePhoto: () -> Unit,
+    photoBlurEnabled: Boolean = true
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
@@ -295,12 +327,18 @@ private fun CoreQuestionsCard(
 
             Divider()
 
-            // C1: Mood
-            QuestionSection(title = "今天心情如何？") {
+            // C1+C6: Mood + Emotions merged
+            QuestionSection(title = "今天的心情狀態", subtitle = "選擇主要情緒和情緒標簽") {
                 MoodSelector(
                     selectedMood = entry.mood,
                     moods = Constants.MOODS,
                     onMoodSelected = { onUpdate(entry.copy(mood = it)) }
+                )
+                Spacer(Modifier.height(8.dp))
+                MultiSelectChipGroup(
+                    options = Constants.EMOTIONS,
+                    selectedOptions = entry.emotions,
+                    onSelectionChange = { onUpdate(entry.copy(emotions = it)) }
                 )
             }
 
@@ -347,14 +385,7 @@ private fun CoreQuestionsCard(
                     valueRange = 1f..10f, steps = 8, label = "專注指數")
             }
 
-            // C6: Emotions
-            QuestionSection(title = "今天的情緒狀態", subtitle = "可多選") {
-                MultiSelectChipGroup(
-                    options = Constants.EMOTIONS,
-                    selectedOptions = entry.emotions,
-                    onSelectionChange = { onUpdate(entry.copy(emotions = it)) }
-                )
-            }
+            // (C6 merged into C1 above)
 
             // Photo check-in
             Divider()
@@ -384,10 +415,58 @@ private fun CoreQuestionsCard(
                         if (f.exists()) BitmapFactory.decodeFile(f.absolutePath) else null
                     }.getOrNull()
                 }
-                bitmap?.let {
-                    Image(it.asImageBitmap(), "打卡照片",
-                        Modifier.fillMaxWidth().height(180.dp), contentScale = ContentScale.Crop)
+                bitmap?.let { bmp ->
+                    var revealed by remember { mutableStateOf(false) }
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .clickable { if (photoBlurEnabled) revealed = !revealed }
+                    ) {
+                        Image(bmp.asImageBitmap(), "打卡照片",
+                            Modifier.matchParentSize(), contentScale = ContentScale.Crop)
+                        if (photoBlurEnabled && !revealed) {
+                            Box(
+                                Modifier
+                                    .matchParentSize()
+                                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.88f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Icon(Icons.Default.Lock, null, tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+                                    Text("點擊查看照片", style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+                                }
+                            }
+                        }
+                    }
                 }
+            }
+
+            // E7: Exercise (moved from extended to core)
+            Divider()
+            QuestionSection(title = "是否運動？") {
+                YesNoToggle(entry.exercised, { onUpdate(entry.copy(exercised = it)) }, "有運動")
+                AnimatedVisibility(entry.exercised) {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        MultiSelectChipGroup(
+                            options = Constants.EXERCISE_TYPES,
+                            selectedOptions = entry.exerciseTypes,
+                            onSelectionChange = { onUpdate(entry.copy(exerciseTypes = it)) }
+                        )
+                        DurationPicker(entry.exerciseDuration,
+                            { onUpdate(entry.copy(exerciseDuration = it)) }, label = "運動時長")
+                    }
+                }
+            }
+
+            // E8: Cleaning (moved from extended to core)
+            QuestionSection(title = "今天是否清潔了貞操裝置？") {
+                MultiSelectChipGroup(
+                    options = Constants.CLEANING_TYPES,
+                    selectedOptions = entry.cleaningType?.let { listOf(it) } ?: emptyList(),
+                    onSelectionChange = { onUpdate(entry.copy(cleaningType = it.firstOrNull())) }
+                )
             }
         }
     }
@@ -479,84 +558,51 @@ private fun RotatingQuestionsCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RotatingQuestionItem(q: RotatingQuestion, entry: DailyEntry, onUpdate: (DailyEntry) -> Unit) {
-    QuestionSection(title = q.title, subtitle = q.subtitle) {
-        when (q) {
-            RotatingQuestion.LEAKAGE -> {
-                YesNoToggle(entry.hadLeakage, { onUpdate(entry.copy(hadLeakage = it)) }, "有洩漏")
-                AnimatedVisibility(entry.hadLeakage) {
-                    MultiSelectChipGroup(
-                        options = Constants.LEAKAGE_AMOUNTS,
-                        selectedOptions = entry.leakageAmount?.let { listOf(it) } ?: emptyList(),
-                        onSelectionChange = { onUpdate(entry.copy(leakageAmount = it.firstOrNull())) }
-                    )
-                }
-            }
-            RotatingQuestion.ERECTION -> {
-                YesNoToggle(entry.hadErection, { onUpdate(entry.copy(hadErection = it)) }, "有勃起")
-            }
-            RotatingQuestion.EDGING -> {
-                YesNoToggle(entry.hadEdging, { onUpdate(entry.copy(hadEdging = it)) }, "有進行")
-                AnimatedVisibility(entry.hadEdging) {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        DurationPicker(entry.edgingDuration, { onUpdate(entry.copy(edgingDuration = it)) }, label = "時長")
-                        MultiSelectChipGroup(
-                            options = Constants.EDGING_METHODS,
-                            selectedOptions = entry.edgingMethods,
-                            onSelectionChange = { onUpdate(entry.copy(edgingMethods = it)) }
-                        )
-                    }
-                }
-            }
-            RotatingQuestion.KEYHOLDER -> {
-                YesNoToggle(entry.keyholderInteraction,
-                    { onUpdate(entry.copy(keyholderInteraction = it)) }, "有互動")
-                AnimatedVisibility(entry.keyholderInteraction) {
-                    MultiSelectChipGroup(
-                        options = Constants.INTERACTION_TYPES,
-                        selectedOptions = entry.interactionTypes,
-                        onSelectionChange = { onUpdate(entry.copy(interactionTypes = it)) }
-                    )
-                }
-            }
-            RotatingQuestion.CLEANING -> {
-                MultiSelectChipGroup(
-                    options = Constants.CLEANING_TYPES,
-                    selectedOptions = entry.cleaningType?.let { listOf(it) } ?: emptyList(),
-                    onSelectionChange = { onUpdate(entry.copy(cleaningType = it.firstOrNull())) }
+    val rawValue = entry.rotatingAnswers[q.key]
+    val answered = rawValue != null
+    val answerIsYes = rawValue == "true"
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(q.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(
+                selected = answered && answerIsYes,
+                onClick = {
+                    val newAnswers = entry.rotatingAnswers.toMutableMap().also { it[q.key] = "true" }
+                    onUpdate(entry.copy(rotatingAnswers = newAnswers))
+                },
+                label = { Text("有") }
+            )
+            FilterChip(
+                selected = answered && !answerIsYes,
+                onClick = {
+                    val newAnswers = entry.rotatingAnswers.toMutableMap().also { it[q.key] = "false" }
+                    onUpdate(entry.copy(rotatingAnswers = newAnswers))
+                },
+                label = { Text("沒有") }
+            )
+        }
+
+        AnimatedVisibility(visible = answered) {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f)
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = q.feedback,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.padding(10.dp)
                 )
-            }
-            RotatingQuestion.SOCIAL -> {
-                MultiSelectChipGroup(
-                    options = Constants.SOCIAL_ACTIVITIES,
-                    selectedOptions = entry.socialActivities,
-                    onSelectionChange = { onUpdate(entry.copy(socialActivities = it)) }
-                )
-                AnimatedVisibility(entry.socialActivities.isNotEmpty()) {
-                    SliderWithLabel(entry.socialAnxiety?.toFloat() ?: 1f,
-                        { onUpdate(entry.copy(socialAnxiety = it.toInt())) },
-                        label = "被發現的焦慮感 (1=毫不擔心 10=極度焦慮)")
-                }
-            }
-            RotatingQuestion.REMOVAL -> {
-                YesNoToggle(entry.temporarilyRemoved,
-                    { onUpdate(entry.copy(temporarilyRemoved = it)) }, "有取下")
-                AnimatedVisibility(entry.temporarilyRemoved) {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        DurationPicker(entry.removalDuration,
-                            { onUpdate(entry.copy(removalDuration = it)) }, label = "取下時長")
-                        MultiSelectChipGroup(
-                            options = Constants.REMOVAL_REASONS,
-                            selectedOptions = entry.removalReasons,
-                            onSelectionChange = { onUpdate(entry.copy(removalReasons = it)) }
-                        )
-                    }
-                }
             }
         }
     }
 }
 
-// ─── ⑤ Extended Questions (expandable) ───────────────────────────────────────
+// ─── ⑤ Extended Questions (備註) ─────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExtendedQuestionsCard(entry: DailyEntry, onUpdate: (DailyEntry) -> Unit) {
@@ -570,7 +616,7 @@ private fun ExtendedQuestionsCard(entry: DailyEntry, onUpdate: (DailyEntry) -> U
                 Icon(if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                     null, Modifier.size(20.dp))
                 Spacer(Modifier.width(8.dp))
-                Text(if (expanded) "收起詳細記錄" else "我想記錄更多 →",
+                Text(if (expanded) "收起備註" else "我想記錄更多 →",
                     style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.weight(1f))
                 Text("選填", style = MaterialTheme.typography.labelSmall,
@@ -581,79 +627,7 @@ private fun ExtendedQuestionsCard(entry: DailyEntry, onUpdate: (DailyEntry) -> U
                     verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     Divider()
 
-                    // Porn
-                    QuestionSection("今天是否接觸色情內容？") {
-                        YesNoToggle(entry.viewedPorn, { onUpdate(entry.copy(viewedPorn = it)) }, "有接觸")
-                        AnimatedVisibility(entry.viewedPorn) {
-                            DurationPicker(entry.pornDuration, { onUpdate(entry.copy(pornDuration = it)) }, label = "觀看時長")
-                        }
-                    }
-
-                    // Exercise
-                    QuestionSection("是否運動？") {
-                        YesNoToggle(entry.exercised, { onUpdate(entry.copy(exercised = it)) }, "有運動")
-                        AnimatedVisibility(entry.exercised) {
-                            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                MultiSelectChipGroup(
-                                    options = Constants.EXERCISE_TYPES,
-                                    selectedOptions = entry.exerciseTypes,
-                                    onSelectionChange = { onUpdate(entry.copy(exerciseTypes = it)) }
-                                )
-                                DurationPicker(entry.exerciseDuration,
-                                    { onUpdate(entry.copy(exerciseDuration = it)) }, label = "運動時長")
-                            }
-                        }
-                    }
-
-                    // Unlock / Masturbation
-                    QuestionSection("是否解鎖？是否自慰？") {
-                        YesNoToggle(entry.unlocked, { onUpdate(entry.copy(unlocked = it)) }, "解鎖")
-                        YesNoToggle(entry.masturbated, { onUpdate(entry.copy(masturbated = it)) }, "自慰")
-                        AnimatedVisibility(entry.masturbated) {
-                            DurationPicker(entry.masturbationDuration,
-                                { onUpdate(entry.copy(masturbationDuration = it)) }, label = "持續時長")
-                        }
-                    }
-
-                    // Exposed lock
-                    QuestionSection("是否露出貞操鎖？") {
-                        YesNoToggle(entry.exposedLock, { onUpdate(entry.copy(exposedLock = it)) }, "有露出")
-                        AnimatedVisibility(entry.exposedLock) {
-                            MultiSelectChipGroup(
-                                options = Constants.EXPOSED_LOCATIONS,
-                                selectedOptions = entry.exposedLocations,
-                                onSelectionChange = { onUpdate(entry.copy(exposedLocations = it)) }
-                            )
-                        }
-                    }
-
-                    // Discomfort (only if wearing)
-                    AnimatedVisibility(visible = entry.deviceCheckPassed) {
-                        QuestionSection("是否有不適或疼痛？") {
-                            YesNoToggle(entry.hasDiscomfort,
-                                { onUpdate(entry.copy(hasDiscomfort = it)) }, "有不適")
-                            AnimatedVisibility(entry.hasDiscomfort) {
-                                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    MultiSelectChipGroup(
-                                        options = Constants.DISCOMFORT_AREAS,
-                                        selectedOptions = entry.discomfortAreas,
-                                        onSelectionChange = { onUpdate(entry.copy(discomfortAreas = it)) }
-                                    )
-                                    SliderWithLabel(entry.discomfortLevel?.toFloat() ?: 5f,
-                                        { onUpdate(entry.copy(discomfortLevel = it.toInt())) },
-                                        label = "疼痛程度")
-                                }
-                            }
-                        }
-                    }
-
-                    // Self rating
-                    QuestionSection("今天的自我評價") {
-                        StarRating(entry.selfRating ?: 3,
-                            { onUpdate(entry.copy(selfRating = it)) }, label = "自我評分")
-                    }
-
-                    // Notes
+                    // X5: 備註（唯一保留項目；其餘問題已整合至核心題或輪換題）
                     QuestionSection("備註", subtitle = "任何想補充的想法") {
                         OutlinedTextField(
                             value = entry.notes ?: "",
@@ -684,6 +658,7 @@ private fun DailyEntryTabContent(
     selectedDate: LocalDate = LocalDate.now(),
     isExisting: Boolean = false,
     onTakePhoto: () -> Unit = {},
+    photoBlurEnabled: Boolean = true,
 ) {
     var showBedtimePicker by remember { mutableStateOf(false) }
     var showWakeTimePicker by remember { mutableStateOf(false) }
@@ -804,6 +779,11 @@ private fun DailyEntryTabContent(
                         onValueChange = { onUpdate(entry.copy(wokeUpDueToDevice = it)) },
                         label = "因佩戴裝置而醒來"
                     )
+                    YesNoToggle(
+                        value = entry.hadEroticDream,
+                        onValueChange = { onUpdate(entry.copy(hadEroticDream = it)) },
+                        label = "昨晚有春夢？"
+                    )
                 }
             }
 
@@ -821,13 +801,17 @@ private fun DailyEntryTabContent(
                         QuestionSection(title = "晨勃") {
                             YesNoToggle(entry.morningErection, { onUpdate(entry.copy(morningErection = it)) }, "有晨勃")
                         }
-                        QuestionSection(title = "昨晚夜間勃起次數", subtitle = "0 = 無，可能因勃起而醒來") {
-                            SliderWithLabel(
-                                value = entry.nightErections?.toFloat() ?: 0f,
-                                onValueChange = { onUpdate(entry.copy(nightErections = it.toInt())) },
-                                valueRange = 0f..10f, steps = 9, label = "次數",
-                                valueFormatter = { "${it.toInt()} 次" }
-                            )
+                        QuestionSection(title = "昨晚夜間勃起", subtitle = "大概的感受即可") {
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Constants.NIGHT_ERECTION_OPTIONS.forEach { label ->
+                                    val value = Constants.NIGHT_ERECTION_VALUES[label] ?: 0
+                                    FilterChip(
+                                        selected = entry.nightErections == value,
+                                        onClick = { onUpdate(entry.copy(nightErections = value)) },
+                                        label = { Text(label) }
+                                    )
+                                }
+                            }
                         }
                         YesNoToggle(
                             value = entry.wokeUpFromErection,
@@ -855,13 +839,20 @@ private fun DailyEntryTabContent(
                             onMoodSelected = { onUpdate(entry.copy(morningMood = it)) }
                         )
                     }
+                    // M10: Battery-style energy display
                     QuestionSection(title = "起床能量指數", subtitle = "1 = 極度疲憊   5 = 精力充沛") {
-                        StarRating(
-                            rating = entry.morningEnergy ?: 3,
-                            onRatingChange = { onUpdate(entry.copy(morningEnergy = it)) },
-                            label = "能量指數",
-                            maxStars = 5
-                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            val batteryIcons = listOf("🪫", "🔋", "🔋", "🔋", "⚡")
+                            val batteryLabels = listOf("1", "2", "3", "4", "5")
+                            batteryLabels.forEachIndexed { index, lbl ->
+                                val level = index + 1
+                                FilterChip(
+                                    selected = entry.morningEnergy == level,
+                                    onClick = { onUpdate(entry.copy(morningEnergy = level)) },
+                                    label = { Text("${batteryIcons[index]} $lbl") }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -869,7 +860,7 @@ private fun DailyEntryTabContent(
         } else {
             // ── 🌙 Evening cards ───────────────────────────────────────────────
             DayStatusCard(entry, selectedDate)
-            CoreQuestionsCard(entry = entry, onUpdate = onUpdate, onTakePhoto = onTakePhoto)
+            CoreQuestionsCard(entry = entry, onUpdate = onUpdate, onTakePhoto = onTakePhoto, photoBlurEnabled = photoBlurEnabled)
             val score = coreCompletionScore(entry)
             AnimatedVisibility(visible = score >= 2) {
                 RealtimeFeedbackCard(entry, score)

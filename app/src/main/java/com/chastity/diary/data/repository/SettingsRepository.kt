@@ -77,4 +77,8 @@ class SettingsRepository(private val preferencesManager: PreferencesManager) {
     suspend fun updateMorningReminderSettings(enabled: Boolean, hour: Int, minute: Int) {
         preferencesManager.updateMorningReminderSettings(enabled, hour, minute)
     }
+
+    suspend fun updatePhotoBlurEnabled(enabled: Boolean) {
+        preferencesManager.updatePhotoBlurEnabled(enabled)
+    }
 }

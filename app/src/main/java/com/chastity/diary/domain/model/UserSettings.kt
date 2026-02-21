@@ -27,7 +27,10 @@ data class UserSettings(
     // Morning check-in reminder
     val morningReminderEnabled: Boolean = false,
     val morningReminderHour: Int = 7,
-    val morningReminderMinute: Int = 30
+    val morningReminderMinute: Int = 30,
+
+    // Photo
+    val photoBlurEnabled: Boolean = true
 ) {
     /**
      * Calculate BMI if height and weight are available

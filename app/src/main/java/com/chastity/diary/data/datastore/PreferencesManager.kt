@@ -52,6 +52,9 @@ class PreferencesManager(private val context: Context) {
 
         // Onboarding
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
+
+        // Photo
+        val PHOTO_BLUR_ENABLED = booleanPreferencesKey("photo_blur_enabled")
     }
     
     val userSettingsFlow: Flow<UserSettings> = context.dataStore.data
@@ -94,7 +97,10 @@ class PreferencesManager(private val context: Context) {
                 // Morning reminder
                 morningReminderEnabled = preferences[PreferencesKeys.MORNING_REMINDER_ENABLED] ?: false,
                 morningReminderHour = preferences[PreferencesKeys.MORNING_REMINDER_HOUR] ?: 7,
-                morningReminderMinute = preferences[PreferencesKeys.MORNING_REMINDER_MINUTE] ?: 30
+                morningReminderMinute = preferences[PreferencesKeys.MORNING_REMINDER_MINUTE] ?: 30,
+
+                // Photo
+                photoBlurEnabled = preferences[PreferencesKeys.PHOTO_BLUR_ENABLED] ?: true
             )
         }
     
@@ -231,6 +237,12 @@ class PreferencesManager(private val context: Context) {
             preferences[PreferencesKeys.MORNING_REMINDER_ENABLED] = enabled
             preferences[PreferencesKeys.MORNING_REMINDER_HOUR] = hour
             preferences[PreferencesKeys.MORNING_REMINDER_MINUTE] = minute
+        }
+    }
+
+    suspend fun updatePhotoBlurEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.PHOTO_BLUR_ENABLED] = enabled
         }
     }
 }

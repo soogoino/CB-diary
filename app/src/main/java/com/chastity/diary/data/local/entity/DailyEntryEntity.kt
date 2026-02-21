@@ -73,6 +73,7 @@ data class DailyEntryEntity(
     val morningEnergy: Int? = null,
     val morningErection: Boolean = false,
     val morningCheckDone: Boolean = false,
+    val hadEroticDream: Boolean = false,
 
     // Metadata
     val createdAt: LocalDateTime = LocalDateTime.now(),
@@ -134,6 +135,7 @@ fun DailyEntryEntity.toDomainModel(): DailyEntry {
         morningEnergy = morningEnergy,
         morningErection = morningErection,
         morningCheckDone = morningCheckDone,
+        hadEroticDream = hadEroticDream,
         createdAt = createdAt,
         updatedAt = updatedAt
     )
@@ -194,5 +196,6 @@ fun DailyEntry.toEntity(): DailyEntryEntity {
         morningEnergy = morningEnergy,
         morningErection = morningErection,
         morningCheckDone = morningCheckDone,
+        hadEroticDream = hadEroticDream,
     )
 }
