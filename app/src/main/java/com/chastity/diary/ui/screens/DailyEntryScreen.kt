@@ -27,10 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chastity.diary.domain.model.DailyEntry
+import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.ui.components.*
 import com.chastity.diary.util.Constants
 import com.chastity.diary.viewmodel.DailyEntryViewModel
 import com.chastity.diary.viewmodel.EntryFormState
+import com.chastity.diary.viewmodel.SettingsViewModel
 import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -51,8 +53,9 @@ private enum class RotatingQuestion(val title: String, val subtitle: String) {
     REMOVAL("今天是否短暫取下裝置？", "含原因與時長"),
 }
 
-private fun getRotatingQuestionsForDate(date: LocalDate): List<RotatingQuestion> {
-    val pool = RotatingQuestion.entries
+private fun getRotatingQuestionsForDate(date: LocalDate, isMale: Boolean): List<RotatingQuestion> {
+    val pool = if (isMale) RotatingQuestion.entries
+               else RotatingQuestion.entries.filter { it != RotatingQuestion.ERECTION }
     val seed = date.dayOfYear
     val a = pool[seed % pool.size]
     val b = pool[(seed + 3) % pool.size].let { if (it == a) pool[(seed + 5) % pool.size] else it }
@@ -75,6 +78,7 @@ private fun coreCompletionScore(entry: DailyEntry): Int {
 @Composable
 fun DailyEntryScreen(
     viewModel: DailyEntryViewModel = viewModel(),
+    settingsViewModel: SettingsViewModel = viewModel(),
     outerPadding: PaddingValues = PaddingValues()
 ) {
     val selectedDate by viewModel.selectedDate.collectAsState()
@@ -85,6 +89,8 @@ fun DailyEntryScreen(
     val errorMessage by viewModel.errorMessage.collectAsState()
     val currentTab by viewModel.currentTab.collectAsState()
     val morningSaveSuccess by viewModel.morningSaveSuccess.collectAsState()
+    val userSettings by settingsViewModel.userSettings.collectAsState()
+    val isMale = userSettings.gender == Gender.MALE
 
     var showDatePicker by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -182,68 +188,27 @@ fun DailyEntryScreen(
                 }
             } else if (currentTab == 0) {
                 // ── Morning Tab ────────────────────────────────────────────────
-                MorningTabContent(
+                DailyEntryTabContent(
                     entry = entry,
                     onUpdate = { viewModel.updateEntry { _ -> it } },
                     onSave = { viewModel.saveMorningCheck() },
-                    outerPadding = outerPadding
+                    outerPadding = outerPadding,
+                    isMorning = true,
+                    isMale = isMale
                 )
             } else {
                 // ── Evening Tab ────────────────────────────────────────────────
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(
-                            start = 16.dp, end = 16.dp, top = 12.dp,
-                            bottom = outerPadding.calculateBottomPadding() + 16.dp
-                        ),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
-                ) {
-                    DayStatusCard(entry, selectedDate)
-                    CoreQuestionsCard(
-                        entry = entry,
-                        onUpdate = { viewModel.updateEntry { _ -> it } },
-                        onTakePhoto = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) }
-                    )
-                    val score = coreCompletionScore(entry)
-                    AnimatedVisibility(visible = score >= 2) {
-                        RealtimeFeedbackCard(entry, score)
-                    }
-                    RotatingQuestionsCard(
-                        questions = remember(selectedDate) { getRotatingQuestionsForDate(selectedDate) },
-                        entry = entry,
-                        onUpdate = { viewModel.updateEntry { _ -> it } }
-                    )
-                    ExtendedQuestionsCard(
-                        entry = entry,
-                        onUpdate = { viewModel.updateEntry { _ -> it } }
-                    )
-                    if (isExisting) {
-                        val loaded = (entryState as EntryFormState.Loaded).entry
-                        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
-                            Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                Text("記錄信息", style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("建立：${loaded.createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("更新：${loaded.updatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                        }
-                    }
-                    Button(
-                        onClick = { viewModel.saveEntry() },
-                        modifier = Modifier.fillMaxWidth().height(52.dp)
-                    ) {
-                        Icon(Icons.Default.Save, null)
-                        Spacer(Modifier.width(8.dp))
-                        Text(if (isExisting) "更新記錄" else "儲存今日記錄",
-                            style = MaterialTheme.typography.titleMedium)
-                    }
-                }
+                DailyEntryTabContent(
+                    entry = entry,
+                    onUpdate = { viewModel.updateEntry { _ -> it } },
+                    onSave = { viewModel.saveEntry() },
+                    outerPadding = outerPadding,
+                    isMorning = false,
+                    isMale = isMale,
+                    selectedDate = selectedDate,
+                    isExisting = isExisting,
+                    onTakePhoto = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) }
+                )
             }
         }
     }
@@ -706,19 +671,25 @@ private fun ExtendedQuestionsCard(entry: DailyEntry, onUpdate: (DailyEntry) -> U
     }
 }
 
-// ─── Morning Tab Content ──────────────────────────────────────────────────────
+// ─── Unified Tab Content ──────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MorningTabContent(
+private fun DailyEntryTabContent(
     entry: DailyEntry,
     onUpdate: (DailyEntry) -> Unit,
     onSave: () -> Unit,
-    outerPadding: PaddingValues
+    outerPadding: PaddingValues,
+    isMorning: Boolean,
+    isMale: Boolean = true,
+    selectedDate: LocalDate = LocalDate.now(),
+    isExisting: Boolean = false,
+    onTakePhoto: () -> Unit = {},
 ) {
     var showBedtimePicker by remember { mutableStateOf(false) }
     var showWakeTimePicker by remember { mutableStateOf(false) }
     val timeFmt = DateTimeFormatter.ofPattern("HH:mm")
 
+    // ── Shared scrollable wrapper ──────────────────────────────────────────────
     Column(
         Modifier
             .fillMaxSize()
@@ -729,207 +700,223 @@ private fun MorningTabContent(
             ),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        // ── Completion banner ──────────────────────────────────────────────────
-        if (entry.morningCheckDone) {
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    Modifier.padding(14.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically
+        if (isMorning) {
+            // ── ☀️ Morning cards ───────────────────────────────────────────────
+
+            // Completion banner
+            if (entry.morningCheckDone) {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(Icons.Default.CheckCircle, null, tint = MaterialTheme.colorScheme.primary)
-                    Column {
-                        Text("早晨記錄已完成 ☀️",
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer)
-                        Text("可隨時更新早晨記錄",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f))
-                    }
-                }
-            }
-        }
-
-        // ── 🛏 Sleep Card ──────────────────────────────────────────────────────
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Nightlight, null,
-                        tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(6.dp))
-                    Text("睡眠記錄", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                }
-                Divider()
-
-                // Bedtime
-                Row(Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Column {
-                        Text("就寢時間", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
-                        Text(
-                            entry.bedtime?.format(timeFmt) ?: "未設定",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = if (entry.bedtime != null) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    OutlinedButton(onClick = { showBedtimePicker = true }) {
-                        Icon(Icons.Default.Bedtime, null, Modifier.size(16.dp))
-                        Spacer(Modifier.width(4.dp))
-                        Text("設定")
-                    }
-                }
-
-                // Wake time
-                Row(Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Column {
-                        Text("起床時間", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
-                        Text(
-                            entry.wakeTime?.format(timeFmt) ?: "未設定",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = if (entry.wakeTime != null) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    OutlinedButton(onClick = { showWakeTimePicker = true }) {
-                        Icon(Icons.Default.WbSunny, null, Modifier.size(16.dp))
-                        Spacer(Modifier.width(4.dp))
-                        Text("設定")
-                    }
-                }
-
-                // Auto-calculated sleep duration
-                if (entry.bedtime != null && entry.wakeTime != null) {
-                    val dur = java.time.Duration.between(entry.bedtime, entry.wakeTime).let {
-                        if (it.isNegative) it.plusDays(1) else it
-                    }
-                    val h = dur.toHours()
-                    val m = dur.toMinutes() % 60
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-                        modifier = Modifier.fillMaxWidth()
+                    Row(
+                        Modifier.padding(14.dp).fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(Modifier.padding(10.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Schedule, null,
-                                tint = MaterialTheme.colorScheme.onSecondaryContainer, modifier = Modifier.size(16.dp))
-                            Text("睡眠時長：${h}小時${if (m > 0) " ${m}分" else ""}",
+                        Icon(Icons.Default.CheckCircle, null, tint = MaterialTheme.colorScheme.primary)
+                        Column {
+                            Text("早晨記錄已完成 ☀️",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer)
+                            Text("可隨時更新早晨記錄",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer)
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f))
                         }
                     }
                 }
-
-                Divider()
-
-                // Sleep quality
-                QuestionSection(title = "睡眠品質", subtitle = "整體睡眠感受") {
-                    StarRating(
-                        rating = entry.sleepQuality ?: 3,
-                        onRatingChange = { onUpdate(entry.copy(sleepQuality = it)) },
-                        label = "睡眠品質"
-                    )
-                }
-
-                // Woke due to device
-                YesNoToggle(
-                    value = entry.wokeUpDueToDevice,
-                    onValueChange = { onUpdate(entry.copy(wokeUpDueToDevice = it)) },
-                    label = "因佩戴裝置而醒來"
-                )
             }
-        }
 
-        // ── 💪 Body Card ───────────────────────────────────────────────────────
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.FitnessCenter, null,
-                        tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(6.dp))
-                    Text("身體狀況", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Spacer(Modifier.weight(1f))
-                    AssistChip(onClick = {}, label = { Text("男性參考", style = MaterialTheme.typography.labelSmall) })
-                }
-                Divider()
-
-                QuestionSection(title = "晨勃") {
-                    YesNoToggle(entry.morningErection, { onUpdate(entry.copy(morningErection = it)) }, "有晨勃")
-                }
-
-                QuestionSection(title = "昨晚夜間勃起次數", subtitle = "0 = 無，可能因勃起而醒來") {
-                    SliderWithLabel(
-                        value = entry.nightErections?.toFloat() ?: 0f,
-                        onValueChange = { onUpdate(entry.copy(nightErections = it.toInt())) },
-                        valueRange = 0f..10f, steps = 9, label = "次數",
-                        valueFormatter = { "${it.toInt()} 次" }
-                    )
-                }
-
-                YesNoToggle(
-                    value = entry.wokeUpFromErection,
-                    onValueChange = { onUpdate(entry.copy(wokeUpFromErection = it)) },
-                    label = "因夜間勃起而醒來"
-                )
-            }
-        }
-
-        // ── 😊 Morning Mood Card ───────────────────────────────────────────────
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.EmojiEmotions, null,
-                        tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(6.dp))
-                    Text("起床狀態", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                }
-                Divider()
-
-                QuestionSection(title = "起床後心情") {
-                    MoodSelector(
-                        selectedMood = entry.morningMood,
-                        moods = Constants.MOODS,
-                        onMoodSelected = { onUpdate(entry.copy(morningMood = it)) }
-                    )
-                }
-
-                QuestionSection(title = "起床能量指數", subtitle = "1 = 極度疲憊   5 = 精力充沛") {
-                    StarRating(
-                        rating = entry.morningEnergy ?: 3,
-                        onRatingChange = { onUpdate(entry.copy(morningEnergy = it)) },
-                        label = "能量指數",
-                        maxStars = 5
+            // 🛏 Sleep Card
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Nightlight, null,
+                            tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("睡眠記錄", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    }
+                    Divider()
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                        Column {
+                            Text("就寢時間", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                            Text(
+                                entry.bedtime?.format(timeFmt) ?: "未設定",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = if (entry.bedtime != null) MaterialTheme.colorScheme.primary
+                                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        OutlinedButton(onClick = { showBedtimePicker = true }) {
+                            Icon(Icons.Default.Bedtime, null, Modifier.size(16.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text("設定")
+                        }
+                    }
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                        Column {
+                            Text("起床時間", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                            Text(
+                                entry.wakeTime?.format(timeFmt) ?: "未設定",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = if (entry.wakeTime != null) MaterialTheme.colorScheme.primary
+                                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        OutlinedButton(onClick = { showWakeTimePicker = true }) {
+                            Icon(Icons.Default.WbSunny, null, Modifier.size(16.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text("設定")
+                        }
+                    }
+                    if (entry.bedtime != null && entry.wakeTime != null) {
+                        val dur = java.time.Duration.between(entry.bedtime, entry.wakeTime).let {
+                            if (it.isNegative) it.plusDays(1) else it
+                        }
+                        val h = dur.toHours()
+                        val m = dur.toMinutes() % 60
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(Modifier.padding(10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Schedule, null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer, modifier = Modifier.size(16.dp))
+                                Text("睡眠時長：${h}小時${if (m > 0) " ${m}分" else ""}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer)
+                            }
+                        }
+                    }
+                    Divider()
+                    QuestionSection(title = "睡眠品質", subtitle = "整體睡眠感受") {
+                        StarRating(
+                            rating = entry.sleepQuality ?: 3,
+                            onRatingChange = { onUpdate(entry.copy(sleepQuality = it)) },
+                            label = "睡眠品質"
+                        )
+                    }
+                    YesNoToggle(
+                        value = entry.wokeUpDueToDevice,
+                        onValueChange = { onUpdate(entry.copy(wokeUpDueToDevice = it)) },
+                        label = "因佩戴裝置而醒來"
                     )
                 }
             }
+
+            // 💪 Body Card (男性限定)
+            if (isMale) {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.FitnessCenter, null,
+                                tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(6.dp))
+                            Text("身體狀況", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        }
+                        Divider()
+                        QuestionSection(title = "晨勃") {
+                            YesNoToggle(entry.morningErection, { onUpdate(entry.copy(morningErection = it)) }, "有晨勃")
+                        }
+                        QuestionSection(title = "昨晚夜間勃起次數", subtitle = "0 = 無，可能因勃起而醒來") {
+                            SliderWithLabel(
+                                value = entry.nightErections?.toFloat() ?: 0f,
+                                onValueChange = { onUpdate(entry.copy(nightErections = it.toInt())) },
+                                valueRange = 0f..10f, steps = 9, label = "次數",
+                                valueFormatter = { "${it.toInt()} 次" }
+                            )
+                        }
+                        YesNoToggle(
+                            value = entry.wokeUpFromErection,
+                            onValueChange = { onUpdate(entry.copy(wokeUpFromErection = it)) },
+                            label = "因夜間勃起而醒來"
+                        )
+                    }
+                }
+            }
+
+            // 😊 Morning Mood Card
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.EmojiEmotions, null,
+                            tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("起床狀態", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    }
+                    Divider()
+                    QuestionSection(title = "起床後心情") {
+                        MoodSelector(
+                            selectedMood = entry.morningMood,
+                            moods = Constants.MOODS,
+                            onMoodSelected = { onUpdate(entry.copy(morningMood = it)) }
+                        )
+                    }
+                    QuestionSection(title = "起床能量指數", subtitle = "1 = 極度疲憊   5 = 精力充沛") {
+                        StarRating(
+                            rating = entry.morningEnergy ?: 3,
+                            onRatingChange = { onUpdate(entry.copy(morningEnergy = it)) },
+                            label = "能量指數",
+                            maxStars = 5
+                        )
+                    }
+                }
+            }
+
+        } else {
+            // ── 🌙 Evening cards ───────────────────────────────────────────────
+            DayStatusCard(entry, selectedDate)
+            CoreQuestionsCard(entry = entry, onUpdate = onUpdate, onTakePhoto = onTakePhoto)
+            val score = coreCompletionScore(entry)
+            AnimatedVisibility(visible = score >= 2) {
+                RealtimeFeedbackCard(entry, score)
+            }
+            RotatingQuestionsCard(
+                questions = remember(selectedDate, isMale) { getRotatingQuestionsForDate(selectedDate, isMale) },
+                entry = entry,
+                onUpdate = onUpdate
+            )
+            ExtendedQuestionsCard(entry = entry, onUpdate = onUpdate)
+            if (isExisting) {
+                Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+                    Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text("記錄信息", style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("建立：${entry.createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("更新：${entry.updatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
         }
 
-        // ── Save button ────────────────────────────────────────────────────────
-        Button(
-            onClick = onSave,
-            modifier = Modifier.fillMaxWidth().height(52.dp)
-        ) {
-            Icon(Icons.Default.CheckCircle, null)
+        // ── Shared save button ─────────────────────────────────────────────────
+        Button(onClick = onSave, modifier = Modifier.fillMaxWidth().height(52.dp)) {
+            Icon(
+                imageVector = if (isMorning) Icons.Default.CheckCircle else Icons.Default.Save,
+                contentDescription = null
+            )
             Spacer(Modifier.width(8.dp))
             Text(
-                if (entry.morningCheckDone) "更新早晨記錄" else "完成早晨記錄",
+                when {
+                    isMorning && entry.morningCheckDone -> "更新早晨記錄"
+                    isMorning -> "完成早晨記錄"
+                    isExisting -> "更新記錄"
+                    else -> "儲存今日記錄"
+                },
                 style = MaterialTheme.typography.titleMedium
             )
         }
         Spacer(Modifier.height(8.dp))
     }
 
-    // ── Time pickers ───────────────────────────────────────────────────────────
+    // ── Time pickers (morning only) ────────────────────────────────────────────
     if (showBedtimePicker) {
         TimePickerDialog(
             onDismiss = { showBedtimePicker = false },

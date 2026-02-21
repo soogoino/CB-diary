@@ -152,11 +152,34 @@ fun SettingsScreen(
                         )
                     }
 
-                    Text(
-                        text = "性別: ${userSettings.gender.name}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text = "生理性別",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        val genderOptions = listOf(
+                            Gender.MALE to "男性 ♂",
+                            Gender.FEMALE to "女性 ♀",
+                            Gender.OTHER to "其他"
+                        )
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            genderOptions.forEach { (gender, label) ->
+                                FilterChip(
+                                    selected = userSettings.gender == gender,
+                                    onClick = { viewModel.updateGender(gender) },
+                                    label = { Text(label) }
+                                )
+                            }
+                        }
+                        Text(
+                            text = "影響記錄頁顯示的性別特定題目",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
                     Text(
                         text = "開始日期: ${userSettings.startDate?.toString() ?: "未設定"}",
                         style = MaterialTheme.typography.bodyMedium
