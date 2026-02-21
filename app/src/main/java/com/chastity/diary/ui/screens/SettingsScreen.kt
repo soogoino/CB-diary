@@ -48,7 +48,6 @@ fun SettingsScreen(
     var showProfileDialog by remember { mutableStateOf(false) }
     var showPinSetupDialog by remember { mutableStateOf(false) }
     var showBiometricWarning by remember { mutableStateOf(false) }
-    var showTimePickerDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val biometricHelper = remember { BiometricHelper(context) }
 
@@ -225,7 +224,7 @@ fun SettingsScreen(
                 }
             }
             
-            // Notification settings
+            // ☀️ 早安提醒
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -233,13 +232,82 @@ fun SettingsScreen(
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = "通知設定",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    
-                    Divider()
-                    
+                    var showMorningTimePicker by remember { mutableStateOf(false) }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.WbSunny,
+                                contentDescription = "早安提醒",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Column {
+                                Text(
+                                    text = "☀️ 早安提醒",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                Text(
+                                    text = if (userSettings.morningReminderEnabled) "已啟用" else "已停用",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                        Switch(
+                            checked = userSettings.morningReminderEnabled,
+                            onCheckedChange = { enabled ->
+                                viewModel.updateMorningReminderSettings(
+                                    enabled,
+                                    userSettings.morningReminderHour,
+                                    userSettings.morningReminderMinute
+                                )
+                            }
+                        )
+                    }
+
+                    if (userSettings.morningReminderEnabled) {
+                        Divider()
+                        OutlinedButton(
+                            onClick = { showMorningTimePicker = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(Icons.Default.AccessTime, null, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("提醒時間: ${String.format("%02d:%02d", userSettings.morningReminderHour, userSettings.morningReminderMinute)}")
+                        }
+                    }
+
+                    if (showMorningTimePicker) {
+                        TimePickerDialog(
+                            onDismiss = { showMorningTimePicker = false },
+                            onConfirm = { h, m ->
+                                viewModel.updateMorningReminderSettings(true, h, m)
+                                showMorningTimePicker = false
+                            },
+                            initialHour = userSettings.morningReminderHour,
+                            initialMinute = userSettings.morningReminderMinute
+                        )
+                    }
+                }
+            }
+
+            // 🌙 晚安提醒
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    var showEveningTimePicker by remember { mutableStateOf(false) }
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -251,19 +319,16 @@ fun SettingsScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Notifications,
-                                contentDescription = "每日提醒",
+                                contentDescription = "晚安提醒",
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Column {
                                 Text(
-                                    text = "每日提醒",
-                                    style = MaterialTheme.typography.bodyLarge
+                                    text = "🌙 晚安提醒",
+                                    style = MaterialTheme.typography.titleMedium
                                 )
                                 Text(
-                                    text = if (userSettings.reminderEnabled) 
-                                        "已啟用" 
-                                    else 
-                                        "已停用",
+                                    text = if (userSettings.reminderEnabled) "已啟用" else "已停用",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -273,7 +338,6 @@ fun SettingsScreen(
                             checked = userSettings.reminderEnabled,
                             onCheckedChange = { enabled ->
                                 if (enabled) {
-                                    // Check permission for Android 13+
                                     if (hasNotificationPermission()) {
                                         viewModel.updateReminderSettings(
                                             true,
@@ -293,12 +357,11 @@ fun SettingsScreen(
                             }
                         )
                     }
-                    
+
                     if (userSettings.reminderEnabled) {
                         Divider()
-                        
                         OutlinedButton(
-                            onClick = { showTimePickerDialog = true },
+                            onClick = { showEveningTimePicker = true },
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Icon(
@@ -309,72 +372,17 @@ fun SettingsScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("提醒時間: ${String.format("%02d:%02d", userSettings.reminderHour, userSettings.reminderMinute)}")
                         }
-                        
-                        Text(
-                            text = "每天會在設定的時間提醒您記錄日記",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
 
-                    Divider()
-
-                    // Morning reminder
-                    var showMorningTimePicker by remember { mutableStateOf(false) }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(Icons.Default.WbSunny, "早晨 Check-in",
-                                tint = MaterialTheme.colorScheme.primary)
-                            Column {
-                                Text("☀️ 早晨 Check-in 提醒",
-                                    style = MaterialTheme.typography.bodyLarge)
-                                Text(
-                                    if (userSettings.morningReminderEnabled) "已啟用" else "已停用",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                        Switch(
-                            checked = userSettings.morningReminderEnabled,
-                            onCheckedChange = { enabled ->
-                                viewModel.updateMorningReminderSettings(
-                                    enabled,
-                                    userSettings.morningReminderHour,
-                                    userSettings.morningReminderMinute
-                                )
-                            }
-                        )
-                    }
-                    if (userSettings.morningReminderEnabled) {
-                        OutlinedButton(
-                            onClick = { showMorningTimePicker = true },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Icon(Icons.Default.AccessTime, null, modifier = Modifier.size(20.dp))
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("早晨提醒時間: ${String.format("%02d:%02d", userSettings.morningReminderHour, userSettings.morningReminderMinute)}")
-                        }
-                        Text("起床後記錄睡眠品質、晨勃狀況與精神狀態",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                    if (showMorningTimePicker) {
+                    if (showEveningTimePicker) {
                         TimePickerDialog(
-                            onDismiss = { showMorningTimePicker = false },
+                            onDismiss = { showEveningTimePicker = false },
                             onConfirm = { h, m ->
-                                viewModel.updateMorningReminderSettings(true, h, m)
-                                showMorningTimePicker = false
+                                viewModel.updateReminderSettings(true, h, m)
+                                showEveningTimePicker = false
                             },
-                            initialHour = userSettings.morningReminderHour,
-                            initialMinute = userSettings.morningReminderMinute
+                            initialHour = userSettings.reminderHour,
+                            initialMinute = userSettings.reminderMinute
                         )
                     }
                 }
@@ -663,21 +671,5 @@ fun SettingsScreen(
             )
         }
         
-        // Time picker dialog
-        if (showTimePickerDialog) {
-            TimePickerDialog(
-                onDismiss = { showTimePickerDialog = false },
-                onConfirm = { hour, minute ->
-                    viewModel.updateReminderSettings(
-                        enabled = true,
-                        hour = hour,
-                        minute = minute
-                    )
-                    showTimePickerDialog = false
-                },
-                initialHour = userSettings.reminderHour,
-                initialMinute = userSettings.reminderMinute
-            )
-        }
     }
 }
