@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.chastity.diary.ui.screens.DailyEntryScreen
 import com.chastity.diary.ui.screens.DashboardScreen
+import com.chastity.diary.ui.screens.HistoryScreen
 import com.chastity.diary.ui.screens.SettingsScreen
 
 /**
@@ -26,6 +27,10 @@ fun NavGraph(navController: NavHostController, outerPadding: PaddingValues = Pad
             DashboardScreen(outerPadding = outerPadding)
         }
         
+        composable(Screen.History.route) {
+            HistoryScreen(outerPadding = outerPadding)
+        }
+
         composable(Screen.Settings.route) {
             SettingsScreen(outerPadding = outerPadding)
         }

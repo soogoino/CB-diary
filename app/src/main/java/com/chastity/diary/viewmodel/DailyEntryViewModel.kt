@@ -184,6 +184,25 @@ class DailyEntryViewModel(application: Application) : AndroidViewModel(applicati
         _saveSuccess.value = false
     }
 
+    /** Save narrative text to the current entry's notes field without re-triggering saveSuccess */
+    fun saveNarrativeToNotes(narrative: String) {
+        viewModelScope.launch {
+            try {
+                val state = _entryState.value
+                if (state is EntryFormState.Loaded) {
+                    val updated = state.entry.copy(
+                        notes = narrative,
+                        updatedAt = LocalDateTime.now()
+                    )
+                    repository.updateEntry(updated)
+                    _entryState.value = EntryFormState.Loaded(updated)
+                }
+            } catch (e: Exception) {
+                // notes 儲存失敗不影響主要流程，靜默處理
+            }
+        }
+    }
+
     fun selectTab(index: Int) {
         _currentTab.value = index
     }

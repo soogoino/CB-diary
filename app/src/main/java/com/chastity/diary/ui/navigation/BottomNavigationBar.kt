@@ -20,6 +20,7 @@ data class BottomNavItem(
 val bottomNavItems = listOf(
     BottomNavItem(Screen.DailyEntry, Icons.Filled.Edit, "每日記錄"),
     BottomNavItem(Screen.Dashboard, Icons.Filled.Dashboard, "儀表板"),
+    BottomNavItem(Screen.History, Icons.Filled.CalendarMonth, "歷史紀錄"),
     BottomNavItem(Screen.Settings, Icons.Filled.Settings, "設定")
 )
 

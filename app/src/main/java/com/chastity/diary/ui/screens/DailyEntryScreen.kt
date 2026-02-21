@@ -131,6 +131,7 @@ fun DailyEntryScreen(
 
     var showDatePicker by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showNarrativeSheet by rememberSaveable { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
@@ -157,7 +158,18 @@ fun DailyEntryScreen(
     }
 
     LaunchedEffect(saveSuccess) {
-        if (saveSuccess) { snackbarHostState.showSnackbar("儲存成功！"); viewModel.clearSaveSuccess() }
+        if (saveSuccess) {
+            // 先生成敖事文字並存到 notes
+            val narrativeEntry = when (val s = entryState) {
+                is EntryFormState.Loaded -> s.entry
+                is EntryFormState.Empty -> DailyEntry(date = selectedDate)
+            }
+            val narrativeText = generateDailyNarrative(narrativeEntry)
+            viewModel.saveNarrativeToNotes(narrativeText)
+            showNarrativeSheet = true
+            snackbarHostState.showSnackbar("儲存成功！")
+            viewModel.clearSaveSuccess()
+        }
     }
     LaunchedEffect(morningSaveSuccess) {
         if (morningSaveSuccess) { snackbarHostState.showSnackbar("☀️ 早晨記錄已儲存！"); viewModel.clearMorningSaveSuccess() }
@@ -277,6 +289,46 @@ fun DailyEntryScreen(
             onConfirm = { viewModel.deleteEntry() },
             onDismiss = { showDeleteDialog = false }
         )
+    }
+
+    // 💬 Daily Narrative Bottom Sheet
+    if (showNarrativeSheet) {
+        val narrativeEntry = when (val s = entryState) {
+            is EntryFormState.Loaded -> s.entry
+            is EntryFormState.Empty -> DailyEntry(date = selectedDate)
+        }
+        ModalBottomSheet(onDismissRequest = { showNarrativeSheet = false }) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 24.dp, end = 24.dp, bottom = 40.dp, top = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    "📝 今日摘要",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                )
+                Text(
+                    selectedDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                )
+                Divider()
+                Text(
+                    text = generateDailyNarrative(narrativeEntry),
+                    style = MaterialTheme.typography.bodyMedium,
+                    lineHeight = androidx.compose.ui.unit.TextUnit.Unspecified
+                )
+                Spacer(Modifier.height(8.dp))
+                Button(
+                    onClick = { showNarrativeSheet = false },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("好的，讘記了👍")
+                }
+            }
+        }
     }
 }
 
@@ -1035,6 +1087,59 @@ private fun DailyEntryTabContent(
             initialMinute = entry.wakeTime?.minute ?: 30
         )
     }
+}
+
+// ─── Daily Narrative ──────────────────────────────────────────────────────────
+private fun generateDailyNarrative(entry: DailyEntry): String {
+    val parts = mutableListOf<String>()
+
+    // 心情
+    entry.mood?.let { parts.add("今天心情是 $it") }
+
+    // 性慾
+    entry.desireLevel?.let {
+        parts.add(when {
+            it >= 8 -> "性慾強度 $it/10，今天是高峰日——但你撐過來了 💪"
+            it <= 3 -> "性慾強度 $it/10，今天異常平靜 😌"
+            else    -> "性慾強度 $it/10，處於正常範圍"
+        })
+    }
+
+    // 佩戴
+    if (entry.deviceCheckPassed) {
+        entry.comfortRating?.let { r ->
+            parts.add("佩戴舒適度 $r/5" + when {
+                r >= 4 -> "，狀況很好！"
+                r <= 2 -> "，記得調整佩戴方式。"
+                else   -> "。"
+            })
+        }
+    } else {
+        parts.add("今天沒有佩戴裝置。")
+    }
+
+    // 運動
+    if (entry.exercised) {
+        parts.add("有運動" + (entry.exerciseDuration?.let { "（${it} 分鐘）" } ?: "") + "，自律 +1 🏃")
+    }
+
+    // 清潔
+    entry.cleaningType?.takeIf { it != "未清潔" }?.let { parts.add("清潔類型：$it 🧹") }
+
+    // Keyholder
+    if (entry.keyholderInteraction) parts.add("今天與 Keyholder 保持了連結 💬")
+
+    // 打卡照
+    if (entry.photoPath != null) parts.add("📷 今天有留下打卡照片")
+
+    // 解鎖
+    if (entry.unlocked) parts.add("今天解鎖了——誠實記錄是好事 🔓")
+
+    // 邊緣
+    if (entry.hadEdging) parts.add("邊緣訓練完成，耐力值 UP 😈")
+
+    return if (parts.isEmpty()) "今日記錄已儲存，繼續保持！"
+           else parts.joinToString("\n• ", prefix = "• ")
 }
 
 // ─── Helper ───────────────────────────────────────────────────────────────────
