@@ -228,6 +228,12 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun updateCurrentDeviceSize(size: String?) {
+        viewModelScope.launch {
+            repository.updateCurrentDeviceSize(size)
+        }
+    }
+
     fun updateNickname(name: String?) {
         viewModelScope.launch {
             repository.updateNickname(name)

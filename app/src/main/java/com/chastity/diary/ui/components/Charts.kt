@@ -16,6 +16,8 @@ import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
+import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.entryOf
@@ -28,6 +30,7 @@ fun TrendLineChart(
     title: String,
     data: List<Float>,
     labels: List<String> = emptyList(),
+    intYAxis: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier.fillMaxWidth()) {
@@ -52,10 +55,14 @@ fun TrendLineChart(
                 }
                 
                 ProvideChartStyle {
+                    val intFormatter = AxisValueFormatter<AxisPosition.Vertical.Start> { value, _ ->
+                        value.toInt().toString()
+                    }
                     Chart(
                         chart = lineChart(),
                         chartModelProducer = chartEntryModelProducer,
-                        startAxis = rememberStartAxis(),
+                        startAxis = if (intYAxis) rememberStartAxis(valueFormatter = intFormatter)
+                                    else rememberStartAxis(),
                         bottomAxis = rememberBottomAxis(),
                         modifier = Modifier
                             .fillMaxWidth()

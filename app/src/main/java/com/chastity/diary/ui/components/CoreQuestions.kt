@@ -63,15 +63,15 @@ fun CoreQuestionsSection(
         // Q2: Desire Level
         QuestionSection(
             title = "2. 今天的性慾強度？",
-            subtitle = "1 = 幾乎沒有, 10 = 非常強烈"
+            subtitle = "0 = 完全沒有, 10 = 非常強烈"
         ) {
             SliderWithLabel(
                 value = entry.desireLevel?.toFloat() ?: 5f,
                 onValueChange = { value ->
                     onEntryUpdate(entry.copy(desireLevel = value.toInt()))
                 },
-                valueRange = 1f..10f,
-                steps = 8,
+                valueRange = 0f..10f,
+                steps = 9,
                 label = "性慾強度"
             )
         }
@@ -79,14 +79,15 @@ fun CoreQuestionsSection(
         // Q3: Comfort Rating
         QuestionSection(
             title = "3. 佩戴鎖的舒適度？",
-            subtitle = "評估整天佩戴的舒適程度"
+            subtitle = "0 = 非常不舒適, 10 = 非常舒適"
         ) {
-            StarRating(
-                rating = entry.comfortRating ?: 3,
-                onRatingChange = { rating ->
-                    onEntryUpdate(entry.copy(comfortRating = rating))
+            SliderWithLabel(
+                value = entry.comfortRating?.toFloat() ?: 5f,
+                onValueChange = { value ->
+                    onEntryUpdate(entry.copy(comfortRating = value.toInt()))
                 },
-                maxStars = 5,
+                valueRange = 0f..10f,
+                steps = 9,
                 label = "舒適度"
             )
         }

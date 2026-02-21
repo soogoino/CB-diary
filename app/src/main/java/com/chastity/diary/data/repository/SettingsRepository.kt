@@ -64,6 +64,10 @@ class SettingsRepository(private val preferencesManager: PreferencesManager) {
         preferencesManager.updateCurrentDeviceName(name)
     }
 
+    suspend fun updateCurrentDeviceSize(size: String?) {
+        preferencesManager.updateCurrentDeviceSize(size)
+    }
+
     suspend fun updateNickname(name: String?) {
         preferencesManager.updateNickname(name)
     }

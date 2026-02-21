@@ -133,39 +133,37 @@ fun SettingsScreen(
                 ),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // User preferences section
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            // ── 個人資料（包含偏好設定）──
+            Card(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = "用戶偏好",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
-                    if (!userSettings.nickname.isNullOrBlank()) {
-                        Text(
-                            text = "暱稱: ${userSettings.nickname}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("個人資料", style = MaterialTheme.typography.titleMedium)
+                        TextButton(onClick = { showProfileDialog = true }) { Text("編輯") }
                     }
 
+                    if (!userSettings.nickname.isNullOrBlank())
+                        Text("暱稱: ${userSettings.nickname}", style = MaterialTheme.typography.bodyMedium)
+
+                    Text(
+                        text = "開始日期: ${userSettings.startDate?.toString() ?: "未設定"}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+
+                    // 生理性別（直接可點）
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            text = "生理性別",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        Text("生理性別", style = MaterialTheme.typography.bodyMedium)
                         val genderOptions = listOf(
                             Gender.MALE to "男性 ♂",
                             Gender.FEMALE to "女性 ♀",
                             Gender.OTHER to "其他"
                         )
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             genderOptions.forEach { (gender, label) ->
                                 FilterChip(
                                     selected = userSettings.gender == gender,
@@ -182,77 +180,31 @@ fun SettingsScreen(
                                 )
                             }
                         }
-                        Text(
-                            text = "影響記錄頁顯示的性別特定題目",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
 
-                    Text(
-                        text = "開始日期: ${userSettings.startDate?.toString() ?: "未設定"}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-            
-            // Personal Profile section
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
+                    if (userSettings.height != null)
+                        Text("身高: ${userSettings.height} cm", style = MaterialTheme.typography.bodyMedium)
+                    if (userSettings.weight != null)
+                        Text("體重: ${userSettings.weight} kg", style = MaterialTheme.typography.bodyMedium)
+                    if (userSettings.bmi != null)
                         Text(
-                            text = "個人資料",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        TextButton(onClick = { showProfileDialog = true }) {
-                            Text("編輯")
-                        }
-                    }
-                    
-                    if (userSettings.height != null) {
-                        Text(
-                            text = "身高: ${userSettings.height} cm",
+                            "BMI: ${String.format("%.1f", userSettings.bmi)} (${userSettings.bmiStatus ?: ""})",
                             style = MaterialTheme.typography.bodyMedium
                         )
+
+                    if (!userSettings.currentDeviceName.isNullOrBlank()) {
+                        val sizeLabel = if (!userSettings.currentDeviceSize.isNullOrBlank())
+                            " (${userSettings.currentDeviceSize})"
+                        else ""
+                        Text("貞操鎖: ${userSettings.currentDeviceName}$sizeLabel",
+                            style = MaterialTheme.typography.bodyMedium)
                     }
-                    
-                    if (userSettings.weight != null) {
-                        Text(
-                            text = "體重: ${userSettings.weight} kg",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                    
-                    if (userSettings.bmi != null) {
-                        Text(
-                            text = "BMI: ${String.format("%.1f", userSettings.bmi)} (${userSettings.bmiStatus ?: ""})",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                    
-                    if (userSettings.currentDeviceName != null && userSettings.currentDeviceName!!.isNotBlank()) {
-                        Text(
-                            text = "貞操鎖: ${userSettings.currentDeviceName}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                    
-                    if (userSettings.height == null && userSettings.weight == null && 
-                        (userSettings.currentDeviceName == null || userSettings.currentDeviceName!!.isBlank())) {
-                        Text(
-                            text = "尚未設定個人資料",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+
+                    if (userSettings.height == null && userSettings.weight == null &&
+                        userSettings.currentDeviceName.isNullOrBlank() &&
+                        userSettings.nickname.isNullOrBlank() && userSettings.startDate == null)
+                        Text("尚未設定個人資料", style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
             
@@ -618,6 +570,8 @@ fun SettingsScreen(
                         style = MaterialTheme.typography.titleMedium
                     )
                     
+                    // TODO: 雲端同步功能待實作
+                    /*
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -635,6 +589,7 @@ fun SettingsScreen(
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
+                    */
                     
                     Button(
                         onClick = {
@@ -691,14 +646,20 @@ fun SettingsScreen(
         // Profile edit dialog
         if (showProfileDialog) {
             ProfileEditDialog(
+                currentNickname = userSettings.nickname,
+                currentStartDate = userSettings.startDate,
                 currentHeight = userSettings.height,
                 currentWeight = userSettings.weight,
                 currentDeviceName = userSettings.currentDeviceName,
+                currentDeviceSize = userSettings.currentDeviceSize,
                 onDismiss = { showProfileDialog = false },
-                onSave = { height, weight, deviceName ->
+                onSave = { nickname, startDate, height, weight, deviceName, deviceSize ->
+                    viewModel.updateNickname(nickname)
+                    startDate?.let { viewModel.updateStartDate(it) }
                     viewModel.updateHeight(height)
                     viewModel.updateWeight(weight)
                     viewModel.updateCurrentDeviceName(deviceName)
+                    viewModel.updateCurrentDeviceSize(deviceSize)
                     showProfileDialog = false
                 }
             )

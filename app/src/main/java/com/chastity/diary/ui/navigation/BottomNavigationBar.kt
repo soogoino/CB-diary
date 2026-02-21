@@ -34,8 +34,8 @@ fun BottomNavigationBar(navController: NavHostController) {
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = item.label) },
                 label = { Text(item.label) },
-                selected = currentDestination?.hierarchy?.any { 
-                    it.route == item.screen.route 
+                selected = currentDestination?.hierarchy?.any {
+                    it.route == item.screen.route
                 } == true,
                 onClick = {
                     navController.navigate(item.screen.route) {

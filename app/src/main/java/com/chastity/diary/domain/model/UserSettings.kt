@@ -23,6 +23,7 @@ data class UserSettings(
     val height: Int? = null,              // Height in cm (100-250)
     val weight: Float? = null,            // Weight in kg (30-200)
     val currentDeviceName: String? = null, // Chastity device name
+    val currentDeviceSize: String? = null,  // Chastity device size (free text, e.g. "S", "38mm")
 
     // Morning check-in reminder
     val morningReminderEnabled: Boolean = false,

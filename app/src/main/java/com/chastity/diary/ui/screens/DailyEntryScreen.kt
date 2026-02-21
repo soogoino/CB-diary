@@ -325,7 +325,7 @@ fun DailyEntryScreen(
                     onClick = { showNarrativeSheet = false },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("好的，讘記了👍")
+                    Text(" 好的 👍 ")
                 }
             }
         }
@@ -436,14 +436,15 @@ private fun CoreQuestionsCard(
             QuestionSection(title = "今日性慾強度", subtitle = "1 = 很低   10 = 很強烈") {
                 SliderWithLabel(entry.desireLevel?.toFloat() ?: 5f,
                     { onUpdate(entry.copy(desireLevel = it.toInt())) },
-                    valueRange = 1f..10f, steps = 8, label = "性慾指數")
+                    valueRange = 0f..10f, steps = 9, label = "性慾指數")
             }
 
             // C4: Comfort (只在佩戴時)
             AnimatedVisibility(visible = entry.deviceCheckPassed) {
-                QuestionSection(title = "佩戴舒適度", subtitle = "整天佩戴鎖的感受") {
-                    StarRating(entry.comfortRating ?: 3,
-                        { onUpdate(entry.copy(comfortRating = it)) }, label = "舒適度")
+                QuestionSection(title = "佩戴舒適度", subtitle = "0 = 非常不舒適  10 = 非常舒適") {
+                    SliderWithLabel(entry.comfortRating?.toFloat() ?: 5f,
+                        { onUpdate(entry.copy(comfortRating = it.toInt())) },
+                        valueRange = 0f..10f, steps = 9, label = "舒適度")
                 }
             }
 
@@ -586,17 +587,6 @@ private fun CoreQuestionsCard(
             Divider()
             QuestionSection(title = "是否運動？") {
                 YesNoToggle(entry.exercised, { onUpdate(entry.copy(exercised = it)) }, "有運動")
-                AnimatedVisibility(entry.exercised) {
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        MultiSelectChipGroup(
-                            options = Constants.EXERCISE_TYPES,
-                            selectedOptions = entry.exerciseTypes,
-                            onSelectionChange = { onUpdate(entry.copy(exerciseTypes = it)) }
-                        )
-                        DurationPicker(entry.exerciseDuration,
-                            { onUpdate(entry.copy(exerciseDuration = it)) }, label = "運動時長")
-                    }
-                }
             }
 
             // E8: Cleaning (moved from extended to core) — single-select
@@ -1028,6 +1018,7 @@ private fun DailyEntryTabContent(
                 onUpdate = onUpdate
             )
             ExtendedQuestionsCard(entry = entry, onUpdate = onUpdate)
+            EveningMasturbationCard(entry = entry, onUpdate = onUpdate)
             if (isExisting) {
                 Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
                     Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -1089,6 +1080,73 @@ private fun DailyEntryTabContent(
     }
 }
 
+// ─── Evening Masturbation Card ──────────────────────────────────────────────────────
+@Composable
+private fun EveningMasturbationCard(entry: DailyEntry, onUpdate: (DailyEntry) -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(
+                "💧 自慰小記",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            com.chastity.diary.ui.components.QuestionSection(
+                title = "今天是否有自慰？"
+            ) {
+                com.chastity.diary.ui.components.YesNoToggle(
+                    value = entry.masturbated,
+                    onValueChange = { v ->
+                        onUpdate(entry.copy(
+                            masturbated = v,
+                            masturbationCount = if (!v) null else entry.masturbationCount
+                        ))
+                    },
+                    label = "有自慰"
+                )
+                if (entry.masturbated) {
+                    Spacer(Modifier.height(12.dp))
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "次數：",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.alignByBaseline()
+                        )
+                        androidx.compose.material3.IconButton(
+                            onClick = {
+                                val cur = entry.masturbationCount ?: 1
+                                if (cur > 1) onUpdate(entry.copy(masturbationCount = cur - 1))
+                            }
+                        ) {
+                            Icon(Icons.Default.Remove, contentDescription = "減少")
+                        }
+                        Text(
+                            text = "${entry.masturbationCount ?: 1}",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.alignByBaseline()
+                        )
+                        androidx.compose.material3.IconButton(
+                            onClick = {
+                                val cur = entry.masturbationCount ?: 1
+                                onUpdate(entry.copy(masturbationCount = cur + 1))
+                            }
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = "增加")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 // ─── Daily Narrative ──────────────────────────────────────────────────────────
 private fun generateDailyNarrative(entry: DailyEntry): String {
     val parts = mutableListOf<String>()
@@ -1108,9 +1166,9 @@ private fun generateDailyNarrative(entry: DailyEntry): String {
     // 佩戴
     if (entry.deviceCheckPassed) {
         entry.comfortRating?.let { r ->
-            parts.add("佩戴舒適度 $r/5" + when {
-                r >= 4 -> "，狀況很好！"
-                r <= 2 -> "，記得調整佩戴方式。"
+            parts.add("佩戴舒適度 $r/10" + when {
+                r >= 8 -> "，狀況很好！"
+                r <= 3 -> "，記得調整佩戴方式。"
                 else   -> "。"
             })
         }
@@ -1134,6 +1192,12 @@ private fun generateDailyNarrative(entry: DailyEntry): String {
 
     // 解鎖
     if (entry.unlocked) parts.add("今天解鎖了——誠實記錄是好事 🔓")
+
+    // 自慰
+    if (entry.masturbated) {
+        val cnt = entry.masturbationCount ?: 1
+        parts.add("今天有自慰 $cnt 次 💧")
+    }
 
     // 邊緣
     if (entry.hadEdging) parts.add("邊緣訓練完成，耐力值 UP 😈")

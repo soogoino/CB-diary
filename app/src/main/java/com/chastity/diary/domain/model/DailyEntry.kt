@@ -31,6 +31,7 @@ data class DailyEntry(
     val unlocked: Boolean = false,
     val masturbated: Boolean = false,
     val masturbationDuration: Int? = null, // minutes
+    val masturbationCount: Int? = null,    // times
     
     // Q6: Exposed lock
     val exposedLock: Boolean = false,
@@ -43,7 +44,7 @@ data class DailyEntry(
     val desireLevel: Int? = null, // 1-10
     
     // Q9: Comfort rating
-    val comfortRating: Int? = null, // 1-5
+    val comfortRating: Int? = null, // 0-10
     
     // Q10: Discomfort
     val hasDiscomfort: Boolean = false,

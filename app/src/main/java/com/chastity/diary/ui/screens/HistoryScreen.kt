@@ -2,6 +2,7 @@ package com.chastity.diary.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -18,7 +19,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.chastity.diary.domain.model.DailyEntry
+import com.chastity.diary.ui.navigation.Screen
+import com.chastity.diary.viewmodel.DailyEntryViewModel
 import com.chastity.diary.viewmodel.DashboardState
 import com.chastity.diary.viewmodel.DashboardViewModel
 import java.time.LocalDate
@@ -29,6 +33,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun HistoryScreen(
     viewModel: DashboardViewModel = viewModel(),
+    dailyEntryViewModel: DailyEntryViewModel = viewModel(),
+    navController: NavHostController,
     outerPadding: PaddingValues = PaddingValues()
 ) {
     val dashboardState by viewModel.dashboardState.collectAsState()
@@ -57,10 +63,17 @@ fun HistoryScreen(
                             ),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // 月份心情日曆
-                        MoodCalendarSection(entries = state.entries)
-
-                        // 近期記錄列表
+                        MoodCalendarSection(
+                            entries = state.entries,
+                            onDateClick = { date ->
+                                dailyEntryViewModel.selectDate(date)
+                                navController.navigate(Screen.DailyEntry.route) {
+                                    launchSingleTop = true
+                                    restoreState = false
+                                    popUpTo(Screen.DailyEntry.route) { inclusive = true }
+                                }
+                            }
+                        )
                         RecentEntriesSection(entries = state.entries)
                     }
                 }
@@ -71,7 +84,7 @@ fun HistoryScreen(
 
 // ─── 🗓 Mood Calendar ─────────────────────────────────────────────────────────
 @Composable
-fun MoodCalendarSection(entries: List<DailyEntry>) {
+fun MoodCalendarSection(entries: List<DailyEntry>, onDateClick: ((LocalDate) -> Unit)? = null) {
     val today = LocalDate.now()
     val yearMonth = YearMonth.from(today)
     val firstDay = yearMonth.atDay(1)
@@ -130,6 +143,11 @@ fun MoodCalendarSection(entries: List<DailyEntry>) {
                                             2.dp, MaterialTheme.colorScheme.primary,
                                             RoundedCornerShape(6.dp)
                                         ) else Modifier
+                                    )
+                                    .then(
+                                        if (!isFuture && onDateClick != null)
+                                            Modifier.clickable { onDateClick(date) }
+                                        else Modifier
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -226,6 +244,7 @@ private fun EntryRow(entry: DailyEntry) {
                     if (entry.keyholderInteraction) Text("💬", fontSize = 13.sp)
                     if (entry.photoPath != null) Text("📷", fontSize = 13.sp)
                     if (entry.unlocked) Text("🔓", fontSize = 13.sp)
+                    if (entry.masturbated) Text("💧", fontSize = 13.sp)
                 }
             }
             Text(

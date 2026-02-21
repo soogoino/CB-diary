@@ -43,6 +43,7 @@ class PreferencesManager(private val context: Context) {
         val HEIGHT = intPreferencesKey("height")
         val WEIGHT = floatPreferencesKey("weight")
         val CURRENT_DEVICE_NAME = stringPreferencesKey("current_device_name")
+        val CURRENT_DEVICE_SIZE = stringPreferencesKey("current_device_size")
         val NICKNAME = stringPreferencesKey("nickname")
 
         // Morning reminder
@@ -92,6 +93,7 @@ class PreferencesManager(private val context: Context) {
                 height = preferences[PreferencesKeys.HEIGHT],
                 weight = preferences[PreferencesKeys.WEIGHT],
                 currentDeviceName = preferences[PreferencesKeys.CURRENT_DEVICE_NAME],
+                currentDeviceSize = preferences[PreferencesKeys.CURRENT_DEVICE_SIZE],
                 nickname = preferences[PreferencesKeys.NICKNAME],
 
                 // Morning reminder
@@ -206,6 +208,16 @@ class PreferencesManager(private val context: Context) {
                 preferences[PreferencesKeys.CURRENT_DEVICE_NAME] = name
             } else {
                 preferences.remove(PreferencesKeys.CURRENT_DEVICE_NAME)
+            }
+        }
+    }
+
+    suspend fun updateCurrentDeviceSize(size: String?) {
+        context.dataStore.edit { preferences ->
+            if (!size.isNullOrBlank()) {
+                preferences[PreferencesKeys.CURRENT_DEVICE_SIZE] = size
+            } else {
+                preferences.remove(PreferencesKeys.CURRENT_DEVICE_SIZE)
             }
         }
     }

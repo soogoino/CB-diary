@@ -63,7 +63,7 @@ interface DailyEntryDao {
     @Query("SELECT COUNT(*) FROM daily_entries WHERE viewedPorn = 1 AND date BETWEEN :startDate AND :endDate")
     suspend fun getPornViewCount(startDate: LocalDate, endDate: LocalDate): Int
     
-    @Query("SELECT COUNT(*) FROM daily_entries WHERE masturbated = 1 AND date BETWEEN :startDate AND :endDate")
+    @Query("SELECT COALESCE(SUM(CASE WHEN masturbationCount IS NOT NULL THEN masturbationCount WHEN masturbated = 1 THEN 1 ELSE 0 END), 0) FROM daily_entries WHERE date BETWEEN :startDate AND :endDate")
     suspend fun getMasturbationCount(startDate: LocalDate, endDate: LocalDate): Int
     
     @Query("SELECT COUNT(*) FROM daily_entries WHERE exercised = 1 AND date BETWEEN :startDate AND :endDate")

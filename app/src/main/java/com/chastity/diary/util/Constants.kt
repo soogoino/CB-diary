@@ -73,7 +73,7 @@ object Constants {
 
     // Database
     const val DATABASE_NAME = "chastity_diary_db"
-    const val DATABASE_VERSION = 3
+    const val DATABASE_VERSION = 4
 
     // Photo
     const val PREF_PHOTO_BLUR_ENABLED = "photo_blur_enabled"
