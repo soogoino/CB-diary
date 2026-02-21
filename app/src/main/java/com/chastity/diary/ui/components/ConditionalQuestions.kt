@@ -171,6 +171,8 @@ private fun UnlockQuestion(
         if (entry.unlocked) {
             Spacer(modifier = Modifier.height(12.dp))
             
+            Text("解鎖後有自慰？", style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(6.dp))
             YesNoToggle(
                 value = entry.masturbated,
                 onValueChange = { masturbated ->

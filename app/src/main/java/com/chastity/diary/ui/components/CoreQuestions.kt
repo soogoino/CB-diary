@@ -102,7 +102,7 @@ fun CoreQuestionsSection(
                     onEntryUpdate(entry.copy(sleepQuality = rating))
                 },
                 maxStars = 5,
-                label = "睡眠品質"
+                label = "昨晚有睡好嗎？"
             )
             
             Spacer(modifier = Modifier.height(8.dp))

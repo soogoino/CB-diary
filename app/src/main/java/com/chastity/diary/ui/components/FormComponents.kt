@@ -291,8 +291,10 @@ fun DurationPicker(
 }
 
 /**
- * Yes/No toggle
+ * Yes/No chip pair — replaces Switch to make selection state explicit.
+ * [label] is kept for call-site compatibility but not displayed (parent QuestionSection provides context).
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun YesNoToggle(
     value: Boolean,
@@ -301,17 +303,34 @@ fun YesNoToggle(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium
+        FilterChip(
+            selected = value,
+            onClick = { onValueChange(true) },
+            label = { Text("是") },
+            colors = FilterChipDefaults.filterChipColors(
+                selectedContainerColor = MaterialTheme.colorScheme.primary,
+                selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+            ),
+            border = FilterChipDefaults.filterChipBorder(
+                borderColor = MaterialTheme.colorScheme.outline,
+                selectedBorderColor = MaterialTheme.colorScheme.primary,
+            ),
         )
-        Switch(
-            checked = value,
-            onCheckedChange = onValueChange
+        FilterChip(
+            selected = !value,
+            onClick = { onValueChange(false) },
+            label = { Text("否") },
+            colors = FilterChipDefaults.filterChipColors(
+                selectedContainerColor = MaterialTheme.colorScheme.primary,
+                selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+            ),
+            border = FilterChipDefaults.filterChipBorder(
+                borderColor = MaterialTheme.colorScheme.outline,
+                selectedBorderColor = MaterialTheme.colorScheme.primary,
+            ),
         )
     }
 }

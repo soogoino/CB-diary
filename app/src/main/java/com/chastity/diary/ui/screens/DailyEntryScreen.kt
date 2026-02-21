@@ -97,14 +97,18 @@ private fun getRotatingQuestionsForDate(date: LocalDate, isMale: Boolean): List<
 
 private fun coreCompletionScore(entry: DailyEntry): Int {
     var s = 0
-    if (entry.mood != null) s++
-    if (entry.desireLevel != null) s++
-    if (entry.comfortRating != null) s++
-    if (entry.focusLevel != null) s++
-    if (entry.selfRating != null) s++
-    if (entry.emotions.isNotEmpty()) s++
+    s++                                                                      // 1. 今天有佩戴（Boolean，是/否 chips 永遠算已答）
+    if (entry.mood != null) s++                                              // 2. 今天的心情
+    if (entry.desireLevel != null) s++                                       // 3. 今天的性慾強度
+    if (entry.deviceCheckPassed && entry.comfortRating != null) s++          // 4. 佩戴舒適度（未佩戴時不顯示故不計）
+    if (entry.focusLevel != null) s++                                        // 5. 今天的專注度
+    s++                                                                      // 6. 是否運動（Boolean，是/否 chips 永遠算已答）
+    if (entry.cleaningType != null) s++                                      // 7. 清潔
     return s
 }
+
+/** 佩戴時共 7 題；未佩戴時舒適度不顯示，共 6 題 */
+private fun coreCompletionTotal(entry: DailyEntry) = if (entry.deviceCheckPassed) 7 else 6
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
@@ -281,7 +285,7 @@ fun DailyEntryScreen(
 @Composable
 private fun DayStatusCard(entry: DailyEntry, selectedDate: LocalDate) {
     val score = coreCompletionScore(entry)
-    val total = 6
+    val total = coreCompletionTotal(entry)
     val isToday = selectedDate == LocalDate.now()
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
@@ -298,7 +302,7 @@ private fun DayStatusCard(entry: DailyEntry, selectedDate: LocalDate) {
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    if (score == 0) "尚未開始記錄" else "核心題目完成 $score / $total",
+                    if (score <= 2) "尚未開始記錄（可填 $total 題）" else "核心題目完成 $score / $total",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                 )
@@ -543,71 +547,40 @@ private fun CoreQuestionsCard(
                 }
             }
 
-            // E8: Cleaning (moved from extended to core)
+            // E8: Cleaning (moved from extended to core) — single-select
             QuestionSection(title = "今天是否清潔了貞操鎖？") {
-                MultiSelectChipGroup(
-                    options = Constants.CLEANING_TYPES,
-                    selectedOptions = entry.cleaningType?.let { listOf(it) } ?: emptyList(),
-                    onSelectionChange = { onUpdate(entry.copy(cleaningType = it.firstOrNull())) }
-                )
-            }
-        }
-    }
-}
-
-// ─── ③ Realtime Feedback Card ─────────────────────────────────────────────────
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun RealtimeFeedbackCard(entry: DailyEntry, score: Int) {
-    val msgs = buildList {
-        entry.desireLevel?.let {
-            when {
-                it >= 8 -> add("🔥 性慾強度 $it/10，今天可能是高峰期，自律加油！")
-                it <= 3 -> add("😌 性慾強度 $it/10，今天狀態非常平靜。")
-                else -> add("⚖️ 性慾強度 $it/10，處於正常範圍。")
-            }
-        }
-        if (entry.deviceCheckPassed) {
-            entry.comfortRating?.let {
-                when {
-                    it <= 2 -> add("⚠️ 舒適度偏低（$it/5），請檢查佩戴狀態。")
-                    it >= 4 -> add("✅ 舒適度良好（$it/5），繼續保持！")
-                    else -> {}
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Constants.CLEANING_TYPES.chunked(2).forEach { row ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            row.forEach { option ->
+                                FilterChip(
+                                    selected = entry.cleaningType == option,
+                                    onClick = {
+                                        // Single-select: clicking selected item deselects, clicking another selects it
+                                        onUpdate(entry.copy(cleaningType = if (entry.cleaningType == option) null else option))
+                                    },
+                                    label = { Text(option) },
+                                    modifier = Modifier.weight(1f),
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                    ),
+                                    border = FilterChipDefaults.filterChipBorder(
+                                        borderColor = MaterialTheme.colorScheme.outline,
+                                        selectedBorderColor = MaterialTheme.colorScheme.primary,
+                                    ),
+                                )
+                            }
+                            if (row.size < 2) Spacer(Modifier.weight(1f))
+                        }
+                    }
                 }
             }
         }
-        entry.focusLevel?.let {
-            when {
-                it <= 3 -> add("🧠 專注度 $it/10，鎖可能影響日常表現，留意調整。")
-                it >= 8 -> add("💡 高度專注！$it/10，習慣養成中。")
-                else -> {}
-            }
-        }
-        if (score >= 5) add("🌟 今天填寫非常完整，小成就 +1！")
-    }
-    if (msgs.isEmpty()) return
-
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Insights, null,
-                    tint = MaterialTheme.colorScheme.onTertiaryContainer, modifier = Modifier.size(16.dp))
-                Spacer(Modifier.width(6.dp))
-                Text("即時回饋", style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer, fontWeight = FontWeight.Bold)
-            }
-            msgs.forEach {
-                Text(it, style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer)
-            }
-        }
     }
 }
 
-// ─── ④ Rotating Questions Card ────────────────────────────────────────────────
+// ─── ③ Rotating Questions Card ────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RotatingQuestionsCard(
@@ -873,16 +846,20 @@ private fun DailyEntryTabContent(
                             label = "昨晚有睡好嗎？"
                         )
                     }
-                    YesNoToggle(
-                        value = entry.wokeUpDueToDevice,
-                        onValueChange = { onUpdate(entry.copy(wokeUpDueToDevice = it)) },
-                        label = "因佩戴鎖而醒來"
-                    )
-                    YesNoToggle(
-                        value = entry.hadEroticDream,
-                        onValueChange = { onUpdate(entry.copy(hadEroticDream = it)) },
-                        label = "昨晚有春夢？（在備註紀錄吧）"
-                    )
+                    QuestionSection(title = "因佩戴鎖而醒來？") {
+                        YesNoToggle(
+                            value = entry.wokeUpDueToDevice,
+                            onValueChange = { onUpdate(entry.copy(wokeUpDueToDevice = it)) },
+                            label = "因佩戴鎖而醒來"
+                        )
+                    }
+                    QuestionSection(title = "昨晚有春夢？") {
+                        YesNoToggle(
+                            value = entry.hadEroticDream,
+                            onValueChange = { onUpdate(entry.copy(hadEroticDream = it)) },
+                            label = "昨晚有春夢"
+                        )
+                    }
                 }
             }
 
@@ -920,11 +897,13 @@ private fun DailyEntryTabContent(
                                 }
                             }
                         }
-                        YesNoToggle(
-                            value = entry.wokeUpFromErection,
-                            onValueChange = { onUpdate(entry.copy(wokeUpFromErection = it)) },
-                            label = "因夜間勃起而醒來"
-                        )
+                        QuestionSection(title = "因夜間勃起而醒來？") {
+                            YesNoToggle(
+                                value = entry.wokeUpFromErection,
+                                onValueChange = { onUpdate(entry.copy(wokeUpFromErection = it)) },
+                                label = "因夜間勃起而醒來"
+                            )
+                        }
                     }
                 }
             }
@@ -991,10 +970,6 @@ private fun DailyEntryTabContent(
             // ── 🌙 Evening cards ───────────────────────────────────────────────
             DayStatusCard(entry, selectedDate)
             CoreQuestionsCard(entry = entry, onUpdate = onUpdate, onTakePhoto = onTakePhoto, photoBlurEnabled = photoBlurEnabled)
-            val score = coreCompletionScore(entry)
-            AnimatedVisibility(visible = score >= 2) {
-                RealtimeFeedbackCard(entry, score)
-            }
             RotatingQuestionsCard(
                 questions = remember(selectedDate, isMale) { getRotatingQuestionsForDate(selectedDate, isMale) },
                 entry = entry,
