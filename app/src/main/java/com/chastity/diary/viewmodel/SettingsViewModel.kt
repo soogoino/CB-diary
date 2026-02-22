@@ -14,6 +14,7 @@ import com.chastity.diary.data.repository.SettingsRepository
 import com.chastity.diary.domain.model.DarkMode
 import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.domain.model.UserSettings
+import com.chastity.diary.util.Constants
 import com.chastity.diary.util.CsvHelper
 import com.chastity.diary.util.TestDataGenerator
 import com.chastity.diary.util.NotificationHelper
@@ -36,12 +37,6 @@ import java.util.concurrent.TimeUnit
  */
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
 
-    companion object {
-        // Q2: Central constants to avoid silent typo bugs when cancelling/scheduling
-        const val WORK_DAILY_REMINDER = "daily_reminder"
-        const val WORK_MORNING_REMINDER = "morning_reminder"
-    }
-
     private val preferencesManager = PreferencesManager(application)
     private val repository = SettingsRepository(preferencesManager)
     private val database = AppDatabase.getInstance(application)
@@ -55,7 +50,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             
         EncryptedSharedPreferences.create(
             application,
-            "secure_prefs",
+            Constants.ENCRYPTED_PREFS_NAME,
             masterKey,
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
@@ -111,7 +106,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             if (enabled) {
                 scheduleMorningReminder(hour, minute)
             } else {
-                workManager.cancelUniqueWork(WORK_MORNING_REMINDER)
+                workManager.cancelUniqueWork(Constants.WORK_MORNING_REMINDER)
             }
         }
     }
@@ -139,14 +134,14 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             .build()
         
         workManager.enqueueUniquePeriodicWork(
-            WORK_DAILY_REMINDER,
+            Constants.WORK_DAILY_REMINDER,
             ExistingPeriodicWorkPolicy.UPDATE,
             dailyWorkRequest
         )
     }
     
     private fun cancelDailyReminder() {
-        workManager.cancelUniqueWork(WORK_DAILY_REMINDER)
+        workManager.cancelUniqueWork(Constants.WORK_DAILY_REMINDER)
     }
 
     private fun scheduleMorningReminder(hour: Int, minute: Int) {
@@ -160,7 +155,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             .build()
 
         workManager.enqueueUniquePeriodicWork(
-            WORK_MORNING_REMINDER,
+            Constants.WORK_MORNING_REMINDER,
             ExistingPeriodicWorkPolicy.UPDATE,
             request
         )
@@ -171,7 +166,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             repository.updateBiometricEnabled(enabled)
             // Update encrypted preferences
             encryptedPrefs.edit().apply {
-                putBoolean("lock_enabled", enabled || userSettings.value.pinEnabled)
+                putBoolean(Constants.KEY_LOCK_ENABLED, enabled || userSettings.value.pinEnabled)
                 apply()
             }
         }
@@ -182,7 +177,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             repository.updatePinEnabled(enabled)
             // Update encrypted preferences
             encryptedPrefs.edit().apply {
-                putBoolean("lock_enabled", enabled || userSettings.value.biometricEnabled)
+                putBoolean(Constants.KEY_LOCK_ENABLED, enabled || userSettings.value.biometricEnabled)
                 apply()
             }
         }
@@ -191,7 +186,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun updatePinCode(pin: String) {
         viewModelScope.launch {
             encryptedPrefs.edit().apply {
-                putString("pin_code", pin)
+                putString(Constants.KEY_PIN_CODE, pin)
                 apply()
             }
         }

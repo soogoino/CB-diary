@@ -8,7 +8,11 @@ import com.chastity.diary.data.local.database.AppDatabase
 import com.chastity.diary.data.repository.EntryRepository
 import com.chastity.diary.data.repository.StreakRepository
 import com.chastity.diary.domain.model.DailyEntry
+import com.chastity.diary.domain.model.Gender
+import com.chastity.diary.domain.model.HeatmapQuestion
+import com.chastity.diary.domain.model.HeatmapTimeRange
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -60,6 +64,12 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 .average().let { if (it.isNaN()) 0f else it.toFloat() },
             averageComfortRating = rangeEntries.mapNotNull { it.comfortRating?.toFloat() }
                 .average().let { if (it.isNaN()) 0f else it.toFloat() },
+            averageFocusLevel   = rangeEntries.mapNotNull { it.focusLevel?.toFloat() }
+                .average().let { if (it.isNaN()) 0f else it.toFloat() },
+            averageSleepQuality = rangeEntries.mapNotNull { it.sleepQuality?.toFloat() }
+                .average().let { if (it.isNaN()) 0f else it.toFloat() },
+            averageMorningEnergy = rangeEntries.mapNotNull { it.morningEnergy?.toFloat() }
+                .average().let { if (it.isNaN()) 0f else it.toFloat() },
             pornViewCount       = rangeEntries.count { it.viewedPorn },
             masturbationCount   = rangeEntries.count { it.masturbated },
             exerciseCount       = rangeEntries.count { it.exercised }
@@ -74,18 +84,59 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     
     val longestStreak = streakRepository.longestStreak
         .stateIn(viewModelScope, SharingStarted.Lazily, 0)
-    
+
+    // ── Action Heatmap state ──────────────────────────────────────────────
+
+    /** 目前選擇的熱力圖時間範圍，從 DataStore 讀取（預設 7 天） */
+    val heatmapTimeRange: StateFlow<HeatmapTimeRange> = preferencesManager.heatmapTimeRangeFlow
+        .stateIn(viewModelScope, SharingStarted.Lazily, HeatmapTimeRange.WEEK_1)
+
+    /** 使用者性別（用於過濾晨勃等性別限定題目） */
+    private val gender: StateFlow<Gender> = preferencesManager.userSettingsFlow
+        .map { it.gender }
+        .stateIn(viewModelScope, SharingStarted.Lazily, Gender.MALE)
+
+    /**
+     * 熱力圖資料：Map<日期, Map<題目, Boolean>>
+     * 題目清單固定為 HeatmapQuestion.forGender(gender)，無使用者自選。
+     */
+    val heatmapData: StateFlow<Map<LocalDate, Map<HeatmapQuestion, Boolean>>> = combine(
+        allEntries,
+        heatmapTimeRange,
+        gender
+    ) { entries, timeRange, g ->
+        val questions = HeatmapQuestion.forGender(g)
+        val today = LocalDate.now()
+        val days = (0 until timeRange.days).map { offset ->
+            today.minusDays((timeRange.days - 1 - offset).toLong())
+        }
+        val entryByDate = entries.associateBy { it.date }
+        days.associateWith { date ->
+            val entry = entryByDate[date]
+            questions.associateWith { q -> if (entry != null) q.extractor(entry) else false }
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyMap())
+
+    /** 修改熱力圖時間範圍，寫入 DataStore */
+    fun setHeatmapTimeRange(range: HeatmapTimeRange) {
+        viewModelScope.launch {
+            preferencesManager.updateHeatmapTimeRange(range)
+        }
+    }
+
+    // ── Dashboard time range ──────────────────────────────────────────────
+
     fun setTimeRange(range: TimeRange) {
         _timeRange.value = range
     }
-    
+
     private fun getDateRange(range: TimeRange): Pair<LocalDate, LocalDate> {
         val end = LocalDate.now()
         val start = when (range) {
             TimeRange.WEEK -> end.minusWeeks(1)
             TimeRange.MONTH -> end.minusMonths(1)
             TimeRange.THREE_MONTHS -> end.minusMonths(3)
-            TimeRange.ALL -> end.minusYears(10) // Arbitrary old date
+            TimeRange.ALL -> end.minusYears(10)
         }
         return start to end
     }
@@ -103,6 +154,9 @@ sealed class DashboardState {
         val entries: List<DailyEntry>,
         val averageDesireLevel: Float,
         val averageComfortRating: Float,
+        val averageFocusLevel: Float,
+        val averageSleepQuality: Float,
+        val averageMorningEnergy: Float,
         val pornViewCount: Int,
         val masturbationCount: Int,
         val exerciseCount: Int

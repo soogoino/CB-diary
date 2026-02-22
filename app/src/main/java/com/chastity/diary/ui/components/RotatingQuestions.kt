@@ -3,6 +3,10 @@ package com.chastity.diary.ui.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.ui.res.stringArrayResource
+import com.chastity.diary.R
+import kotlin.math.abs
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.Modifier
@@ -60,6 +64,39 @@ fun RotatingQuestionSection(
                 // Should not happen
                 Text("無效的輪替問題")
             }
+        }
+
+        // Unified feedback: show a playful, slightly-embarrassed message regardless of yes/no
+        val answered = when (questionOfDay) {
+            QuestionId.EXERCISE -> entry.exercised || entry.exerciseTypes.isNotEmpty() || entry.exerciseDuration != null
+            QuestionId.EXPOSED_LOCK -> entry.exposedLock || entry.exposedLocations.isNotEmpty()
+            QuestionId.KEYHOLDER_INTERACTION -> entry.keyholderInteraction || entry.interactionTypes.isNotEmpty()
+            QuestionId.CLEANING -> entry.cleaningType != null
+            QuestionId.SOCIAL_ACTIVITIES -> entry.socialActivities.isNotEmpty()
+            else -> false
+        }
+
+        RotatingQuestionFeedback(key = questionOfDay.name, answered = answered)
+    }
+}
+
+@Composable
+private fun RotatingQuestionFeedback(key: String, answered: Boolean) {
+    val feedbacks = stringArrayResource(R.array.daily_rotating_feedback_generic)
+    val unified = remember(key) { feedbacks[abs(key.hashCode()) % feedbacks.size] }
+    AnimatedVisibility(visible = answered) {
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.12f)
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = unified,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                modifier = Modifier.padding(12.dp)
+            )
         }
     }
 }

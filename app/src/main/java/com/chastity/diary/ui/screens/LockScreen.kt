@@ -11,6 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.chastity.diary.R
+import com.chastity.diary.util.Constants
 
 @Composable
 fun LockScreen(
@@ -42,13 +45,13 @@ fun LockScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Lock,
-                    contentDescription = "鎖定",
+                    contentDescription = stringResource(R.string.lock_icon_desc),
                     modifier = Modifier.size(64.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
-                    text = "貞操日記已鎖定",
+                    text = stringResource(R.string.lock_screen_title),
                     style = MaterialTheme.typography.headlineSmall
                 )
 
@@ -57,13 +60,13 @@ fun LockScreen(
                         onClick = onUnlockWithBiometric,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("使用生物辨識解鎖")
+                        Text(stringResource(R.string.lock_biometric_button))
                     }
 
                     Divider()
 
                     Text(
-                        text = "或使用 PIN 碼",
+                        text = stringResource(R.string.lock_or_pin),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -71,7 +74,7 @@ fun LockScreen(
                 OutlinedTextField(
                     value = pinInput,
                     onValueChange = { pinInput = it },
-                    label = { Text("PIN 碼") },
+                    label = { Text(stringResource(R.string.lock_pin_label)) },
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                     modifier = Modifier.fillMaxWidth(),
@@ -87,9 +90,9 @@ fun LockScreen(
                         pinInput = ""
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = pinInput.length >= 4
+                    enabled = pinInput.length >= Constants.PIN_MIN_LENGTH
                 ) {
-                    Text("解鎖")
+                    Text(stringResource(R.string.lock_unlock_button))
                 }
             }
         }

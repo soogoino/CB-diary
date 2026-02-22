@@ -50,7 +50,7 @@ data class DailyEntry(
     val desireLevel: Int? = null, // 1-10
     
     // Q9: Comfort rating
-    val comfortRating: Int? = null, // 0-10
+    val comfortRating: Int? = null, // 1-10
     
     // Q10: Discomfort
     val hasDiscomfort: Boolean = false,
@@ -74,7 +74,7 @@ data class DailyEntry(
     val interactionTypes: List<String> = emptyList(),
     
     // Q15: Sleep quality
-    val sleepQuality: Int? = null, // 1-5
+    val sleepQuality: Int? = null, // 1-10
     val wokeUpDueToDevice: Boolean = false,
     
     // Q16: Temporarily removed
@@ -109,7 +109,7 @@ data class DailyEntry(
     val bedtime: LocalTime? = null,              // time went to bed
     val wakeTime: LocalTime? = null,             // time woke up
     val morningMood: String? = null,             // mood on waking
-    val morningEnergy: Int? = null,              // energy level 1-5
+    val morningEnergy: Int? = null,              // energy level 1-10
     val morningErection: Boolean = false,        // morning erection
     val morningCheckDone: Boolean = false,       // morning session submitted
     val hadEroticDream: Boolean = false,         // erotic dream (M5b)

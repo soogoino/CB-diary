@@ -103,7 +103,7 @@ private fun PornQuestion(
                 onDurationSelected = { duration ->
                     onEntryUpdate(entry.copy(pornDuration = duration))
                 },
-                quickOptions = listOf(5, 10, 15, 30, 60, 120),
+                quickOptions = Constants.DURATION_QUICK_OPTIONS,
                 label = "觀看時長"
             )
         }
@@ -188,7 +188,7 @@ private fun UnlockQuestion(
                     onDurationSelected = { duration ->
                         onEntryUpdate(entry.copy(masturbationDuration = duration))
                     },
-                    quickOptions = listOf(5, 10, 15, 30, 60, 120),
+                    quickOptions = Constants.DURATION_QUICK_OPTIONS,
                     label = "自慰時長"
                 )
             }
@@ -317,7 +317,7 @@ private fun EdgingQuestion(
                 onDurationSelected = { duration ->
                     onEntryUpdate(entry.copy(edgingDuration = duration))
                 },
-                quickOptions = listOf(5, 10, 15, 30, 60, 120),
+                quickOptions = Constants.DURATION_QUICK_OPTIONS,
                 label = "訓練時長"
             )
             
@@ -364,7 +364,7 @@ private fun RemovalQuestion(
                 onDurationSelected = { duration ->
                     onEntryUpdate(entry.copy(removalDuration = duration))
                 },
-                quickOptions = listOf(5, 10, 15, 30, 60, 120),
+                quickOptions = Constants.DURATION_QUICK_OPTIONS,
                 label = "取下時長"
             )
             

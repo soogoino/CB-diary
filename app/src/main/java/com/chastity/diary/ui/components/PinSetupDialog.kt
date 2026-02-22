@@ -12,6 +12,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.chastity.diary.util.Constants
 
 /**
  * Dialog for setting or changing PIN code
@@ -52,7 +53,7 @@ fun PinSetupDialog(
                     OutlinedTextField(
                         value = currentPin,
                         onValueChange = { 
-                            if (it.length <= 6 && it.all { char -> char.isDigit() }) {
+                            if (it.length <= Constants.PIN_MAX_LENGTH && it.all { char -> char.isDigit() }) {
                                 currentPin = it
                                 currentPinError = null
                             }
@@ -91,11 +92,11 @@ fun PinSetupDialog(
                 OutlinedTextField(
                     value = newPin,
                     onValueChange = { 
-                        if (it.length <= 6 && it.all { char -> char.isDigit() }) {
+                        if (it.length <= Constants.PIN_MAX_LENGTH && it.all { char -> char.isDigit() }) {
                             newPin = it
                             newPinError = when {
                                 it.isEmpty() -> null
-                                it.length < 4 -> "PIN 碼至少需要 4 位數字"
+                                it.length < Constants.PIN_MIN_LENGTH -> "PIN 碼至少需要 ${Constants.PIN_MIN_LENGTH} 位數字"
                                 else -> null
                             }
                         }
@@ -125,7 +126,7 @@ fun PinSetupDialog(
                 OutlinedTextField(
                     value = confirmPin,
                     onValueChange = { 
-                        if (it.length <= 6 && it.all { char -> char.isDigit() }) {
+                        if (it.length <= Constants.PIN_MAX_LENGTH && it.all { char -> char.isDigit() }) {
                             confirmPin = it
                             confirmPinError = when {
                                 it.isEmpty() -> null
@@ -168,8 +169,8 @@ fun PinSetupDialog(
                         hasError = true
                     }
                     
-                    if (newPin.length < 4) {
-                        newPinError = "PIN 碼至少需要 4 位數字"
+                    if (newPin.length < Constants.PIN_MIN_LENGTH) {
+                        newPinError = "PIN 碼至少需要 ${Constants.PIN_MIN_LENGTH} 位數字"
                         hasError = true
                     }
                     
@@ -185,9 +186,9 @@ fun PinSetupDialog(
                     }
                 },
                 enabled = if (isChangingPin) {
-                    currentPin.length >= 4 && newPin.length >= 4 && newPin == confirmPin
+                    currentPin.length >= Constants.PIN_MIN_LENGTH && newPin.length >= Constants.PIN_MIN_LENGTH && newPin == confirmPin
                 } else {
-                    newPin.length >= 4 && newPin == confirmPin
+                    newPin.length >= Constants.PIN_MIN_LENGTH && newPin == confirmPin
                 }
             ) {
                 Text("確定")

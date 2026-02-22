@@ -49,6 +49,10 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chastity.diary.domain.model.DailyEntry
 import com.chastity.diary.domain.model.Gender
+import com.chastity.diary.R
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.stringArrayResource
+import kotlin.math.abs
 import com.chastity.diary.ui.components.*
 import com.chastity.diary.util.Constants
 import com.chastity.diary.MainActivity
@@ -71,38 +75,38 @@ private enum class RotatingQuestion(
     val feedback: String,
     val isMaleOnly: Boolean = false
 ) {
-    R1 ("R1",  "今日是否有分泌物洩漏？",                           "看來身體已經開始用最誠實的方式抗議了……清潔工作可別偷懶哦。"),
-    R2 ("R2",  "今日是否有主動頂鎖/摩擦，尋求快感？",                        "嗯？今天好像特別不甘心被關著呢……數一數有幾次試圖爭取自由吧。", isMaleOnly = true),
-    R3 ("R3",  "今日是否進行邊緣訓練？",                           "走到懸崖邊又縮回來……這種欲拒還迎的把戲，到底誰在折磨誰？"),
-    R4 ("R4",  "今日是否與Keyholder互動？",                        "今天有沒有乖乖報告？還是偷偷想留一點小秘密？溝通可是契約的氧氣。"),
-    R6 ("R6",  "今日是否帶著鎖進入公眾場合？",                   "在人群中帶著這個小秘密走動，緊張感是不是特別清晰？下次還敢嗎？"),
-    R7 ("R7",  "今日是否曾短暫解除鎖？",                         "手是不是有點癢？誠實交代解開的理由，否則下次可能更難熬哦。"),
-    R8 ("R8",  "今日是否有意展示或洩露鎖蹤跡？",                 "故意讓邊緣露出一點點？這種小壞壞的試探……真的只是不小心嗎？"),
-    R9 ("R9",  "今日是否接觸成人內容？",                           "看了那些東西，卻只能乾瞪眼……意志力今天考了幾分？"),
-    R10("R10", "今日是否解鎖或進行自慰？",                         "破戒的瞬間一定很爽……但現在後悔的感覺是不是更強烈？記下來，好好反省。"),
-    R11("R11", "今日是否進行乳頭開發/玩弄？",                      "開始把快感往上轉移了？看來下半身已經學會求饒，胸口卻越來越誠實。"),
-    R12("R12", "今日是否進行後庭開發/探索？",                      "後面也開始主動爭寵了？身體地圖正在被重新繪製……感覺如何？"),
-    R13("R13", "今天你有沒有感受到鎖帶來的不適或調整需求？",     "哪裡卡卡的？哪裡磨紅了？身體的小抱怨可不能忽視。"),
-    R14("R14", "今天佩戴鎖是否讓你感覺到內心的平靜或成就？",    "居然真的覺得安心……這算不算已經有點上癮的跡象了？"),
-    R15("R15", "今天有沒有想起Keyholder，並感受到連結的溫暖？",   "腦袋裡閃過那個人的臉時，心跳有沒有加速？這種思念也算是甜蜜的折磨。"),
-    R16("R16", "今天鎖是否已融入你的日常routine中，感覺自然？", "已經開始像內褲一樣理所當然了？恭喜，墮落進度又前進了一步。"),
-    R17("R17", "今天有沒有將慾望轉向其他活動，如運動或創作？",    "把精力丟到別的地方……聰明的轉移戰術，但下半身真的被騙到了嗎？"),
-    R18("R18", "今天在人群中，你有沒有特別注意到自己的隱密狀態？","每走一步都在提醒自己「裡面有東西」……這種隱秘的刺激，有沒有讓你偷偷嘴角上揚？"),
-    R19("R19", "今天有沒有進行放鬆活動來緩解可能的壓力？",        "學會哄自己了？不過再怎麼放鬆，鎖還是鎖著，逃不掉的哦。"),
-    R20("R20", "今天醒來後，有沒有回想起與鎖相關的夢境？",      "連睡覺都在被管教……你的潛意識看來已經徹底投降了。"),
-    R21("R21", "今天其他感官（如觸覺或聽覺）是否變得更敏銳？",    "碰一下衣服都像被撩撥……下半身被封印後，其他地方好像變得特別饑渴呢。"),
-    R22("R22", "今天有沒有與Keyholder分享你的感受或想法？",       "今天敢不敢把心裡那些念頭說出來？還是只敢在腦袋裡演戲？"),
-    R23("R23", "今天在不同環境中，鎖帶來的感受如何？",          "坐著的時候、走路的時候、蹲下的時候……它無時無刻不在提醒你誰才是主人。"),
-    R24("R24", "今天有沒有遇到讓你猶豫或掙扎的時刻？",           "差點就伸手了對吧？最後還是忍住了……這次算你贏，但下次呢？"),
-    R25("R25", "今天佩戴是否帶來任何意外的正面體驗？",           "居然還能挖到一點甜頭？看來被關著也能找到快樂……真是個奇怪的小傢伙。"),
-    R26("R26", "今天有沒有特別注意清潔或保濕等保養？",           "認真擦拭、抹乳液……對待牢籠比對待自己還細心，這算不算斯德哥爾摩？"),
-    R27("R27", "今天有沒有透過寫作或藝術表達你的體驗？",         "把被鎖的感覺寫成詩、畫成圖……這種昇華的方式還挺優雅的病態。"),
-    R28("R28", "今天時間感覺過得快還是慢，受鎖影響？",         "時間明明過得慢，卻又忍不住想再熬久一點……這矛盾的癮頭還真有趣。"),
-    R29("R29", "今天有沒有在匿名社群分享或閱讀相關經驗？",       "偷偷看別人被鎖的慘況，是不是有一種「同是天涯淪落人」的暗爽？"),
-    R30("R30", "今天有沒有在想萬一鎖取不下來該怎麼辦？",         "緊急預案想了幾套？安全是第一位的，恐慌可是最難看的樣子。"),
-    R31("R31", "今天情緒是否有起伏，與鎖相關？",               "一會兒覺得好色，一會兒又覺得好乖……這種心情過山車，玩得還開心嗎？"),
-    R32("R32", "今天有沒有想像未來繼續佩戴的畫面？",             "腦中已經出現一年後的自己……看來你不只接受了，還開始期待了呢。"),
-    R33("R33", "今日是否有剔除陰毛？",                            "連毛髮都要被管理……看來整個身體都慢慢不屬於自己了呢。記得幫下面做好衛生保養哦。"),
+    R1 ("R1",  "今日是否有分泌物洩漏？",                           "不論有沒有分泌物，記得別害羞地忽略清潔，身體會感謝你的。"),
+    R2 ("R2",  "今日是否有主動頂鎖/摩擦，尋求快感？",                        "不管有沒有試探那份衝動，誠實面對自己就已經很勇敢了。", isMaleOnly = true),
+    R3 ("R3",  "今日是否進行邊緣訓練？",                           "無論你是逗留邊緣還是退縮，能覺察這種誘惑本身就值得一點羞澀的笑。"),
+    R4 ("R4",  "今日是否與Keyholder互動？",                        "不論有沒有說出來，關係的細節常常比結果更值得回味。"),
+    R6 ("R6",  "今日是否帶著鎖進入公眾場合？",                   "在人前帶著這個小秘密，不管敢不敢暴露，這種心跳都是你的獎勵。"),
+    R7 ("R7",  "今日是否曾短暫解除鎖？",                         "不管有沒有偷偷鬆開一秒，記得對自己誠實，並負起責任照顧好自己。"),
+    R8 ("R8",  "今日是否有意展示或洩露鎖蹤跡？",                 "故意或不小心露出一點點，都會讓你心裡暗自發笑——接受這份小調皮吧。"),
+    R9 ("R9",  "今日是否接觸成人內容？",                           "有沒有看，那種慾望的拉扯本身就值得你輕輕自嘲一下。"),
+    R10("R10", "今日是否解鎖或進行自慰？",                         "不論今天怎麼做，承認自己的感受比隱瞞更誠實，也更有療癒力。"),
+    R11("R11", "今日是否進行乳頭開發/玩弄？",                      "無論有沒有逗弄，發現新的敏感點總讓人又尷尬又好奇。"),
+    R12("R12", "今日是否進行後庭開發/探索？",                      "不管有沒有探索，這類私密體驗的存在本身就會讓人面紅心跳。"),
+    R13("R13", "今天你有沒有感受到鎖帶來的不適或調整需求？",     "有沒有不舒服都要記下來，照顧好身體比硬撐更值得一點羞澀。"),
+    R14("R14", "今天佩戴鎖是否讓你感覺到內心的平靜或成就？",    "不論感覺如何，察覺到微妙的安心或不適都是成長的一部分。"),
+    R15("R15", "今天有沒有想起Keyholder，並感受到連結的溫暖？",   "想或不想，這些小念頭讓你忍不住臉紅，證明了情感的存在。"),
+    R16("R16", "今天鎖是否已融入你的日常routine中，感覺自然？", "無論像不像日常，發現自己適應或反彈都是值得悄悄慶祝的事。"),
+    R17("R17", "今天有沒有將慾望轉向其他活動，如運動或創作？",    "試圖轉移注意力成功與否，都是在跟自己較勁的一種小勝利。"),
+    R18("R18", "今天在人群中，你有沒有特別注意到自己的隱密狀態？","在人群裡的那點心跳感，不管你有沒有留意，都是你的秘密奢侈品。"),
+    R19("R19", "今天有沒有進行放鬆活動來緩解可能的壓力？",        "不論有沒有刻意放鬆，對自己好一點的念頭本身就值得鼓勵。"),
+    R20("R20", "今天醒來後，有沒有回想起與鎖相關的夢境？",      "做或沒做夢都無妨，夢裡的那些畫面只是偷偷告訴你內心的小秘密。"),
+    R21("R21", "今天其他感官（如觸覺或聽覺）是否變得更敏銳？",    "感覺變細膩或平常無感，都是身體在跟你說話，別害羞聽它說完。"),
+    R22("R22", "今天有沒有與Keyholder分享你的感受或想法？",       "說或不說都會讓人臉紅，能意識到想分享就是進步。"),
+    R23("R23", "今天在不同環境中，鎖帶來的感受如何？",          "站著、坐著、走路時的那些小提醒，不管有沒有注意到，都是真實的回響。"),
+    R24("R24", "今天有沒有遇到讓你猶豫或掙扎的時刻？",           "猶豫過或沒有，能回想起那瞬間就證明你還有人性（還有點可愛的弱點）。"),
+    R25("R25", "今天佩戴是否帶來任何意外的正面體驗？",           "發現一點小樂子或完全沒有，承認它們會讓你覺得又羞又甜。"),
+    R26("R26", "今天有沒有特別注意清潔或保濕等保養？",           "不管做了沒，對細節的在意其實是在偷偷寵自己，別不好意思接受。"),
+    R27("R27", "今天有沒有透過寫作或藝術表達你的體驗？",         "寫或畫出來會讓自己臉紅，但這種表達很療癒，值得一點羞澀的驕傲。"),
+    R28("R28", "今天時間感覺過得快還是慢，受鎖影響？",         "時間感的拉扯不管你注意沒注意，都在提醒你這段經驗有趣又奇怪。"),
+    R29("R29", "今天有沒有在匿名社群分享或閱讀相關經驗？",       "偷看或分享都會讓人心裡有點小偷笑，這種連結感其實挺暖的。"),
+    R30("R30", "今天有沒有在想萬一鎖取不下來該怎麼辦？",         "想過或沒想，準備備案本身就是成熟且有責任感的一步，給自己一個點讚。"),
+    R31("R31", "今天情緒是否有起伏，與鎖相關？",               "情緒忽上忽下不需要羞愧，能覺察就是在進步，帶點自嘲也沒關係。"),
+    R32("R32", "今天有沒有想像未來繼續佩戴的畫面？",             "想像或不想像都好，能看到未來的自己代表你在慢慢接受這件事。"),
+    R33("R33", "今日是否有剔除陰毛？",                            "不論有沒有修整，這種私密的小事值得溫柔對待和好好衛生照護。"),
 }
 
 private fun getRotatingQuestionsForDate(date: LocalDate, isMale: Boolean): List<RotatingQuestion> {
@@ -211,14 +215,14 @@ fun DailyEntryScreen(
             viewModel.clearSaveSuccess()
             // C-3: Narrative is shown in the BottomSheet only — do NOT overwrite user's notes field
             showNarrativeSheet = true
-            snackbarHostState.showSnackbar("儲存成功！")
+            snackbarHostState.showSnackbar(context.getString(R.string.save_success))
         }
     }
     LaunchedEffect(morningSaveSuccess) {
-        if (morningSaveSuccess) { snackbarHostState.showSnackbar("☀️ 早晨記錄已儲存！"); viewModel.clearMorningSaveSuccess() }
+        if (morningSaveSuccess) { snackbarHostState.showSnackbar(context.getString(R.string.morning_save_success)); viewModel.clearMorningSaveSuccess() }
     }
     LaunchedEffect(deleteSuccess) {
-        if (deleteSuccess) { snackbarHostState.showSnackbar("刪除成功！"); viewModel.clearDeleteSuccess() }
+        if (deleteSuccess) { snackbarHostState.showSnackbar(context.getString(R.string.delete_success)); viewModel.clearDeleteSuccess() }
     }
     LaunchedEffect(errorMessage) {
         errorMessage?.let { snackbarHostState.showSnackbar(it); viewModel.clearError() }
@@ -241,7 +245,7 @@ fun DailyEntryScreen(
                         Column {
                             Text(date.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")))
                             if (entryState is EntryFormState.Loaded) {
-                                Text("編輯模式", style = MaterialTheme.typography.labelSmall,
+                                Text(stringResource(R.string.edit_mode), style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.primary)
                             }
                         }
@@ -311,7 +315,7 @@ fun DailyEntryScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Text("☀️ 早晨")
+                            Text(stringResource(R.string.tab_morning))
                             if (!entry.morningCheckDone) {
                                 Badge()
                             }
@@ -321,7 +325,7 @@ fun DailyEntryScreen(
                 Tab(
                     selected = pagerState.currentPage == 1,
                     onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
-                    text = { Text("🌙 晚間") }
+                    text = { Text(stringResource(R.string.tab_evening)) }
                 )
             }
 
@@ -394,7 +398,7 @@ fun DailyEntryScreen(
     }
     if (showDeleteDialog) {
         DeleteConfirmDialog(
-            title = "確認刪除",
+            title = stringResource(R.string.delete_dialog_title),
             message = "確定要刪除 ${selectedDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日"))} 的記錄嗎？\n\n此操作無法復原。",
             onConfirm = { viewModel.deleteEntry() },
             onDismiss = { showDeleteDialog = false }
@@ -568,15 +572,15 @@ private fun CoreQuestionsCard(
             QuestionSection(title = "今日性慾強度", subtitle = "1 = 很低   10 = 很強烈") {
                 SliderWithLabel(entry.desireLevel?.toFloat() ?: 5f,
                     { onUpdate(entry.copy(desireLevel = it.toInt())) },
-                    valueRange = 0f..10f, steps = 9, label = "性慾指數")
+                    valueRange = 1f..10f, steps = 8, label = "性慾強度")
             }
 
             // C4: Comfort (只在佩戴時)
             AnimatedVisibility(visible = entry.deviceCheckPassed) {
-                QuestionSection(title = "佩戴舒適度", subtitle = "0 = 非常不舒適  10 = 非常舒適") {
+                QuestionSection(title = "佩戴舒適度", subtitle = "1 = 非常不舒適  10 = 非常舒適") {
                     SliderWithLabel(entry.comfortRating?.toFloat() ?: 5f,
                         { onUpdate(entry.copy(comfortRating = it.toInt())) },
-                        valueRange = 0f..10f, steps = 9, label = "舒適度")
+                        valueRange = 1f..10f, steps = 8, label = "舒適度")
                 }
             }
 
@@ -584,7 +588,7 @@ private fun CoreQuestionsCard(
             QuestionSection(title = "今日專注度", subtitle = "1 = 完全分心   10 = 高度專注") {
                 SliderWithLabel(entry.focusLevel?.toFloat() ?: 5f,
                     { onUpdate(entry.copy(focusLevel = it.toInt())) },
-                    valueRange = 1f..10f, steps = 8, label = "專注指數")
+                    valueRange = 1f..10f, steps = 8, label = "專注度")
             }
 
             // (C6 merged into C1 above)
@@ -877,8 +881,10 @@ private fun RotatingQuestionItem(q: RotatingQuestion, entry: DailyEntry, onUpdat
                 ),
                 modifier = Modifier.fillMaxWidth()
             ) {
+                val feedbacks = stringArrayResource(R.array.daily_rotating_feedback_generic)
+                val unifiedFeedback = remember(q.key) { feedbacks[abs(q.key.hashCode()) % feedbacks.size] }
                 Text(
-                    text = q.feedback,
+                    text = unifiedFeedback,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.padding(10.dp)
@@ -980,11 +986,11 @@ private fun DailyEntryTabContent(
                     ) {
                         Icon(Icons.Default.CheckCircle, null, tint = MaterialTheme.colorScheme.primary)
                         Column {
-                            Text("早晨記錄已完成 ☀️",
+                            Text(stringResource(R.string.morning_done_title),
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer)
-                            Text("可隨時更新早晨記錄",
+                            Text(stringResource(R.string.morning_done_subtitle),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f))
                         }
@@ -1056,11 +1062,11 @@ private fun DailyEntryTabContent(
                         }
                     }
                     Divider()
-                    QuestionSection(title = "睡眠品質") {
-                        StarRating(
-                            rating = entry.sleepQuality ?: 3,
-                            onRatingChange = { onUpdate(entry.copy(sleepQuality = it)) },
-                            label = "昨晚有睡好嗎？"
+                    QuestionSection(title = "睡眠品質", subtitle = "1 = 很差   10 = 極佳") {
+                        SliderWithLabel(
+                            entry.sleepQuality?.toFloat() ?: 5f,
+                            { onUpdate(entry.copy(sleepQuality = it.toInt())) },
+                            valueRange = 1f..10f, steps = 8, label = "睡眠品質"
                         )
                     }
                     QuestionSection(title = "因佩戴鎖而醒來？") {
@@ -1142,43 +1148,12 @@ private fun DailyEntryTabContent(
                             onMoodSelected = { onUpdate(entry.copy(morningMood = it)) }
                         )
                     }
-                    // M10: Battery-style energy display
-                    QuestionSection(title = "起床能量指數", subtitle = "1 = 極度疲憊   5 = 精力充沛") {
-                        val batteryIcons = listOf("🪫", "🔋", "🔋", "🔋", "⚡")
-                        val batteryLabels = listOf("1", "2", "3", "4", "5")
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            batteryLabels.forEachIndexed { index, lbl ->
-                                val level = index + 1
-                                Box(modifier = Modifier.weight(1f)) {
-                                    FilterChip(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        selected = entry.morningEnergy == level,
-                                        onClick = { onUpdate(entry.copy(morningEnergy = level)) },
-                                        colors = FilterChipDefaults.filterChipColors(
-                                            selectedContainerColor = MaterialTheme.colorScheme.primary,
-                                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                                        ),
-                                        border = FilterChipDefaults.filterChipBorder(
-                                            borderColor = MaterialTheme.colorScheme.outline,
-                                            selectedBorderColor = MaterialTheme.colorScheme.primary,
-                                        ),
-                                        label = {
-                                            Column(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(vertical = 6.dp),
-                                                verticalArrangement = Arrangement.Center,
-                                                horizontalAlignment = Alignment.CenterHorizontally
-                                            ) {
-                                                Text(batteryIcons[index], maxLines = 1)
-                                                Spacer(Modifier.height(2.dp))
-                                                Text(lbl, style = MaterialTheme.typography.bodySmall)
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                        }
+                    QuestionSection(title = "起床能量指數", subtitle = "1 = 極度疲憊   10 = 精力充沛") {
+                        SliderWithLabel(
+                            entry.morningEnergy?.toFloat() ?: 5f,
+                            { onUpdate(entry.copy(morningEnergy = it.toInt())) },
+                            valueRange = 1f..10f, steps = 8, label = "起床能量"
+                        )
                     }
                 }
             }
@@ -1219,10 +1194,10 @@ private fun DailyEntryTabContent(
             Spacer(Modifier.width(8.dp))
             Text(
                 when {
-                    isMorning && entry.morningCheckDone -> "更新早晨記錄"
-                    isMorning -> "完成早晨記錄"
-                    isExisting -> "更新記錄"
-                    else -> "儲存今日記錄"
+                    isMorning && entry.morningCheckDone -> stringResource(R.string.save_button_update_morning)
+                    isMorning -> stringResource(R.string.save_button_complete_morning)
+                    isExisting -> stringResource(R.string.save_button_update)
+                    else -> stringResource(R.string.save_button_save_today)
                 },
                 style = MaterialTheme.typography.titleMedium
             )

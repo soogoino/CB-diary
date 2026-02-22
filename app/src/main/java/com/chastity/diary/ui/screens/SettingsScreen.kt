@@ -28,6 +28,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.chastity.diary.R
+import androidx.compose.ui.res.stringResource
+import com.chastity.diary.BuildConfig
 import com.chastity.diary.domain.model.DarkMode
 import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.ui.components.PinSetupDialog
@@ -120,7 +123,7 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("設定") }
+                title = { Text(stringResource(R.string.settings_title)) }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -146,7 +149,7 @@ fun SettingsScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("個人資料", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.settings_profile), style = MaterialTheme.typography.titleMedium)
                         TextButton(onClick = { showProfileDialog = true }) { Text("編輯") }
                     }
 
@@ -201,7 +204,7 @@ fun SettingsScreen(
                     if (userSettings.height == null && userSettings.weight == null &&
                         userSettings.currentDeviceName.isNullOrBlank() &&
                         userSettings.nickname.isNullOrBlank() && userSettings.startDate == null)
-                        Text("尚未設定個人資料", style = MaterialTheme.typography.bodySmall,
+                        Text(stringResource(R.string.settings_no_profile), style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
@@ -227,16 +230,16 @@ fun SettingsScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.WbSunny,
-                                contentDescription = "早安提醒",
+                                contentDescription = stringResource(R.string.settings_reminder_icon_desc),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Column {
                                 Text(
-                                    text = "☀️ 早安提醒",
+                                    text = stringResource(R.string.settings_morning_reminder),
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 Text(
-                                    text = if (userSettings.morningReminderEnabled) "已啟用" else "已停用",
+                                    text = if (userSettings.morningReminderEnabled) stringResource(R.string.settings_reminder_enabled) else stringResource(R.string.settings_reminder_disabled),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -377,7 +380,7 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "安全設定",
+                        text = stringResource(R.string.settings_security),
                         style = MaterialTheme.typography.titleMedium
                     )
                     
@@ -449,7 +452,7 @@ fun SettingsScreen(
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                                 Text(
-                                    text = if (userSettings.pinEnabled) "已設定" else "未設定",
+                                    text = if (userSettings.pinEnabled) stringResource(R.string.settings_pin_set) else stringResource(R.string.settings_pin_not_set),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -544,7 +547,7 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "界面設定",
+                        text = stringResource(R.string.settings_ui),
                         style = MaterialTheme.typography.titleMedium
                     )
 
@@ -637,7 +640,7 @@ fun SettingsScreen(
                     ) {
                         Icon(Icons.Default.FileUpload, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(8.dp))
-                        Text("匯出資料 (CSV)")
+                        Text(stringResource(R.string.settings_export_csv))
                     }
 
                     OutlinedButton(
@@ -648,7 +651,7 @@ fun SettingsScreen(
                     ) {
                         Icon(Icons.Default.FileDownload, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(8.dp))
-                        Text("匯入資料 (CSV)")
+                        Text(stringResource(R.string.settings_import_csv))
                     }
                 }
             }
@@ -666,7 +669,7 @@ fun SettingsScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "貞操日記 v1.0.0",
+                        text = stringResource(R.string.settings_version_format, BuildConfig.VERSION_NAME),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -719,8 +722,8 @@ fun SettingsScreen(
             AlertDialog(
                 onDismissRequest = { showBiometricWarning = false },
                 icon = { Icon(Icons.Default.Lock, contentDescription = null) },
-                title = { Text("生物辨識不可用") },
-                text = { Text("您的裝置不支援生物辨識功能，或未設定指紋/臉部識別。請先在系統設定中設定生物辨識。") },
+                title = { Text(stringResource(R.string.biometric_unavailable_title)) },
+                text = { Text(stringResource(R.string.biometric_unavailable_message)) },
                 confirmButton = {
                     TextButton(onClick = { showBiometricWarning = false }) {
                         Text("確定")

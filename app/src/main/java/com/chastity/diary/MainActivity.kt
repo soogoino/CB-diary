@@ -26,6 +26,7 @@ import com.chastity.diary.ui.screens.LockScreen
 import com.chastity.diary.ui.screens.OnboardingScreen
 import com.chastity.diary.ui.theme.DiaryTheme
 import com.chastity.diary.util.BiometricHelper
+import com.chastity.diary.util.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,7 +84,7 @@ class MainActivity : FragmentActivity() {
                     .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
                     .build()
                 EncryptedSharedPreferences.create(
-                    applicationContext, "secure_prefs", masterKey,
+                    applicationContext, Constants.ENCRYPTED_PREFS_NAME, masterKey,
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
                 )
@@ -92,7 +93,7 @@ class MainActivity : FragmentActivity() {
             val settingsDeferred   = async { preferencesManager.userSettingsFlow.first() }
 
             val prefs       = encPrefsDeferred.await()
-            val lockEnabled = prefs.getBoolean("lock_enabled", false)
+            val lockEnabled = prefs.getBoolean(Constants.KEY_LOCK_ENABLED, false)
             val onboarding  = onboardingDeferred.await()
             val settings    = settingsDeferred.await()
 
@@ -151,16 +152,16 @@ class MainActivity : FragmentActivity() {
                                             errorMessage = null
                                         },
                                         onError = { error -> errorMessage = error },
-                                        onFailed = { errorMessage = "辨識失敗，請重試" }
+                                        onFailed = { errorMessage = getString(R.string.error_biometric_failed) }
                                     )
                                 },
                                 onUnlockWithPin = { pin ->
-                                    val savedPin = encryptedPrefs.getString("pin_code", "")
+                                    val savedPin = encryptedPrefs.getString(Constants.KEY_PIN_CODE, "")
                                     if (pin == savedPin) {
                                         _isLocked.value = false
                                         errorMessage = null
                                     } else {
-                                        errorMessage = "PIN 碼錯誤"
+                                        errorMessage = getString(R.string.error_pin_incorrect)
                                     }
                                 },
                                 biometricAvailable = biometricHelper.isBiometricAvailable(),

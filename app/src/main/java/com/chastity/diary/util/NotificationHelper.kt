@@ -12,26 +12,27 @@ import com.chastity.diary.R
 
 object NotificationHelper {
 
-    private const val CHANNEL_ID = "daily_reminder"
-    private const val CHANNEL_NAME = "每日提醒"
-    private const val CHANNEL_DESCRIPTION = "提醒您記錄每日貞操日記"
-
-    private const val MORNING_CHANNEL_ID = "morning_reminder"
-    private const val MORNING_CHANNEL_NAME = "早晨 Check-in"
-    private const val MORNING_CHANNEL_DESCRIPTION = "提醒您完成早晨睡眠與狀態記錄"
-
     fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             notificationManager.createNotificationChannel(
-                NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance).apply {
-                    description = CHANNEL_DESCRIPTION
+                NotificationChannel(
+                    Constants.NOTIFICATION_CHANNEL_ID,
+                    context.getString(R.string.notification_channel_name),
+                    importance
+                ).apply {
+                    description = context.getString(R.string.notification_channel_description)
                 }
             )
             notificationManager.createNotificationChannel(
-                NotificationChannel(MORNING_CHANNEL_ID, MORNING_CHANNEL_NAME, importance).apply {
-                    description = MORNING_CHANNEL_DESCRIPTION
+                NotificationChannel(
+                    Constants.MORNING_NOTIFICATION_CHANNEL_ID,
+                    context.getString(R.string.morning_notification_channel_name),
+                    importance
+                ).apply {
+                    description = context.getString(R.string.morning_notification_channel_description)
                 }
             )
         }
@@ -41,25 +42,24 @@ object NotificationHelper {
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-
         val pendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            Constants.PENDING_INTENT_DAILY,
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )
-
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle("記錄您的每日日記")
-            .setContentText("別忘了記錄今天的貞操日記哦！")
+        val notification = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
+            .setContentTitle(context.getString(R.string.notification_title))
+            .setContentText(context.getString(R.string.notification_text))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .build()
 
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(1001, notification)
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(Constants.NOTIFICATION_ID, notification)
     }
 
     fun showMorningReminderNotification(context: Context) {
@@ -67,18 +67,24 @@ object NotificationHelper {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val pendingIntent = PendingIntent.getActivity(
-            context, 1, intent, PendingIntent.FLAG_IMMUTABLE
+            context,
+            Constants.PENDING_INTENT_MORNING,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE
         )
-        val notification = NotificationCompat.Builder(context, MORNING_CHANNEL_ID)
-            .setContentTitle("☀️ 早晨 Check-in")
-            .setContentText("記錄昨晚睡眠與今晨狀態，只需幾秒鐘！")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-            .build()
+        val notification =
+            NotificationCompat.Builder(context, Constants.MORNING_NOTIFICATION_CHANNEL_ID)
+                .setContentTitle(context.getString(R.string.morning_notification_title))
+                .setContentText(context.getString(R.string.morning_notification_text))
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .build()
 
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(1002, notification)
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(Constants.MORNING_NOTIFICATION_ID, notification)
     }
 }
+

@@ -47,9 +47,96 @@
     <string name="biometric_description">請驗證以存取您的日記</string>
     <string name="biometric_negative_button">使用 PIN</string>
     
-    <!-- Notifications -->
+    <!-- Notifications - Daily -->
     <string name="notification_channel_name">每日提醒</string>
     <string name="notification_channel_description">提醒您記錄今天的日記</string>
     <string name="notification_title">今天還沒記錄喔！</string>
     <string name="notification_text">別忘了打卡 📝</string>
+
+    <!-- Notifications - Morning -->
+    <string name="morning_notification_channel_name">早晨 Check-in</string>
+    <string name="morning_notification_channel_description">提醒您完成早晨睡眠與狀態記錄</string>
+    <string name="morning_notification_title">☀️ 早晨 Check-in</string>
+    <string name="morning_notification_text">記錄昨晚睡眠與今晨狀態，只需幾秒鐘！</string>
+
+    <!-- Errors -->
+    <string name="error_biometric_failed">辨識失敗，請重試</string>
+    <string name="error_pin_incorrect">PIN 碼錯誤</string>
+    <string name="error_prefix">錯誤: %s</string>
+
+    <!-- Lock Screen -->
+    <string name="lock_screen_title">貞操日記已鎖定</string>
+    <string name="lock_icon_desc">鎖定</string>
+    <string name="lock_biometric_button">使用生物辨識解鎖</string>
+    <string name="lock_or_pin">或使用 PIN 碼</string>
+    <string name="lock_pin_label">PIN 碼</string>
+    <string name="lock_unlock_button">解鎖</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">儀表板</string>
+    <string name="time_range_week">本週</string>
+    <string name="time_range_month">本月</string>
+    <string name="time_range_3months">3個月</string>
+    <string name="time_range_all">全部</string>
+    <string name="stat_total_days">總配戴天數</string>
+    <string name="stat_completion_rate">記錄完成率</string>
+    <string name="stat_streak">連續打卡</string>
+    <string name="stat_longest_streak">最長連續</string>
+    <string name="chart_mood_trend">心情趨勢 (1=挫折 → 5=開心)</string>
+    <string name="chart_metric_trend">身心指標趨勢 (1–10)</string>
+    <string name="section_summary">統計摘要</string>
+    <string name="summary_avg_desire">平均性慾強度</string>
+    <string name="summary_avg_comfort">平均舒適度</string>
+    <string name="summary_masturbation_count">自慰次數（總計）</string>
+    <string name="summary_exercise_count">運動次數</string>
+
+    <!-- History Screen -->
+    <string name="history_title">歷史紀錄</string>
+    <string name="history_all_records">所有紀錄</string>
+    <string name="history_has_record">有記錄</string>
+    <string name="history_no_record">未記錄</string>
+
+    <!-- Daily Entry Screen -->
+    <string name="save_success">儲存成功！</string>
+    <string name="morning_save_success">☀️ 早晨記錄已儲存！</string>
+    <string name="delete_success">刪除成功！</string>
+    <string name="edit_mode">編輯模式</string>
+    <string name="tab_morning">☀️ 早晨</string>
+    <string name="tab_evening">🌙 晚間</string>
+    <string name="delete_dialog_title">確認刪除</string>
+    <string name="morning_done_title">早晨記錄已完成 ☀️</string>
+    <string name="morning_done_subtitle">可隨時更新早晨記錄</string>
+    <string name="save_button_update_morning">更新早晨記錄</string>
+    <string name="save_button_complete_morning">完成早晨記錄</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">設定</string>
+    <string name="settings_version_format">貞操日記 v%s</string>
+    <string name="settings_profile">個人資料</string>
+    <string name="settings_no_profile">尚未設定個人資料</string>
+    <string name="settings_morning_reminder">☀️ 早安提醒</string>
+    <string name="settings_reminder_icon_desc">早安提醒</string>
+    <string name="settings_security">安全設定</string>
+    <string name="settings_time_icon_desc">設定時間</string>
+    <string name="settings_ui">界面設定</string>
+    <string name="settings_export_csv">匯出資料 (CSV)</string>
+    <string name="settings_import_csv">匯入資料 (CSV)</string>
+    <string name="settings_pin_set">已設定</string>
+    <string name="settings_pin_not_set">未設定</string>
+    <string name="biometric_unavailable_title">生物辨識不可用</string>
+    <string name="biometric_unavailable_message">您的裝置不支援生物辨識功能，或未設定指紋/臉部識別。請先在系統設定中設定生物辨識。</string>
+    <string name="settings_start_date_prefix">開始日期: %s</string>
+    <string name="settings_start_date_not_set">未設定</string>
+    <string name="save_button_update">更新記錄</string>
+    <string name="save_button_save_today">儲存今日記錄</string>
+    <string name="settings_reminder_enabled">已啟用</string>
+    <string name="settings_reminder_disabled">已停用</string>
+    
+    <!-- Unified rotating question feedbacks (playful, slightly embarrassed) -->
+    <string-array name="daily_rotating_feedback_generic">
+        <item>哎呀，看起來你又偷偷掉隊了，別讓它太放肆了。</item>
+        <item>嗯…這個小狀況，值得小小自責一下，記得善後哦。</item>
+        <item>有點尷尬欸，但老實說，能注意到就是進步了。</item>
+        <item>唉唷，這種小把戲誰沒犯過？下次加把勁啊～</item>
+    </string-array>
 </resources>

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import com.chastity.diary.ui.theme.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,12 +34,12 @@ data class StreakMilestone(
  * All achievement milestones in order
  */
 val STREAK_MILESTONES = listOf(
-    StreakMilestone(7,   "🌱", "初學者",   Color(0xFF4CAF50.toInt())),
-    StreakMilestone(14,  "⚡", "進展中",   Color(0xFF2196F3.toInt())),
-    StreakMilestone(30,  "🔥", "一個月",   Color(0xFFFF9800.toInt())),
-    StreakMilestone(60,  "💪", "兩個月",   Color(0xFF9C27B0.toInt())),
-    StreakMilestone(100, "🏆", "百日勇士", Color(0xFFFFD700.toInt())),
-    StreakMilestone(365, "👑", "一年達人", Color(0xFFE91E63.toInt()))
+    StreakMilestone(7,   "🌱", "初學者",   StreakColorBeginner),
+    StreakMilestone(14,  "⚡", "進展中",   StreakColorProgress),
+    StreakMilestone(30,  "🔥", "一個月",   StreakColorOneMonth),
+    StreakMilestone(60,  "💪", "兩個月",   StreakColorTwoMonths),
+    StreakMilestone(100, "🏆", "百日勇士", StreakColorHundred),
+    StreakMilestone(365, "👑", "一年達人", StreakColorOneYear)
 )
 
 /**

@@ -8,6 +8,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,7 +20,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.chastity.diary.R
 import com.chastity.diary.domain.model.DailyEntry
 import com.chastity.diary.viewmodel.DailyEntryViewModel
 import com.chastity.diary.viewmodel.DashboardState
@@ -42,7 +46,7 @@ fun HistoryScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("歷史紀錄") })
+            TopAppBar(title = { Text(stringResource(R.string.history_title)) })
         }
     ) { paddingValues ->
         Box(
@@ -52,7 +56,7 @@ fun HistoryScreen(
         ) {
             when (val state = dashboardState) {
                 is DashboardState.Loading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
-                is DashboardState.Error -> Text("錯誤: ${state.message}", Modifier.align(Alignment.Center))
+                is DashboardState.Error -> Text(stringResource(R.string.error_prefix, state.message), Modifier.align(Alignment.Center))
                 is DashboardState.Success -> {
                     Column(
                         modifier = Modifier
@@ -71,7 +75,9 @@ fun HistoryScreen(
                                 onNavigateToDailyEntry()
                             }
                         )
-                        RecentEntriesSection(entries = state.entries)
+                        // H-2: Use allEntries so every saved entry appears regardless of
+                        // the timeRange selected on DashboardScreen. Pagination replaces take(30).
+                        RecentEntriesSection(entries = allEntries)
                     }
                 }
             }
@@ -125,9 +131,12 @@ fun MoodCalendarSection(entries: List<DailyEntry>, onDateClick: ((LocalDate) -> 
                             val isToday = date == today
                             val isFuture = date.isAfter(today)
                             val moodEmoji = entry?.mood?.take(2) ?: ""
+                            // C-4: Dark-mode-safe colours — surfaceVariant (fully opaque) has
+                            // enough luminance delta from surface in both light and dark themes,
+                            // whereas surfaceVariant.copy(alpha=0.4f) blends into the background.
                             val bgColor = when {
-                                isFuture -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
-                                entry == null -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+                                isFuture -> Color.Transparent
+                                entry == null -> MaterialTheme.colorScheme.surfaceVariant
                                 else -> MaterialTheme.colorScheme.primaryContainer
                             }
                             Box(
@@ -173,8 +182,8 @@ fun MoodCalendarSection(entries: List<DailyEntry>, onDateClick: ((LocalDate) -> 
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                LegendDot(MaterialTheme.colorScheme.primaryContainer, "有記錄")
-                LegendDot(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f), "未記錄")
+                LegendDot(MaterialTheme.colorScheme.primaryContainer, stringResource(R.string.history_has_record))
+                LegendDot(MaterialTheme.colorScheme.surfaceVariant, stringResource(R.string.history_no_record))
             }
         }
     }
@@ -192,21 +201,49 @@ private fun LegendDot(color: Color, label: String) {
 }
 
 // ─── 📋 Recent Entries List ───────────────────────────────────────────────────
+private const val PAGE_SIZE = 10
+
 @Composable
 private fun RecentEntriesSection(entries: List<DailyEntry>) {
-    // E-1: remember(entries) so sort only runs when list changes, not on every recompose
-    val sorted  = remember(entries) { entries.sortedByDescending { it.date } }
+    // E-1: sort once per list change
+    val sorted = remember(entries) { entries.sortedByDescending { it.date } }
     if (sorted.isEmpty()) return
-    // E-1: Compute display slice once; use forEachIndexed to avoid repeated take(30).last() alloc
-    val display = remember(sorted) { sorted.take(30) }
+
+    // Pagination state — persists across recompositions but resets when list changes
+    var displayCount by remember(sorted) { mutableIntStateOf(PAGE_SIZE) }
+    val display     = remember(sorted, displayCount) { sorted.take(displayCount) }
+    val remaining   = sorted.size - displayCount
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("近期記錄", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(stringResource(R.string.history_all_records), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(
+                    "共 ${sorted.size} 筆",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
             Divider()
             display.forEachIndexed { index, entry ->
                 EntryRow(entry)
-                if (index < display.lastIndex) Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+                if (index < display.lastIndex)
+                    Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+            }
+            // "Load more" button
+            if (remaining > 0) {
+                OutlinedButton(
+                    onClick = { displayCount += PAGE_SIZE },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.ExpandMore, contentDescription = null)
+                    Spacer(Modifier.width(4.dp))
+                    Text("載入更多（還有 $remaining 筆）")
+                }
             }
         }
     }
@@ -231,7 +268,8 @@ private fun EntryRow(entry: DailyEntry) {
             append("$s/$t")
         }
     }
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        // ── Header row: date + score ───────────────────────────────────────────
         Row(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -259,11 +297,22 @@ private fun EntryRow(entry: DailyEntry) {
                 color = MaterialTheme.colorScheme.primary
             )
         }
-        // 教事文字
+        // ── Metric chips: key numbers from the daily summary ──────────────────
+        val hasMetrics = entry.desireLevel != null || entry.comfortRating != null ||
+                         entry.sleepQuality != null || entry.selfRating != null
+        if (hasMetrics) {
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                entry.desireLevel?.let  { MetricChip("慾望 $it/10") }
+                entry.comfortRating?.let { MetricChip("舒適 $it/10") }
+                entry.sleepQuality?.let  { MetricChip("睡眠 $it/10") }
+                entry.selfRating?.let    { MetricChip("自評 $it/10") }
+            }
+        }
+        // ── Notes excerpt ─────────────────────────────────────────────────────
         if (!entry.notes.isNullOrBlank()) {
             Surface(
                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(6.dp),
+                shape = RoundedCornerShape(6.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
@@ -276,5 +325,20 @@ private fun EntryRow(entry: DailyEntry) {
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun MetricChip(label: String) {
+    Surface(
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        shape = RoundedCornerShape(50),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+        )
     }
 }

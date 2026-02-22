@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import com.chastity.diary.domain.model.DarkMode
 import com.chastity.diary.domain.model.Gender
+import com.chastity.diary.domain.model.HeatmapTimeRange
 import com.chastity.diary.domain.model.UserSettings
 import com.chastity.diary.util.Constants
 import kotlinx.coroutines.flow.Flow
@@ -56,6 +57,10 @@ class PreferencesManager(private val context: Context) {
 
         // Photo
         val PHOTO_BLUR_ENABLED = booleanPreferencesKey("photo_blur_enabled")
+
+        // Action Heatmap
+        val HEATMAP_TIME_RANGE = stringPreferencesKey("heatmap_time_range")
+        val HEATMAP_VISIBLE_QUESTIONS = stringSetPreferencesKey("heatmap_visible_questions")
     }
     
     val userSettingsFlow: Flow<UserSettings> = context.dataStore.data
@@ -98,8 +103,10 @@ class PreferencesManager(private val context: Context) {
 
                 // Morning reminder
                 morningReminderEnabled = preferences[PreferencesKeys.MORNING_REMINDER_ENABLED] ?: false,
-                morningReminderHour = preferences[PreferencesKeys.MORNING_REMINDER_HOUR] ?: 7,
-                morningReminderMinute = preferences[PreferencesKeys.MORNING_REMINDER_MINUTE] ?: 30,
+                morningReminderHour = preferences[PreferencesKeys.MORNING_REMINDER_HOUR]
+                    ?: Constants.DEFAULT_MORNING_REMINDER_HOUR,
+                morningReminderMinute = preferences[PreferencesKeys.MORNING_REMINDER_MINUTE]
+                    ?: Constants.DEFAULT_MORNING_REMINDER_MINUTE,
 
                 // Photo
                 photoBlurEnabled = preferences[PreferencesKeys.PHOTO_BLUR_ENABLED] ?: true
@@ -255,6 +262,21 @@ class PreferencesManager(private val context: Context) {
     suspend fun updatePhotoBlurEnabled(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.PHOTO_BLUR_ENABLED] = enabled
+        }
+    }
+
+    // ── Action Heatmap ──────────────────────────────────────────────────────────
+
+    val heatmapTimeRangeFlow: Flow<HeatmapTimeRange> = context.dataStore.data
+        .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        .map { prefs ->
+            val name = prefs[PreferencesKeys.HEATMAP_TIME_RANGE] ?: HeatmapTimeRange.WEEK_1.name
+            HeatmapTimeRange.valueOf(name)
+        }
+
+    suspend fun updateHeatmapTimeRange(range: HeatmapTimeRange) {
+        context.dataStore.edit { prefs ->
+            prefs[PreferencesKeys.HEATMAP_TIME_RANGE] = range.name
         }
     }
 }

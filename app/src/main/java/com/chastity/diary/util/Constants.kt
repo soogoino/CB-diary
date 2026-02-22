@@ -71,27 +71,52 @@ object Constants {
     val NIGHT_ERECTION_OPTIONS = listOf("無", "偶爾", "頻繁")
     val NIGHT_ERECTION_VALUES = mapOf("無" to 0, "偶爾" to 5, "頻繁" to 10)
 
+    // Time duration quick-pick chips shown in the UI (6 items, 2 rows of 3)
+    val DURATION_QUICK_OPTIONS = listOf(5, 10, 15, 30, 60, 120)
+
     // Database
     const val DATABASE_NAME = "chastity_diary_db"
     const val DATABASE_VERSION = 5  // v5: added UNIQUE INDEX on daily_entries.date (C-1 perf)
 
     // Photo
     const val PREF_PHOTO_BLUR_ENABLED = "photo_blur_enabled"
-    
+
     // DataStore
     const val DATASTORE_NAME = "user_preferences"
-    
-    // Notification
+
+    // Notification — Daily reminder
     const val NOTIFICATION_CHANNEL_ID = "daily_reminder"
     const val NOTIFICATION_ID = 1001
     const val DEFAULT_REMINDER_HOUR = 21
     const val DEFAULT_REMINDER_MINUTE = 0
-    
+
+    // Notification — Morning reminder
+    const val MORNING_NOTIFICATION_CHANNEL_ID = "morning_reminder"
+    const val MORNING_NOTIFICATION_ID = 1002
+    const val DEFAULT_MORNING_REMINDER_HOUR = 7
+    const val DEFAULT_MORNING_REMINDER_MINUTE = 30
+
+    // PendingIntent request codes
+    const val PENDING_INTENT_DAILY = 0
+    const val PENDING_INTENT_MORNING = 1
+
     // Encrypted SharedPreferences
-    const val ENCRYPTED_PREFS_NAME = "encrypted_prefs"
+    // A-1 fix: was "encrypted_prefs" — never matched the actual prefs file "secure_prefs"
+    const val ENCRYPTED_PREFS_NAME = "secure_prefs"
     const val KEY_PIN_CODE = "pin_code"
     const val KEY_BIOMETRIC_ENABLED = "biometric_enabled"
-    
-    // WorkManager
-    const val WORK_DAILY_REMINDER = "daily_reminder_work"
+    // A-3 fix: centralised key so all read/write sites stay in sync
+    const val KEY_LOCK_ENABLED = "lock_enabled"
+
+    // WorkManager unique work names
+    // B-1 fix: was "daily_reminder_work" — mismatched SettingsViewModel's "daily_reminder"
+    const val WORK_DAILY_REMINDER = "daily_reminder"
+    const val WORK_MORNING_REMINDER = "morning_reminder"
+
+    // PIN constraints
+    const val PIN_MIN_LENGTH = 4
+    const val PIN_MAX_LENGTH = 6
+
+    // Dashboard chart
+    const val CHART_MAX_DATA_POINTS = 14
 }

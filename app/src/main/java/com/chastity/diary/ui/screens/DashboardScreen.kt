@@ -17,9 +17,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.chastity.diary.R
 import com.chastity.diary.domain.model.DailyEntry
+import com.chastity.diary.domain.model.HeatmapTimeRange
 import com.chastity.diary.ui.components.*
+import com.chastity.diary.util.Constants
 import com.chastity.diary.viewmodel.DashboardState
 import com.chastity.diary.viewmodel.DashboardViewModel
 import com.chastity.diary.viewmodel.TimeRange
@@ -40,11 +44,13 @@ fun DashboardScreen(
     val currentStreak by viewModel.currentStreak.collectAsState()
     val longestStreak by viewModel.longestStreak.collectAsState()
     val timeRange by viewModel.timeRange.collectAsState()
+    val heatmapTimeRange by viewModel.heatmapTimeRange.collectAsState()
+    val heatmapData by viewModel.heatmapData.collectAsState()
     
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("儀表板") }
+                title = { Text(stringResource(R.string.dashboard_title)) }
             )
         }
     ) { paddingValues ->
@@ -61,23 +67,25 @@ fun DashboardScreen(
                 }
                 is DashboardState.Error -> {
                     Text(
-                        text = "錯誤: ${state.message}",
+                        text = stringResource(R.string.error_prefix, state.message),
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
                 is DashboardState.Success -> {
-                    // P2: Cache derived pairs (date, value) — X-axis labels stay coupled to data points
+                    // P2: Cache derived pairs (date, value) for charts
                     val dateFmt = remember { java.time.format.DateTimeFormatter.ofPattern("M/d") }
-                    val desirePairs = remember(state.entries) {
-                        state.entries.takeLast(14)
-                            .mapNotNull { e -> e.desireLevel?.let { e.date to it.toFloat() } }
+                    val last14 = remember(state.entries) { state.entries.takeLast(14) }
+                    val metricSeries = remember(last14) {
+                        listOf(
+                            Triple("性慾", Color(0xFF6650A4), last14.mapNotNull { e -> e.desireLevel?.let { e.date to it.toFloat() } }),
+                            Triple("舒適", Color(0xFF0288D1), last14.mapNotNull { e -> e.comfortRating?.let { e.date to it.toFloat() } }),
+                            Triple("專注", Color(0xFF2E7D32), last14.mapNotNull { e -> e.focusLevel?.let { e.date to it.toFloat() } }),
+                            Triple("睡眠", Color(0xFFF57C00), last14.mapNotNull { e -> e.sleepQuality?.let { e.date to it.toFloat() } }),
+                            Triple("能量", Color(0xFFE53935), last14.mapNotNull { e -> e.morningEnergy?.let { e.date to it.toFloat() } }),
+                        )
                     }
-                    val comfortPairs = remember(state.entries) {
-                        state.entries.takeLast(14)
-                            .mapNotNull { e -> e.comfortRating?.let { e.date to it.toFloat() } }
-                    }
-                    val moodPairs = remember(state.entries) {
-                        state.entries.takeLast(14).mapNotNull { e ->
+                    val moodPairs = remember(last14) {
+                        last14.mapNotNull { e ->
                             val score = when (e.mood) {
                                 "開心" -> 5f; "平靜" -> 4f; "普通" -> 3f
                                 "沮喪" -> 2f; "焦慮" -> 1.5f; "挫折" -> 1f; else -> null
@@ -85,9 +93,7 @@ fun DashboardScreen(
                             score?.let { e.date to it }
                         }
                     }
-                    val desireLabels  = remember(desirePairs)  { desirePairs.map  { it.first.format(dateFmt) } }
-                    val comfortLabels = remember(comfortPairs) { comfortPairs.map { it.first.format(dateFmt) } }
-                    val moodLabels    = remember(moodPairs)    { moodPairs.map    { it.first.format(dateFmt) } }
+                    val moodLabels = remember(moodPairs) { moodPairs.map { it.first.format(dateFmt) } }
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -110,10 +116,10 @@ fun DashboardScreen(
                                     label = {
                                         Text(
                                             when (range) {
-                                                TimeRange.WEEK -> "本週"
-                                                TimeRange.MONTH -> "本月"
-                                                TimeRange.THREE_MONTHS -> "3個月"
-                                                TimeRange.ALL -> "全部"
+                                                TimeRange.WEEK -> stringResource(R.string.time_range_week)
+                                                TimeRange.MONTH -> stringResource(R.string.time_range_month)
+                                                TimeRange.THREE_MONTHS -> stringResource(R.string.time_range_3months)
+                                                TimeRange.ALL -> stringResource(R.string.time_range_all)
                                             }
                                         )
                                     },
@@ -136,12 +142,12 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             StatCard(
-                                title = "總配戴天數",
+                                title = stringResource(R.string.stat_total_days),
                                 value = "${state.totalDays}",
                                 modifier = Modifier.weight(1f)
                             )
                             StatCard(
-                                title = "記錄完成率",
+                                title = stringResource(R.string.stat_completion_rate),
                                 value = String.format("%.1f%%", state.completionRate),
                                 modifier = Modifier.weight(1f)
                             )
@@ -152,12 +158,12 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             StatCard(
-                                title = "連續打卡",
+                                title = stringResource(R.string.stat_streak),
                                 value = "$currentStreak 天 🔥",
                                 modifier = Modifier.weight(1f)
                             )
                             StatCard(
-                                title = "最長連續",
+                                title = stringResource(R.string.stat_longest_streak),
                                 value = "$longestStreak 天",
                                 modifier = Modifier.weight(1f)
                             )
@@ -172,29 +178,26 @@ fun DashboardScreen(
                         // Mood Trend Chart
                         if (moodPairs.isNotEmpty()) {
                             TrendLineChart(
-                                title = "心情趨勢 (1=挫折 → 5=開心)",
+                                title = stringResource(R.string.chart_mood_trend),
                                 data = moodPairs.map { it.second },
                                 labels = moodLabels
                             )
                         }
-                        
-                        // Desire Level Trend
-                        TrendLineChart(
-                            title = "性慾強度趨勢 (1-10)",
-                            data = desirePairs.map { it.second },
-                            labels = desireLabels,
-                            intYAxis = true
+
+                        // Combined 1-10 metric trend chart
+                        MultiTrendLineChart(
+                            title = stringResource(R.string.chart_metric_trend),
+                            series = metricSeries
                         )
-                        
-                        // Comfort Rating Trend
-                        TrendLineChart(
-                            title = "舒適度趨勢 (0-10)",
-                            data = comfortPairs.map { it.second },
-                            labels = comfortLabels,
-                            intYAxis = true
+
+                        // Action Heatmap — Yes/No 題目橫軸日期熱力圖
+                        ActionHeatmapSection(
+                            heatmapData = heatmapData,
+                            selectedTimeRange = heatmapTimeRange,
+                            onTimeRangeChange = viewModel::setHeatmapTimeRange
                         )
-                        
-                        // Summary Statistics
+
+                        // Summary Statistics（放在最後）
                         Card(
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -203,14 +206,17 @@ fun DashboardScreen(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Text(
-                                    text = "統計摘要",
+                                    text = stringResource(R.string.section_summary),
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 Divider()
-                                StatRow("平均性慾強度", String.format("%.1f / 10", state.averageDesireLevel))
-                                StatRow("平均舒適度", String.format("%.1f / 10", state.averageComfortRating))
-                                StatRow("自慰次數（總計）", "${state.masturbationCount} 次")
-                                StatRow("運動次數", "${state.exerciseCount} 次")
+                                StatRow(stringResource(R.string.summary_avg_desire), String.format("%.1f / 10", state.averageDesireLevel))
+                                StatRow(stringResource(R.string.summary_avg_comfort), String.format("%.1f / 10", state.averageComfortRating))
+                                StatRow("平均專注度", String.format("%.1f / 10", state.averageFocusLevel))
+                                StatRow("平均睡眠品質", String.format("%.1f / 10", state.averageSleepQuality))
+                                StatRow("平均晨間能量", String.format("%.1f / 5", state.averageMorningEnergy))
+                                StatRow(stringResource(R.string.summary_masturbation_count), "${state.masturbationCount} 次")
+                                StatRow(stringResource(R.string.summary_exercise_count), "${state.exerciseCount} 次")
                             }
                         }
                     }

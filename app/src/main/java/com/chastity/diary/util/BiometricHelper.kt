@@ -5,6 +5,7 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import com.chastity.diary.R
 
 class BiometricHelper(private val context: Context) {
 
@@ -45,9 +46,9 @@ class BiometricHelper(private val context: Context) {
         )
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("解鎖貞操日記")
-            .setSubtitle("使用生物辨識解鎖")
-            .setNegativeButtonText("使用 PIN 碼")
+            .setTitle(context.getString(R.string.biometric_title))
+            .setSubtitle(context.getString(R.string.biometric_subtitle))
+            .setNegativeButtonText(context.getString(R.string.biometric_negative_button))
             .build()
 
         biometricPrompt.authenticate(promptInfo)
