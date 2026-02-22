@@ -23,7 +23,7 @@ object CsvHelper {
         "viewedPorn", "pornDuration",
         "hadErection", "erectionCount",
         "exercised", "exerciseTypes", "exerciseDuration",
-        "unlocked", "masturbated", "masturbationDuration",
+        "unlocked", "masturbated", "masturbationDuration", "masturbationCount",
         "exposedLock", "exposedLocations",
         "photoPath",
         "desireLevel",
@@ -42,6 +42,9 @@ object CsvHelper {
         "deviceCheckPassed",
         "socialActivities", "socialAnxiety",
         "selfRating",
+        "bedtime", "wakeTime", "morningMood", "morningEnergy",
+        "morningErection", "morningCheckDone", "hadEroticDream",
+        "rotatingAnswers",
         "notes",
         "createdAt", "updatedAt"
     )
@@ -72,6 +75,7 @@ object CsvHelper {
             q(e.unlocked),
             q(e.masturbated),
             q(e.masturbationDuration),
+            q(e.masturbationCount),
             q(e.exposedLock),
             q(e.exposedLocations),
             q(e.photoPath),
@@ -102,6 +106,14 @@ object CsvHelper {
             q(e.socialActivities),
             q(e.socialAnxiety),
             q(e.selfRating),
+            q(e.bedtime?.toString()),
+            q(e.wakeTime?.toString()),
+            q(e.morningMood),
+            q(e.morningEnergy),
+            q(e.morningErection),
+            q(e.morningCheckDone),
+            q(e.hadEroticDream),
+            q(e.rotatingAnswers.entries.joinToString("|") { "${it.key}=${it.value}" }),
             q(e.notes),
             q(e.createdAt.toString()),
             q(e.updatedAt.toString())
@@ -154,6 +166,7 @@ object CsvHelper {
             unlocked = bool("unlocked"),
             masturbated = bool("masturbated"),
             masturbationDuration = int("masturbationDuration"),
+            masturbationCount = int("masturbationCount"),
             exposedLock = bool("exposedLock"),
             exposedLocations = list("exposedLocations"),
             photoPath = col("photoPath").ifBlank { null },
@@ -184,6 +197,20 @@ object CsvHelper {
             socialActivities = list("socialActivities"),
             socialAnxiety = int("socialAnxiety"),
             selfRating = int("selfRating"),
+            bedtime = runCatching { java.time.LocalTime.parse(col("bedtime")) }.getOrNull(),
+            wakeTime = runCatching { java.time.LocalTime.parse(col("wakeTime")) }.getOrNull(),
+            morningMood = col("morningMood").ifBlank { null },
+            morningEnergy = int("morningEnergy"),
+            morningErection = bool("morningErection"),
+            morningCheckDone = bool("morningCheckDone"),
+            hadEroticDream = bool("hadEroticDream"),
+            rotatingAnswers = col("rotatingAnswers").let { raw ->
+                if (raw.isBlank()) emptyMap()
+                else raw.split("|").mapNotNull { pair ->
+                    val eq = pair.indexOf('=')
+                    if (eq > 0) pair.substring(0, eq) to pair.substring(eq + 1) else null
+                }.toMap()
+            },
             notes = col("notes").ifBlank { null },
             createdAt = runCatching { LocalDateTime.parse(col("createdAt")) }.getOrDefault(LocalDateTime.now()),
             updatedAt = runCatching { LocalDateTime.parse(col("updatedAt")) }.getOrDefault(LocalDateTime.now())
@@ -225,6 +252,8 @@ object CsvHelper {
             }
             i++
         }
+        // Q3: Detect unclosed quote — row is malformed; caller's try/catch will skip it
+        if (inQuotes) throw IllegalArgumentException("Unclosed quote in CSV line: ${line.take(80)}")
         result.add(sb.toString())
         return result
     }

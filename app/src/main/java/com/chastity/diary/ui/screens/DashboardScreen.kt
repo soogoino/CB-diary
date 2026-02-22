@@ -66,6 +66,14 @@ fun DashboardScreen(
                     )
                 }
                 is DashboardState.Success -> {
+                    // P2: Cache derived list operations — avoid recomputing mapNotNull on every recomposition
+                    val desireTrend = remember(state.entries) {
+                        state.entries.takeLast(14).mapNotNull { it.desireLevel?.toFloat() }
+                    }
+                    val comfortTrend = remember(state.entries) {
+                        state.entries.takeLast(14).mapNotNull { it.comfortRating?.toFloat() }
+                    }
+                    val moodTrend14 = remember(state.moodTrend) { state.moodTrend.takeLast(14) }
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -148,28 +156,24 @@ fun DashboardScreen(
                         )
                         
                         // Mood Trend Chart
-                        if (state.moodTrend.isNotEmpty()) {
+                        if (moodTrend14.isNotEmpty()) {
                             TrendLineChart(
                                 title = "心情趨勢 (1=挫折 → 5=開心)",
-                                data = state.moodTrend.takeLast(14)
+                                data = moodTrend14  // P2: use cached
                             )
                         }
                         
                         // Desire Level Trend
                         TrendLineChart(
                             title = "性慾強度趨勢 (1-10)",
-                            data = state.entries
-                                .takeLast(14)
-                                .mapNotNull { it.desireLevel?.toFloat() },
+                            data = desireTrend,  // P2: use cached
                             intYAxis = true
                         )
                         
                         // Comfort Rating Trend
                         TrendLineChart(
                             title = "舒適度趨勢 (0-10)",
-                            data = state.entries
-                                .takeLast(14)
-                                .mapNotNull { it.comfortRating?.toFloat() },
+                            data = comfortTrend,  // P2: use cached
                             intYAxis = true
                         )
                         
@@ -188,7 +192,6 @@ fun DashboardScreen(
                                 Divider()
                                 StatRow("平均性慾強度", String.format("%.1f / 10", state.averageDesireLevel))
                                 StatRow("平均舒適度", String.format("%.1f / 10", state.averageComfortRating))
-                                StatRow("色情內容接觸", "${state.pornViewCount} 次")
                                 StatRow("自慰次數（總計）", "${state.masturbationCount} 次")
                                 StatRow("運動次數", "${state.exerciseCount} 次")
                             }

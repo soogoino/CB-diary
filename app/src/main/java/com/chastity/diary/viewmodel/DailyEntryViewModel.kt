@@ -62,6 +62,10 @@ class DailyEntryViewModel(application: Application) : AndroidViewModel(applicati
     private val _morningSaveSuccess = MutableStateFlow(false)
     val morningSaveSuccess: StateFlow<Boolean> = _morningSaveSuccess.asStateFlow()
 
+    // C-1: Track whether the form has unsaved changes since the last save
+    private val _hasUnsavedChanges = MutableStateFlow(false)
+    val hasUnsavedChanges: StateFlow<Boolean> = _hasUnsavedChanges.asStateFlow()
+
     init {
         loadEntryForDate(LocalDate.now())
     }
@@ -130,6 +134,7 @@ class DailyEntryViewModel(application: Application) : AndroidViewModel(applicati
                 } else {
                     EntryFormState.Empty
                 }
+                _hasUnsavedChanges.value = false
             } catch (e: Exception) {
                 _errorMessage.value = "載入失敗: ${e.message}"
             } finally {
@@ -144,8 +149,9 @@ class DailyEntryViewModel(application: Application) : AndroidViewModel(applicati
             is EntryFormState.Empty -> DailyEntry(date = _selectedDate.value)
         }
         _entryState.value = EntryFormState.Loaded(updater(currentEntry))
+        _hasUnsavedChanges.value = true
     }
-    
+
     fun saveEntry() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -167,6 +173,7 @@ class DailyEntryViewModel(application: Application) : AndroidViewModel(applicati
                     streakRepository.updateStreak(entry.date)
                     
                     _saveSuccess.value = true
+                    _hasUnsavedChanges.value = false
                 }
             } catch (e: Exception) {
                 _errorMessage.value = "儲存失敗: ${e.message}"
@@ -231,6 +238,7 @@ class DailyEntryViewModel(application: Application) : AndroidViewModel(applicati
                 }
                 streakRepository.updateStreak(entry.date)
                 _morningSaveSuccess.value = true
+                _hasUnsavedChanges.value = false
             } catch (e: Exception) {
                 _errorMessage.value = "早晨記錄失敗: ${e.message}"
             } finally {

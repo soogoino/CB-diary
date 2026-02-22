@@ -69,6 +69,8 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.activity:activity-compose:1.8.2")
+    // A-2: SplashScreen API — eliminates blank-window flash on cold start (Android 11-)
+    implementation("androidx.core:core-splashscreen:1.0.1")
     
     // Jetpack Compose
     val composeBom = platform("androidx.compose:compose-bom:2023.10.01")
@@ -99,10 +101,12 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     
     // Security (Encryption)
+    // Note: 1.1.0-alpha06 is the latest available; stable 1.0.0 uses older MasterKeys API
+    // which is incompatible with the current EncryptedSharedPreferences usage pattern.
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     
-    // Biometric
-    implementation("androidx.biometric:biometric:1.2.0-alpha05")
+    // Biometric — downgraded from alpha05 to latest stable
+    implementation("androidx.biometric:biometric:1.1.0")
     
     // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.9.0")
@@ -121,11 +125,15 @@ dependencies {
     implementation("com.patrykandpatrick.vico:compose-m3:1.13.1")
     implementation("com.patrykandpatrick.vico:core:1.13.1")
     
-    // Firebase (Optional)
-    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-firestore-ktx")
-    
+    // Firebase — plugin (google-services) is commented out; dependencies removed until
+    // cloud sync is implemented. Re-enable by:
+    //   1. Uncomment id("com.google.gms.google-services") in the plugins block
+    //   2. Replace google-services.json with a real project config
+    //   3. Add Firebase deps:
+    //      implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    //      implementation("com.google.firebase:firebase-auth-ktx")
+    //      implementation("com.google.firebase:firebase-firestore-ktx")
+
     // Gson for JSON serialization
     implementation("com.google.code.gson:gson:2.10.1")
     
@@ -136,4 +144,5 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(composeBom)
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("androidx.room:room-testing:$roomVersion")
 }

@@ -8,6 +8,8 @@ import com.chastity.diary.data.local.database.AppDatabase
 import com.chastity.diary.data.repository.EntryRepository
 import com.chastity.diary.data.repository.StreakRepository
 import com.chastity.diary.domain.model.DailyEntry
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -45,24 +47,29 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     }
     
     private fun loadStatistics() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val (startDate, endDate) = getDateRange(_timeRange.value)
-                
-                val entries = repository.getEntriesInRangeSync(startDate, endDate)
-                val totalEntries = repository.getTotalCount()
                 val totalDaysInRange = ChronoUnit.DAYS.between(startDate, endDate).toInt() + 1
-                val completionRate = if (totalDaysInRange > 0) {
-                    (entries.size.toFloat() / totalDaysInRange) * 100
-                } else 0f
-                
-                //  Statistics
-                val avgDesire = repository.getAverageDesireLevel(startDate, endDate) ?: 0f
-                val avgComfort = repository.getAverageComfortRating(startDate, endDate) ?: 0f
-                val pornCount = repository.getPornViewCount(startDate, endDate)
-                val masturbationCount = repository.getMasturbationCount(startDate, endDate)
-                val exerciseCount = repository.getExerciseCount(startDate, endDate)
-                
+
+                // D-1: Run all 7 DB queries in parallel — total wait = slowest query, not sum of all
+                val entriesDeferred      = async { repository.getEntriesInRangeSync(startDate, endDate) }
+                val totalEntriesDeferred = async { repository.getTotalCount() }
+                val avgDesireDeferred    = async { repository.getAverageDesireLevel(startDate, endDate) }
+                val avgComfortDeferred   = async { repository.getAverageComfortRating(startDate, endDate) }
+                val pornDeferred         = async { repository.getPornViewCount(startDate, endDate) }
+                val mastDeferred         = async { repository.getMasturbationCount(startDate, endDate) }
+                val exerciseDeferred     = async { repository.getExerciseCount(startDate, endDate) }
+
+                val entries           = entriesDeferred.await()
+                val totalEntries      = totalEntriesDeferred.await()
+                val completionRate    = if (totalDaysInRange > 0) entries.size.toFloat() / totalDaysInRange * 100f else 0f
+                val avgDesire         = avgDesireDeferred.await() ?: 0f
+                val avgComfort        = avgComfortDeferred.await() ?: 0f
+                val pornCount         = pornDeferred.await()
+                val masturbationCount = mastDeferred.await()
+                val exerciseCount     = exerciseDeferred.await()
+
                 _dashboardState.value = DashboardState.Success(
                     totalDays = totalEntries,
                     completionRate = completionRate,

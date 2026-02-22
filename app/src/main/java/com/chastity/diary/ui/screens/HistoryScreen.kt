@@ -19,9 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.chastity.diary.domain.model.DailyEntry
-import com.chastity.diary.ui.navigation.Screen
 import com.chastity.diary.viewmodel.DailyEntryViewModel
 import com.chastity.diary.viewmodel.DashboardState
 import com.chastity.diary.viewmodel.DashboardViewModel
@@ -34,7 +32,7 @@ import java.time.format.DateTimeFormatter
 fun HistoryScreen(
     viewModel: DashboardViewModel = viewModel(),
     dailyEntryViewModel: DailyEntryViewModel = viewModel(),
-    navController: NavHostController,
+    onNavigateToDailyEntry: () -> Unit = {},
     outerPadding: PaddingValues = PaddingValues()
 ) {
     val dashboardState by viewModel.dashboardState.collectAsState()
@@ -67,11 +65,7 @@ fun HistoryScreen(
                             entries = state.entries,
                             onDateClick = { date ->
                                 dailyEntryViewModel.selectDate(date)
-                                navController.navigate(Screen.DailyEntry.route) {
-                                    launchSingleTop = true
-                                    restoreState = false
-                                    popUpTo(Screen.DailyEntry.route) { inclusive = true }
-                                }
+                                onNavigateToDailyEntry()
                             }
                         )
                         RecentEntriesSection(entries = state.entries)
@@ -85,13 +79,14 @@ fun HistoryScreen(
 // ─── 🗓 Mood Calendar ─────────────────────────────────────────────────────────
 @Composable
 fun MoodCalendarSection(entries: List<DailyEntry>, onDateClick: ((LocalDate) -> Unit)? = null) {
-    val today = LocalDate.now()
-    val yearMonth = YearMonth.from(today)
-    val firstDay = yearMonth.atDay(1)
-    val daysInMonth = yearMonth.lengthOfMonth()
-    val startOffset = firstDay.dayOfWeek.value % 7 // 0=Sun
-    val entryMap = entries.associateBy { it.date }
-    val weekDays = listOf("日", "一", "二", "三", "四", "五", "六")
+    // E-2: Wrap all derived values in remember{} — prevents O(n) HashMap rebuild on every recompose
+    val today       = remember { LocalDate.now() }
+    val yearMonth   = remember { YearMonth.from(today) }
+    val firstDay    = remember { yearMonth.atDay(1) }
+    val daysInMonth = remember { yearMonth.lengthOfMonth() }
+    val startOffset = remember { firstDay.dayOfWeek.value % 7 } // 0=Sun
+    val entryMap    = remember(entries) { entries.associateBy { it.date } }
+    val weekDays    = remember { listOf("日", "一", "二", "三", "四", "五", "六") }
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -196,34 +191,42 @@ private fun LegendDot(color: Color, label: String) {
 // ─── 📋 Recent Entries List ───────────────────────────────────────────────────
 @Composable
 private fun RecentEntriesSection(entries: List<DailyEntry>) {
-    val sorted = entries.sortedByDescending { it.date }
+    // E-1: remember(entries) so sort only runs when list changes, not on every recompose
+    val sorted  = remember(entries) { entries.sortedByDescending { it.date } }
     if (sorted.isEmpty()) return
+    // E-1: Compute display slice once; use forEachIndexed to avoid repeated take(30).last() alloc
+    val display = remember(sorted) { sorted.take(30) }
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("近期記錄", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Divider()
-            sorted.take(30).forEach { entry ->
+            display.forEachIndexed { index, entry ->
                 EntryRow(entry)
-                if (entry != sorted.take(30).last()) Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+                if (index < display.lastIndex) Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
             }
         }
     }
 }
 
+// E-3: Top-level constant avoids rebuilding DateTimeFormatter on every EntryRow recompose
+private val ENTRY_DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd (EEE)", java.util.Locale.TAIWAN)
+
 @Composable
 private fun EntryRow(entry: DailyEntry) {
-    val formatter = DateTimeFormatter.ofPattern("MM/dd (EEE)", java.util.Locale.TAIWAN)
-    val score = buildString {
-        var s = 0; var t = 0
-        t++; if (entry.deviceCheckPassed) s++
-        entry.mood?.let { t++; s++ }
-        entry.desireLevel?.let { t++; s++ }
-        if (entry.deviceCheckPassed) { entry.comfortRating?.let { t++; s++ } }
-        entry.focusLevel?.let { t++; s++ }
-        t++; if (entry.exercised) s++
-        entry.cleaningType?.let { t++; s++ }
-        append("$s/$t")
+    // E-3: remember(entry) re-runs buildString only when the entry object changes
+    val score = remember(entry) {
+        buildString {
+            var s = 0; var t = 0
+            t++; if (entry.deviceCheckPassed) s++
+            entry.mood?.let { t++; s++ }
+            entry.desireLevel?.let { t++; s++ }
+            if (entry.deviceCheckPassed) { entry.comfortRating?.let { t++; s++ } }
+            entry.focusLevel?.let { t++; s++ }
+            t++; if (entry.exercised) s++
+            entry.cleaningType?.let { t++; s++ }
+            append("$s/$t")
+        }
     }
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(
@@ -233,7 +236,7 @@ private fun EntryRow(entry: DailyEntry) {
         ) {
             Column {
                 Text(
-                    entry.date.format(formatter),
+                    entry.date.format(ENTRY_DATE_FORMATTER),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium
                 )

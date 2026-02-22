@@ -16,7 +16,7 @@ import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.domain.model.UserSettings
 import com.chastity.diary.util.CsvHelper
 import com.chastity.diary.util.TestDataGenerator
-import com.chastity.diary.utils.NotificationHelper
+import com.chastity.diary.util.NotificationHelper
 import com.chastity.diary.worker.DailyReminderWorker
 import com.chastity.diary.worker.MorningReminderWorker
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,7 +35,13 @@ import java.util.concurrent.TimeUnit
  * ViewModel for settings screen
  */
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
-    
+
+    companion object {
+        // Q2: Central constants to avoid silent typo bugs when cancelling/scheduling
+        const val WORK_DAILY_REMINDER = "daily_reminder"
+        const val WORK_MORNING_REMINDER = "morning_reminder"
+    }
+
     private val preferencesManager = PreferencesManager(application)
     private val repository = SettingsRepository(preferencesManager)
     private val database = AppDatabase.getInstance(application)
@@ -61,10 +67,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         NotificationHelper.createNotificationChannel(application)
     }
     
+    // Q4: Eagerly so the first frame always reads persisted settings (avoids isMale flicker)
     val userSettings: StateFlow<UserSettings> = repository.userSettings
         .stateIn(
             viewModelScope,
-            SharingStarted.Lazily,
+            SharingStarted.Eagerly,
             UserSettings()
         )
     
@@ -104,7 +111,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             if (enabled) {
                 scheduleMorningReminder(hour, minute)
             } else {
-                workManager.cancelUniqueWork("morning_reminder")
+                workManager.cancelUniqueWork(WORK_MORNING_REMINDER)
             }
         }
     }
@@ -132,14 +139,14 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             .build()
         
         workManager.enqueueUniquePeriodicWork(
-            "daily_reminder",
+            WORK_DAILY_REMINDER,
             ExistingPeriodicWorkPolicy.UPDATE,
             dailyWorkRequest
         )
     }
     
     private fun cancelDailyReminder() {
-        workManager.cancelUniqueWork("daily_reminder")
+        workManager.cancelUniqueWork(WORK_DAILY_REMINDER)
     }
 
     private fun scheduleMorningReminder(hour: Int, minute: Int) {
@@ -153,7 +160,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             .build()
 
         workManager.enqueueUniquePeriodicWork(
-            "morning_reminder",
+            WORK_MORNING_REMINDER,
             ExistingPeriodicWorkPolicy.UPDATE,
             request
         )

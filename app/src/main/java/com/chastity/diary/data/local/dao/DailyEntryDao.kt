@@ -2,6 +2,7 @@ package com.chastity.diary.data.local.dao
 
 import androidx.room.*
 import com.chastity.diary.data.local.entity.DailyEntryEntity
+import com.chastity.diary.data.local.entity.DailyEntryWithAttributes
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -25,7 +26,12 @@ interface DailyEntryDao {
     
     @Query("SELECT * FROM daily_entries WHERE date = :date")
     suspend fun getByDate(date: LocalDate): DailyEntryEntity?
-    
+
+    // C-2: @Relation fetches entry + attributes in one @Transaction, replacing two sequential queries.
+    @Transaction
+    @Query("SELECT * FROM daily_entries WHERE date = :date")
+    suspend fun getByDateWithAttributes(date: LocalDate): DailyEntryWithAttributes?
+
     @Query("SELECT * FROM daily_entries WHERE date = :date")
     fun getByDateFlow(date: LocalDate): Flow<DailyEntryEntity?>
     

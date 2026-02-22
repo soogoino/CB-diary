@@ -4,85 +4,86 @@ import com.chastity.diary.data.datastore.PreferencesManager
 import com.chastity.diary.domain.model.DarkMode
 import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.domain.model.UserSettings
+import com.chastity.diary.domain.repository.ISettingsRepository
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
 /**
  * Repository for user settings
  */
-class SettingsRepository(private val preferencesManager: PreferencesManager) {
+class SettingsRepository(private val preferencesManager: PreferencesManager) : ISettingsRepository {
     
-    val userSettings: Flow<UserSettings> = preferencesManager.userSettingsFlow
+    override val userSettings: Flow<UserSettings> = preferencesManager.userSettingsFlow
     
-    suspend fun updateGender(gender: Gender) {
+    override suspend fun updateGender(gender: Gender) {
         preferencesManager.updateGender(gender)
     }
     
-    suspend fun updateStartDate(date: LocalDate) {
+    override suspend fun updateStartDate(date: LocalDate) {
         preferencesManager.updateStartDate(date)
     }
     
-    suspend fun updateReminderSettings(enabled: Boolean, hour: Int, minute: Int) {
+    override suspend fun updateReminderSettings(enabled: Boolean, hour: Int, minute: Int) {
         preferencesManager.updateReminderSettings(enabled, hour, minute)
     }
     
-    suspend fun updateBiometricEnabled(enabled: Boolean) {
+    override suspend fun updateBiometricEnabled(enabled: Boolean) {
         preferencesManager.updateBiometricEnabled(enabled)
     }
     
-    suspend fun updatePinEnabled(enabled: Boolean) {
+    override suspend fun updatePinEnabled(enabled: Boolean) {
         preferencesManager.updatePinEnabled(enabled)
     }
     
-    suspend fun updateDarkMode(mode: DarkMode) {
+    override suspend fun updateDarkMode(mode: DarkMode) {
         preferencesManager.updateDarkMode(mode)
     }
     
-    suspend fun updateCloudSyncEnabled(enabled: Boolean) {
+    override suspend fun updateCloudSyncEnabled(enabled: Boolean) {
         preferencesManager.updateCloudSyncEnabled(enabled)
     }
     
-    suspend fun updateLastSyncTime(timestamp: Long) {
+    override suspend fun updateLastSyncTime(timestamp: Long) {
         preferencesManager.updateLastSyncTime(timestamp)
     }
     
-    suspend fun updateCustomTasks(tasks: List<String>) {
+    override suspend fun updateCustomTasks(tasks: List<String>) {
         preferencesManager.updateCustomTasks(tasks)
     }
     
     // Personal profile update methods
     
-    suspend fun updateHeight(height: Int?) {
+    override suspend fun updateHeight(height: Int?) {
         preferencesManager.updateHeight(height)
     }
     
-    suspend fun updateWeight(weight: Float?) {
+    override suspend fun updateWeight(weight: Float?) {
         preferencesManager.updateWeight(weight)
     }
     
-    suspend fun updateCurrentDeviceName(name: String?) {
+    override suspend fun updateCurrentDeviceName(name: String?) {
         preferencesManager.updateCurrentDeviceName(name)
     }
 
-    suspend fun updateCurrentDeviceSize(size: String?) {
+    override suspend fun updateCurrentDeviceSize(size: String?) {
         preferencesManager.updateCurrentDeviceSize(size)
     }
 
-    suspend fun updateNickname(name: String?) {
+    override suspend fun updateNickname(name: String?) {
         preferencesManager.updateNickname(name)
     }
 
-    val isOnboardingCompleted: Flow<Boolean> = preferencesManager.isOnboardingCompleted
+    override val isOnboardingCompleted: Flow<Boolean> = preferencesManager.isOnboardingCompleted
 
-    suspend fun setOnboardingCompleted(completed: Boolean) {
+    override suspend fun setOnboardingCompleted(completed: Boolean) {
         preferencesManager.setOnboardingCompleted(completed)
     }
 
-    suspend fun updateMorningReminderSettings(enabled: Boolean, hour: Int, minute: Int) {
+    override suspend fun updateMorningReminderSettings(enabled: Boolean, hour: Int, minute: Int) {
         preferencesManager.updateMorningReminderSettings(enabled, hour, minute)
     }
 
-    suspend fun updatePhotoBlurEnabled(enabled: Boolean) {
+    override suspend fun updatePhotoBlurEnabled(enabled: Boolean) {
         preferencesManager.updatePhotoBlurEnabled(enabled)
     }
 }

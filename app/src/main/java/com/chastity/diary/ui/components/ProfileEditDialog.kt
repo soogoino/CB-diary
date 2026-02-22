@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -39,7 +41,8 @@ fun ProfileEditDialog(
     ) -> Unit
 ) {
     var nickname by remember { mutableStateOf(currentNickname ?: "") }
-    var startDateText by remember { mutableStateOf(currentStartDate?.toString() ?: "") }
+    var startDate by remember { mutableStateOf(currentStartDate) }
+    var showDatePicker by remember { mutableStateOf(false) }
     var height by remember { mutableStateOf(currentHeight?.toString() ?: "") }
     var weight by remember { mutableStateOf(currentWeight?.toString() ?: "") }
     var deviceName by remember { mutableStateOf(currentDeviceName ?: "") }
@@ -47,7 +50,6 @@ fun ProfileEditDialog(
 
     var heightError by remember { mutableStateOf<String?>(null) }
     var weightError by remember { mutableStateOf<String?>(null) }
-    var startDateError by remember { mutableStateOf<String?>(null) }
 
     fun validateHeight(input: String): String? {
         if (input.isBlank()) return null
@@ -74,7 +76,7 @@ fun ProfileEditDialog(
         return try { LocalDate.parse(input); null } catch (e: Exception) { "格式: yyyy-MM-dd，例如 2024-01-15" }
     }
 
-    val isValid = heightError == null && weightError == null && startDateError == null
+    val isValid = heightError == null && weightError == null
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -98,20 +100,14 @@ fun ProfileEditDialog(
                 )
 
                 // ── 開始日期 ──
-                OutlinedTextField(
-                    value = startDateText,
-                    onValueChange = {
-                        startDateText = it
-                        startDateError = validateStartDate(it)
-                    },
-                    label = { Text("鎖定開始日期") },
-                    placeholder = { Text("yyyy-MM-dd") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    isError = startDateError != null,
-                    supportingText = { Text(startDateError ?: "選填，格式 yyyy-MM-dd") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii)
-                )
+                OutlinedButton(
+                    onClick = { showDatePicker = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.CalendarMonth, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("鎖定開始日期: ${startDate?.toString() ?: "未設定"}")
+                }
 
                 Divider()
 
@@ -181,10 +177,7 @@ fun ProfileEditDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    val parsedDate = startDateText.trim().let {
-                        if (it.isBlank()) null
-                        else try { LocalDate.parse(it) } catch (e: Exception) { null }
-                    }
+                    val parsedDate = startDate
                     val heightValue = height.toIntOrNull()?.takeIf { it in 100..250 }
                     val weightValue = weight.toFloatOrNull()?.takeIf { it in 30f..200f }
                     onSave(
@@ -207,4 +200,13 @@ fun ProfileEditDialog(
             }
         }
     )
-}
+    if (showDatePicker) {
+        DatePickerDialog(
+            initialDate = startDate ?: LocalDate.now(),
+            onConfirm = { date ->
+                startDate = date
+                showDatePicker = false
+            },
+            onDismiss = { showDatePicker = false }
+        )
+    }}

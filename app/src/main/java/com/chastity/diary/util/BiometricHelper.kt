@@ -1,4 +1,4 @@
-package com.chastity.diary.utils
+package com.chastity.diary.util
 
 import android.content.Context
 import androidx.biometric.BiometricManager

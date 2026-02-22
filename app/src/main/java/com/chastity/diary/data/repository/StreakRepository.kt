@@ -1,6 +1,7 @@
 package com.chastity.diary.data.repository
 
 import com.chastity.diary.data.datastore.PreferencesManager
+import com.chastity.diary.domain.repository.IStreakRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
@@ -9,12 +10,12 @@ import java.time.temporal.ChronoUnit
 /**
  * Repository for streak tracking
  */
-class StreakRepository(private val preferencesManager: PreferencesManager) {
+class StreakRepository(private val preferencesManager: PreferencesManager) : IStreakRepository {
     
-    val currentStreak: Flow<Int> = preferencesManager.currentStreakFlow
-    val longestStreak: Flow<Int> = preferencesManager.longestStreakFlow
+    override val currentStreak: Flow<Int> = preferencesManager.currentStreakFlow
+    override val longestStreak: Flow<Int> = preferencesManager.longestStreakFlow
     
-    suspend fun updateStreak(entryDate: LocalDate) {
+    override suspend fun updateStreak(entryDate: LocalDate) {
         val currentStreakValue = preferencesManager.currentStreakFlow.first()
         val longestStreakValue = preferencesManager.longestStreakFlow.first()
         
@@ -44,7 +45,7 @@ class StreakRepository(private val preferencesManager: PreferencesManager) {
         preferencesManager.updateStreak(newStreak, newLongestStreak, entryDate)
     }
     
-    suspend fun resetStreak() {
+    override suspend fun resetStreak() {
         val longestStreakValue = preferencesManager.longestStreakFlow.first()
         preferencesManager.updateStreak(0, longestStreakValue, LocalDate.now())
     }

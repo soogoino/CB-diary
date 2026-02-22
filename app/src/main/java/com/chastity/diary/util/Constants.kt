@@ -73,7 +73,7 @@ object Constants {
 
     // Database
     const val DATABASE_NAME = "chastity_diary_db"
-    const val DATABASE_VERSION = 4
+    const val DATABASE_VERSION = 5  // v5: added UNIQUE INDEX on daily_entries.date (C-1 perf)
 
     // Photo
     const val PREF_PHOTO_BLUR_ENABLED = "photo_blur_enabled"

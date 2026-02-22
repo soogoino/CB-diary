@@ -10,8 +10,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Brightness6
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PhotoCamera
@@ -30,7 +33,7 @@ import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.ui.components.PinSetupDialog
 import com.chastity.diary.ui.components.ProfileEditDialog
 import com.chastity.diary.ui.components.TimePickerDialog
-import com.chastity.diary.utils.BiometricHelper
+import com.chastity.diary.util.BiometricHelper
 import com.chastity.diary.viewmodel.SettingsViewModel
 
 /**
@@ -186,11 +189,6 @@ fun SettingsScreen(
                         Text("身高: ${userSettings.height} cm", style = MaterialTheme.typography.bodyMedium)
                     if (userSettings.weight != null)
                         Text("體重: ${userSettings.weight} kg", style = MaterialTheme.typography.bodyMedium)
-                    if (userSettings.bmi != null)
-                        Text(
-                            "BMI: ${String.format("%.1f", userSettings.bmi)} (${userSettings.bmiStatus ?: ""})",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
 
                     if (!userSettings.currentDeviceName.isNullOrBlank()) {
                         val sizeLabel = if (!userSettings.currentDeviceSize.isNullOrBlank())
@@ -549,11 +547,44 @@ fun SettingsScreen(
                         text = "界面設定",
                         style = MaterialTheme.typography.titleMedium
                     )
-                    
+
                     Text(
-                        text = "主題模式: ${userSettings.darkMode.name}",
+                        text = "顯示主題",
                         style = MaterialTheme.typography.bodyMedium
                     )
+
+                    // T3: Dark mode selector — three-option FilterChip row
+                    val darkModeOptions = listOf(
+                        Triple(DarkMode.LIGHT,  Icons.Default.LightMode,  "淺色"),
+                        Triple(DarkMode.DARK,   Icons.Default.DarkMode,   "深色"),
+                        Triple(DarkMode.SYSTEM, Icons.Default.Brightness6, "跟隨系統")
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        darkModeOptions.forEach { (mode, icon, label) ->
+                            FilterChip(
+                                selected = userSettings.darkMode == mode,
+                                onClick = { viewModel.updateDarkMode(mode) },
+                                label = { Text(label) },
+                                leadingIcon = {
+                                    Icon(icon, contentDescription = label,
+                                        modifier = Modifier.size(FilterChipDefaults.IconSize))
+                                },
+                                modifier = Modifier.weight(1f),
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                    selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary
+                                ),
+                                border = FilterChipDefaults.filterChipBorder(
+                                    borderColor = MaterialTheme.colorScheme.outline,
+                                    selectedBorderColor = MaterialTheme.colorScheme.primary,
+                                )
+                            )
+                        }
+                    }
                 }
             }
             
@@ -570,27 +601,33 @@ fun SettingsScreen(
                         style = MaterialTheme.typography.titleMedium
                     )
                     
-                    // TODO: 雲端同步功能待實作
-                    /*
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                    // T2: Cloud sync is planned for a future release.
+                    // Firebase integration requires a real google-services.json and
+                    // privacy policy review. Showing an informational row until ready.
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        ),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("雲端同步")
-                        Switch(
-                            checked = userSettings.cloudSyncEnabled,
-                            onCheckedChange = { viewModel.updateCloudSyncEnabled(it) }
-                        )
+                        Row(
+                            Modifier.padding(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.WbSunny, null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Text(
+                                "雲端同步：開發中，敬請期待 ☁️",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
-                    
-                    if (userSettings.lastSyncTime != null) {
-                        Text(
-                            text = "上次同步: ${userSettings.lastSyncTime}",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                    */
-                    
+
                     Button(
                         onClick = {
                             val ts = java.time.LocalDate.now().toString().replace("-", "")
@@ -612,13 +649,6 @@ fun SettingsScreen(
                         Icon(Icons.Default.FileDownload, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(8.dp))
                         Text("匯入資料 (CSV)")
-                    }
-                    
-                    OutlinedButton(
-                        onClick = { viewModel.generateTestData() },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("生成測試數據 (30天)")
                     }
                 }
             }

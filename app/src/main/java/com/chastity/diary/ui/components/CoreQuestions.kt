@@ -18,6 +18,7 @@ import com.chastity.diary.util.Constants
 fun CoreQuestionsSection(
     entry: DailyEntry,
     onEntryUpdate: (DailyEntry) -> Unit,
+    onTakePhoto: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -203,7 +204,7 @@ fun CoreQuestionsSection(
                 }
             } else {
                 OutlinedButton(
-                    onClick = { /* TODO: Open camera */ },
+                    onClick = onTakePhoto,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(Icons.Default.Camera, contentDescription = null)

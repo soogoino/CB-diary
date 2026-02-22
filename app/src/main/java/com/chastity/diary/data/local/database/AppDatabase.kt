@@ -37,7 +37,10 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     Constants.DATABASE_NAME
                 )
-                    .fallbackToDestructiveMigration()
+                    // Legacy dev versions (1–3) have no migration path; allow destructive reset
+                    // for those only. Version 4+ must have proper migrations in Migrations.kt.
+                    .fallbackToDestructiveMigrationFrom(1, 2, 3)
+                    .addMigrations(*Migrations.ALL_MIGRATIONS)
                     .build()
                 INSTANCE = instance
                 instance

@@ -11,7 +11,12 @@ import java.time.LocalTime
 /**
  * Room entity for daily entries
  */
-@Entity(tableName = "daily_entries")
+// C-1: Unique index on `date` converts every getByDate() from full-table-scan O(n) to O(log n).
+// Also enforces DB-level uniqueness so duplicate-date bugs are caught at insert time.
+@Entity(
+    tableName = "daily_entries",
+    indices = [androidx.room.Index(value = ["date"], unique = true)]
+)
 @TypeConverters(Converters::class)
 data class DailyEntryEntity(
     @PrimaryKey(autoGenerate = true)

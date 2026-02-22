@@ -32,31 +32,7 @@ data class UserSettings(
 
     // Photo
     val photoBlurEnabled: Boolean = true
-) {
-    /**
-     * Calculate BMI if height and weight are available
-     * BMI = weight(kg) / (height(m))²
-     */
-    val bmi: Float?
-        get() = if (height != null && weight != null && height > 0) {
-            weight / ((height / 100f) * (height / 100f))
-        } else null
-    
-    /**
-     * Get BMI status category
-     */
-    val bmiStatus: String?
-        get() = bmi?.let {
-            when {
-                it < 18.5 -> "過輕"
-                it < 24.0 -> "正常"
-                it < 27.0 -> "過重"
-                it < 30.0 -> "輕度肥胖"
-                it < 35.0 -> "中度肥胖"
-                else -> "重度肥胖"
-            }
-        }
-}
+)
 
 enum class Gender {
     MALE, FEMALE, OTHER

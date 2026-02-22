@@ -6,6 +6,7 @@ import com.chastity.diary.data.local.entity.DailyEntryAttributeEntity
 import com.chastity.diary.data.local.entity.toDomainModel
 import com.chastity.diary.data.local.entity.toEntity
 import com.chastity.diary.domain.model.DailyEntry
+import com.chastity.diary.domain.repository.IEntryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
@@ -16,25 +17,25 @@ import java.time.LocalDate
 class EntryRepository(
     private val dao: DailyEntryDao,
     private val attributeDao: DailyEntryAttributeDao
-) {
+) : IEntryRepository {
     
-    fun getAllEntries(): Flow<List<DailyEntry>> {
+    override fun getAllEntries(): Flow<List<DailyEntry>> {
         return dao.getAllEntries().map { entities ->
             entities.map { it.toDomainModel() }
         }
     }
 
-    suspend fun getAllEntriesSync(): List<DailyEntry> {
+    override suspend fun getAllEntriesSync(): List<DailyEntry> {
         return dao.getAllEntriesSync().map { it.toDomainModel() }
     }
     
-    fun getEntriesInRange(startDate: LocalDate, endDate: LocalDate): Flow<List<DailyEntry>> {
+    override fun getEntriesInRange(startDate: LocalDate, endDate: LocalDate): Flow<List<DailyEntry>> {
         return dao.getEntriesInRange(startDate, endDate).map { entities ->
             entities.map { it.toDomainModel() }
         }
     }
     
-    suspend fun getEntriesInRangeSync(
+    override suspend fun getEntriesInRangeSync(
         startDate: LocalDate, 
         endDate: LocalDate
     ): List<DailyEntry> {
@@ -42,18 +43,18 @@ class EntryRepository(
             .map { it.toDomainModel() }
     }
     
-    suspend fun getEntryByDate(date: LocalDate): DailyEntry? {
-        val entity = dao.getByDate(date) ?: return null
-        val attrs = attributeDao.getForEntry(entity.id)
-        val rotatingAnswers = attrs.associate { it.attributeKey to it.attributeValue }
-        return entity.toDomainModel().copy(rotatingAnswers = rotatingAnswers)
+    override suspend fun getEntryByDate(date: LocalDate): DailyEntry? {
+        // C-2: Single @Transaction query replaces two sequential round-trips (getByDate + getForEntry)
+        val result = dao.getByDateWithAttributes(date) ?: return null
+        val rotatingAnswers = result.attributes.associate { it.attributeKey to it.attributeValue }
+        return result.entry.toDomainModel().copy(rotatingAnswers = rotatingAnswers)
     }
     
-    fun getEntryByDateFlow(date: LocalDate): Flow<DailyEntry?> {
+    override fun getEntryByDateFlow(date: LocalDate): Flow<DailyEntry?> {
         return dao.getByDateFlow(date).map { it?.toDomainModel() }
     }
     
-    suspend fun insertEntry(entry: DailyEntry): Long {
+    override suspend fun insertEntry(entry: DailyEntry): Long {
         val id = dao.insert(entry.toEntity())
         if (entry.rotatingAnswers.isNotEmpty()) {
             attributeDao.upsertAll(entry.rotatingAnswers.map { (k, v) ->
@@ -63,7 +64,7 @@ class EntryRepository(
         return id
     }
     
-    suspend fun updateEntry(entry: DailyEntry) {
+    override suspend fun updateEntry(entry: DailyEntry) {
         dao.update(entry.toEntity())
         attributeDao.deleteForEntry(entry.id)
         if (entry.rotatingAnswers.isNotEmpty()) {
@@ -73,41 +74,41 @@ class EntryRepository(
         }
     }
     
-    suspend fun deleteEntry(entry: DailyEntry) {
+    override suspend fun deleteEntry(entry: DailyEntry) {
         attributeDao.deleteForEntry(entry.id)
         dao.delete(entry.toEntity())
     }
     
-    suspend fun getTotalCount(): Int {
+    override suspend fun getTotalCount(): Int {
         return dao.getTotalCount()
     }
     
-    suspend fun getCountInRange(startDate: LocalDate, endDate: LocalDate): Int {
+    override suspend fun getCountInRange(startDate: LocalDate, endDate: LocalDate): Int {
         return dao.getCountInRange(startDate, endDate)
     }
     
-    suspend fun getLatestEntry(): DailyEntry? {
+    override suspend fun getLatestEntry(): DailyEntry? {
         return dao.getLatestEntry()?.toDomainModel()
     }
     
     // Statistics
-    suspend fun getAverageDesireLevel(startDate: LocalDate, endDate: LocalDate): Float? {
+    override suspend fun getAverageDesireLevel(startDate: LocalDate, endDate: LocalDate): Float? {
         return dao.getAverageDesireLevel(startDate, endDate)
     }
     
-    suspend fun getAverageComfortRating(startDate: LocalDate, endDate: LocalDate): Float? {
+    override suspend fun getAverageComfortRating(startDate: LocalDate, endDate: LocalDate): Float? {
         return dao.getAverageComfortRating(startDate, endDate)
     }
     
-    suspend fun getPornViewCount(startDate: LocalDate, endDate: LocalDate): Int {
+    override suspend fun getPornViewCount(startDate: LocalDate, endDate: LocalDate): Int {
         return dao.getPornViewCount(startDate, endDate)
     }
     
-    suspend fun getMasturbationCount(startDate: LocalDate, endDate: LocalDate): Int {
+    override suspend fun getMasturbationCount(startDate: LocalDate, endDate: LocalDate): Int {
         return dao.getMasturbationCount(startDate, endDate)
     }
     
-    suspend fun getExerciseCount(startDate: LocalDate, endDate: LocalDate): Int {
+    override suspend fun getExerciseCount(startDate: LocalDate, endDate: LocalDate): Int {
         return dao.getExerciseCount(startDate, endDate)
     }
 }

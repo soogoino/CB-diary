@@ -7,22 +7,38 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import androidx.exifinterface.media.ExifInterface
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.ScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -36,6 +52,8 @@ import com.chastity.diary.domain.model.DailyEntry
 import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.ui.components.*
 import com.chastity.diary.util.Constants
+import com.chastity.diary.MainActivity
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import com.chastity.diary.viewmodel.DailyEntryViewModel
 import com.chastity.diary.viewmodel.EntryFormState
 import com.chastity.diary.viewmodel.SettingsViewModel
@@ -47,7 +65,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
-// ─── Rotating question pool (R1–R32, 31 total; EAV-backed) ──────────────────
+// ─── Rotating question pool (R1–R33, 32 total; EAV-backed) ──────────────────
 private enum class RotatingQuestion(
     val key: String,
     val title: String,
@@ -85,14 +103,15 @@ private enum class RotatingQuestion(
     R30("R30", "今天有沒有在想萬一鎖取不下來該怎麼辦？",         "緊急預案想了幾套？安全是第一位的，恐慌可是最難看的樣子。"),
     R31("R31", "今天情緒是否有起伏，與鎖相關？",               "一會兒覺得好色，一會兒又覺得好乖……這種心情過山車，玩得還開心嗎？"),
     R32("R32", "今天有沒有想像未來繼續佩戴的畫面？",             "腦中已經出現一年後的自己……看來你不只接受了，還開始期待了呢。"),
+    R33("R33", "今日是否有剔除陰毛？",                            "連毛髮都要被管理……看來整個身體都慢慢不屬於自己了呢。記得幫下面做好衛生保養哦。"),
 }
 
 private fun getRotatingQuestionsForDate(date: LocalDate, isMale: Boolean): List<RotatingQuestion> {
     val pool = RotatingQuestion.entries.filter { !it.isMaleOnly || isMale }
-    // Use a simple deterministic shuffle based on the date
+    // Deterministic shuffle: seed interacts with each element's own hash so relative order
+    // changes every day. Using java.util.Random(seed) gives a proper per-date permutation.
     val seed = date.toEpochDay()
-    val shuffled = pool.sortedBy { (seed * 2654435761L + it.key.hashCode()) and Long.MAX_VALUE }
-    return shuffled.take(2)
+    return pool.shuffled(java.util.Random(seed)).take(2)
 }
 
 private fun coreCompletionScore(entry: DailyEntry): Int {
@@ -110,8 +129,11 @@ private fun coreCompletionScore(entry: DailyEntry): Int {
 /** 佩戴時共 7 題；未佩戴時舒適度不顯示，共 6 題 */
 private fun coreCompletionTotal(entry: DailyEntry) = if (entry.deviceCheckPassed) 7 else 6
 
+// P4: Pre-computed list to avoid rebuilding on every recomposition
+private val CLEANING_TYPES_ROWS: List<List<String>> by lazy { Constants.CLEANING_TYPES.chunked(2) }
+
 // ─── Main Screen ──────────────────────────────────────────────────────────────
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun DailyEntryScreen(
     viewModel: DailyEntryViewModel = viewModel(),
@@ -128,10 +150,21 @@ fun DailyEntryScreen(
     val morningSaveSuccess by viewModel.morningSaveSuccess.collectAsState()
     val userSettings by settingsViewModel.userSettings.collectAsState()
     val isMale = userSettings.gender == Gender.MALE
+    // C-1: Detect unsaved form changes to warn before date switch
+    val hasUnsavedChanges by viewModel.hasUnsavedChanges.collectAsState()
+
+    // P3: Stable lambda references — prevents DailyEntryTabContent from skipping recomposition
+    val onUpdateEntry: (DailyEntry) -> Unit = remember(viewModel) { { e -> viewModel.updateEntry { _ -> e } } }
+    val onSaveMorningCheck: () -> Unit = remember(viewModel) { { viewModel.saveMorningCheck() } }
+    val onSaveEntry: () -> Unit = remember(viewModel) { { viewModel.saveEntry() } }
 
     var showDatePicker by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    // C-1: Guard dialog when navigating away with unsaved changes
+    var showUnsavedChangesDialog by remember { mutableStateOf(false) }
     var showNarrativeSheet by rememberSaveable { mutableStateOf(false) }
+    // B5: Capture generated narrative so BottomSheet displays the same text that was saved
+    var lastNarrativeText by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
@@ -139,6 +172,8 @@ fun DailyEntryScreen(
     var cameraImageUri by remember { mutableStateOf<Uri?>(null) }
     var cameraImageFile by remember { mutableStateOf<File?>(null) }
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { ok ->
+        // 相機返回，清除旗標（雙重保險，ON_START 也會清）
+        MainActivity.isCameraLaunching = false
         if (ok) cameraImageFile?.let { file ->
             if (file.exists()) viewModel.updateEntry { e -> e.copy(photoPath = file.absolutePath) }
         }
@@ -153,22 +188,31 @@ fun DailyEntryScreen(
             cameraImageFile = file
             val u = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
             cameraImageUri = u
+            // 告知 MainActivity：即將進入相機，ON_STOP 不應觸發鎖定
+            MainActivity.isCameraLaunching = true
             cameraLauncher.launch(u)
         }
+    }
+    // Stable camera lambda — new lambda instance is created every Scaffold recompose without
+    // remember, causing the entire evening DailyEntryTabContent to re-layout unnecessarily.
+    val onTakePhotoStable: () -> Unit = remember(cameraPermissionLauncher) {
+        { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) }
     }
 
     LaunchedEffect(saveSuccess) {
         if (saveSuccess) {
-            // 先生成敖事文字並存到 notes
+            // B3: Snapshot entry immediately before any async DB update can change entryState
             val narrativeEntry = when (val s = entryState) {
                 is EntryFormState.Loaded -> s.entry
                 is EntryFormState.Empty -> DailyEntry(date = selectedDate)
             }
             val narrativeText = generateDailyNarrative(narrativeEntry)
-            viewModel.saveNarrativeToNotes(narrativeText)
+            lastNarrativeText = narrativeText
+            // B3: Clear flag immediately
+            viewModel.clearSaveSuccess()
+            // C-3: Narrative is shown in the BottomSheet only — do NOT overwrite user's notes field
             showNarrativeSheet = true
             snackbarHostState.showSnackbar("儲存成功！")
-            viewModel.clearSaveSuccess()
         }
     }
     LaunchedEffect(morningSaveSuccess) {
@@ -185,11 +229,22 @@ fun DailyEntryScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Column {
-                        Text(selectedDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")))
-                        if (entryState is EntryFormState.Loaded) {
-                            Text("編輯模式", style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.primary)
+                    // Slide-and-fade the date text whenever the user picks a new day
+                    AnimatedContent(
+                        targetState = selectedDate,
+                        transitionSpec = {
+                            // New date slides up in, old slides down out
+                            (slideInVertically { h -> h / 3 } + fadeIn(tween(200))) togetherWith
+                            (slideOutVertically { h -> -h / 3 } + fadeOut(tween(150)))
+                        },
+                        label = "dateTitle"
+                    ) { date ->
+                        Column {
+                            Text(date.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")))
+                            if (entryState is EntryFormState.Loaded) {
+                                Text("編輯模式", style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.primary)
+                            }
                         }
                     }
                 },
@@ -202,7 +257,11 @@ fun DailyEntryScreen(
                             }
                         }
                     }
-                    IconButton(onClick = { showDatePicker = true }) {
+                    IconButton(onClick = {
+                        // C-1: Warn user if there are unsaved form changes before switching dates
+                        if (hasUnsavedChanges) showUnsavedChangesDialog = true
+                        else showDatePicker = true
+                    }) {
                         Icon(Icons.Default.CalendarToday, "選擇日期")
                     }
                 }
@@ -210,6 +269,9 @@ fun DailyEntryScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
+        // H-2: Block HorizontalPager horizontal swipe while keyboard is open — prevents accidental
+        // tab switch when the user moves their thumb on the autocomplete bar or types diagonally.
+        val imeVisible = WindowInsets.isImeVisible
         val entry = when (val s = entryState) {
             is EntryFormState.Loaded -> s.entry
             is EntryFormState.Empty -> DailyEntry(date = selectedDate)
@@ -217,12 +279,34 @@ fun DailyEntryScreen(
         val isExisting = entryState is EntryFormState.Loaded &&
                 (entryState as EntryFormState.Loaded).entry.id != 0L
 
+        // Hoist scroll states so they survive recompositions of DailyEntryTabContent
+        // (e.g. triggered by DB save). Without hoisting, the scroll position may reset
+        // mid-interaction and causes an extra layout pass on each state update.
+        val morningScrollState = rememberScrollState()
+        val eveningScrollState = rememberScrollState()
+
+        // HorizontalPager keeps both tabs composed simultaneously —
+        // switching is instant (just slides viewport) with no destroy/recreate cost.
+        val pagerState = rememberPagerState(initialPage = currentTab) { 2 }
+        val coroutineScope = rememberCoroutineScope()
+
+        // Sync: user swipes pager → ViewModel (settledPage avoids mid-scroll noise)
+        LaunchedEffect(pagerState.settledPage) {
+            viewModel.selectTab(pagerState.settledPage)
+        }
+        // Sync: ViewModel tab changed programmatically → animate pager
+        LaunchedEffect(currentTab) {
+            if (pagerState.settledPage != currentTab) {
+                pagerState.animateScrollToPage(currentTab)
+            }
+        }
+
         Column(Modifier.fillMaxSize().padding(padding)) {
             // ── Tab Row ────────────────────────────────────────────────────────
-            TabRow(selectedTabIndex = currentTab) {
+            TabRow(selectedTabIndex = pagerState.currentPage) {
                 Tab(
-                    selected = currentTab == 0,
-                    onClick = { viewModel.selectTab(0) },
+                    selected = pagerState.currentPage == 0,
+                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(0) } },
                     text = {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -236,44 +320,61 @@ fun DailyEntryScreen(
                     }
                 )
                 Tab(
-                    selected = currentTab == 1,
-                    onClick = { viewModel.selectTab(1) },
+                    selected = pagerState.currentPage == 1,
+                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
                     text = { Text("🌙 晚間") }
                 )
             }
 
-            if (isLoading) {
+            // Crossfade between loading spinner and the actual pager — no jarring content swap
+            Crossfade(
+                targetState = isLoading,
+                animationSpec = tween(durationMillis = 180),
+                label = "loadingCrossfade"
+            ) { loading ->
+            if (loading) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
-            } else if (currentTab == 0) {
-                // ── Morning Tab ────────────────────────────────────────────────
-                DailyEntryTabContent(
-                    entry = entry,
-                    onUpdate = { viewModel.updateEntry { _ -> it } },
-                    onSave = { viewModel.saveMorningCheck() },
-                    outerPadding = outerPadding,
-                    isMorning = true,
-                    isMale = isMale,
-                    photoBlurEnabled = userSettings.photoBlurEnabled
-                )
             } else {
-                // ── Evening Tab ────────────────────────────────────────────────
-                DailyEntryTabContent(
-                    entry = entry,
-                    onUpdate = { viewModel.updateEntry { _ -> it } },
-                    onSave = { viewModel.saveEntry() },
-                    outerPadding = outerPadding,
-                    isMorning = false,
-                    isMale = isMale,
-                    selectedDate = selectedDate,
-                    isExisting = isExisting,
-                    onTakePhoto = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) },
-                    photoBlurEnabled = userSettings.photoBlurEnabled
-                )
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize(),
+                    beyondBoundsPageCount = 1,  // keep the other page composed → instant tab switch
+                    key = { it },               // stable page identity → skip recompose when offset-only changes
+                    userScrollEnabled = !imeVisible // H-2: keyboard open → disable swipe to avoid accidental tab change
+                ) { page ->
+                    when (page) {
+                        0 -> DailyEntryTabContent(
+                            entry = entry,
+                            onUpdate = onUpdateEntry,
+                            onSave = onSaveMorningCheck,
+                            outerPadding = outerPadding,
+                            scrollState = morningScrollState,
+                            isMorning = true,
+                            isMale = isMale,
+                            selectedDate = selectedDate,
+                            photoBlurEnabled = userSettings.photoBlurEnabled
+                        )
+                        else -> DailyEntryTabContent(
+                            entry = entry,
+                            onUpdate = onUpdateEntry,
+                            onSave = onSaveEntry,
+                            outerPadding = outerPadding,
+                            scrollState = eveningScrollState,
+                            isMorning = false,
+                            isMale = isMale,
+                            selectedDate = selectedDate,
+                            isExisting = isExisting,
+                            onTakePhoto = onTakePhotoStable,
+                            photoBlurEnabled = userSettings.photoBlurEnabled
+                        )
+                    }
+                }
             }
-        }
-    }
+        }   // closes Crossfade { loading -> }
+    }       // closes Column
+}           // closes Scaffold { padding -> }
 
     if (showDatePicker) {
         DatePickerDialog(
@@ -288,6 +389,26 @@ fun DailyEntryScreen(
             message = "確定要刪除 ${selectedDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日"))} 的記錄嗎？\n\n此操作無法復原。",
             onConfirm = { viewModel.deleteEntry() },
             onDismiss = { showDeleteDialog = false }
+        )
+    }
+
+    // C-1: Unsaved changes guard — shown when user taps the calendar icon with a dirty form
+    if (showUnsavedChangesDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showUnsavedChangesDialog = false },
+            title = { Text("有未儲存的變更") },
+            text = { Text("切換日期將放棄目前尚未儲存的內容，確定要繼續？") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showUnsavedChangesDialog = false
+                    showDatePicker = true
+                }) { Text("直接切換") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showUnsavedChangesDialog = false }) {
+                    Text("取消")
+                }
+            }
         )
     }
 
@@ -315,8 +436,9 @@ fun DailyEntryScreen(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
                 Divider()
+                // B5: Use captured text (same as what was saved to notes), not a fresh call
                 Text(
-                    text = generateDailyNarrative(narrativeEntry),
+                    text = lastNarrativeText.ifBlank { generateDailyNarrative(narrativeEntry) },
                     style = MaterialTheme.typography.bodyMedium,
                     lineHeight = androidx.compose.ui.unit.TextUnit.Unspecified
                 )
@@ -386,8 +508,8 @@ private fun CoreQuestionsCard(
     onTakePhoto: () -> Unit,
     photoBlurEnabled: Boolean = true
 ) {
-    // rememberSaveable survives recomposition; LaunchedEffect resets only when photo actually changes
-    var photoRevealed by rememberSaveable { mutableStateOf(false) }
+    // B4: Use remember (not rememberSaveable) — photo reveal state must not persist across dates
+    var photoRevealed by remember { mutableStateOf(false) }
     LaunchedEffect(entry.photoPath) { photoRevealed = false }
 
     Card(modifier = Modifier.fillMaxWidth()) {
@@ -485,98 +607,138 @@ private fun CoreQuestionsCard(
                 }
 
                 if (!entry.photoPath.isNullOrBlank()) {
-                    val bitmap = remember(entry.photoPath) {
-                        runCatching {
-                            val f = File(entry.photoPath!!)
-                            if (!f.exists()) return@runCatching null
-                            val raw = BitmapFactory.decodeFile(f.absolutePath) ?: return@runCatching null
-                            // Correct orientation using EXIF data (Android camera often saves rotated)
-                            val exif = ExifInterface(f.absolutePath)
-                            val degrees = when (exif.getAttributeInt(
-                                ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
-                            )) {
-                                ExifInterface.ORIENTATION_ROTATE_90  -> 90f
-                                ExifInterface.ORIENTATION_ROTATE_180 -> 180f
-                                ExifInterface.ORIENTATION_ROTATE_270 -> 270f
-                                else -> 0f
-                            }
-                            if (degrees == 0f) raw
-                            else Bitmap.createBitmap(
-                                raw, 0, 0, raw.width, raw.height,
-                                Matrix().apply { postRotate(degrees) }, true
-                            )
-                        }.getOrNull()
+                    // P1: Load bitmap on IO thread to avoid main-thread jank
+                    var bitmap by remember(entry.photoPath) { mutableStateOf<Bitmap?>(null) }
+                    var bitmapLoaded by remember(entry.photoPath) { mutableStateOf(false) }
+                    LaunchedEffect(entry.photoPath) {
+                        bitmapLoaded = false
+                        bitmap = withContext(Dispatchers.IO) {
+                            runCatching {
+                                val f = File(entry.photoPath)  // non-null: inside isNullOrBlank guard
+                                if (!f.exists()) return@runCatching null
+                                // H-1: Two-pass decode with inSampleSize prevents OOM on high-res camera images
+                                val boundsOpts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                                BitmapFactory.decodeFile(f.absolutePath, boundsOpts)
+                                val sampleSize = calculateInSampleSize(boundsOpts, 1080, 1920)
+                                val decodeOpts = BitmapFactory.Options().apply { inSampleSize = sampleSize }
+                                val raw = BitmapFactory.decodeFile(f.absolutePath, decodeOpts) ?: return@runCatching null
+                                val exif = ExifInterface(f.absolutePath)
+                                val degrees = when (exif.getAttributeInt(
+                                    ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
+                                )) {
+                                    ExifInterface.ORIENTATION_ROTATE_90  -> 90f
+                                    ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+                                    ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+                                    else -> 0f
+                                }
+                                if (degrees == 0f) raw
+                                else Bitmap.createBitmap(
+                                    raw, 0, 0, raw.width, raw.height,
+                                    Matrix().apply { postRotate(degrees) }, true
+                                )
+                            }.getOrNull()
+                        }
+                        bitmapLoaded = true
                     }
-                    // Aspect ratio from bitmap; 默認 4:3 (portrait = < 1, landscape = > 1)
-                    val photoAspectRatio = bitmap?.let { it.width.toFloat() / it.height.toFloat() } ?: (4f / 3f)
 
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        // Photo preview with blur overlay — respects portrait / landscape
-                        Box(
-                            Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(photoAspectRatio)
-                                .clickable { photoRevealed = !photoRevealed }
-                        ) {
-                            if (bitmap != null) {
+                    if (!bitmapLoaded) {
+                        // Still loading — show a slim placeholder row
+                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                    } else if (bitmap != null) {
+                        // B2: Guard aspect ratio against divide-by-zero from corrupt images
+                        val photoAspectRatio = bitmap!!.let { b ->
+                            (b.width.toFloat() / b.height.toFloat()).takeIf { it > 0f && it.isFinite() }
+                        } ?: (3f / 4f)
+
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            // Photo preview with blur overlay — respects portrait / landscape
+                            Box(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(photoAspectRatio)
+                                    .clickable { photoRevealed = !photoRevealed }
+                            ) {
                                 Image(
-                                    bitmap.asImageBitmap(), "打卡照片",
+                                    bitmap!!.asImageBitmap(), "打卡照片",
                                     Modifier.matchParentSize(),
                                     contentScale = ContentScale.Crop
                                 )
-                            }
-                            if (photoBlurEnabled && !photoRevealed) {
-                                Box(
-                                    Modifier
-                                        .matchParentSize()
-                                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.88f)),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Icon(
-                                            Icons.Default.Lock, null,
-                                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                                            modifier = Modifier.size(28.dp)
-                                        )
-                                        Spacer(Modifier.height(4.dp))
-                                        Text(
-                                            "點擊查看照片",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                                        )
+                                if (photoBlurEnabled && !photoRevealed) {
+                                    Box(
+                                        Modifier
+                                            .matchParentSize()
+                                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.88f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                            Icon(
+                                                Icons.Default.Lock, null,
+                                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                                                modifier = Modifier.size(28.dp)
+                                            )
+                                            Spacer(Modifier.height(4.dp))
+                                            Text(
+                                                "點擊查看照片",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                                            )
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        // Action buttons below photo
-                        Row(
-                            Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            OutlinedButton(
-                                onClick = onTakePhoto,
-                                modifier = Modifier.weight(1f)
+                            // Action buttons below photo
+                            Row(
+                                Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Icon(Icons.Default.Camera, null, Modifier.size(16.dp))
-                                Spacer(Modifier.width(4.dp))
-                                Text("重新拍攝")
-                            }
-                            OutlinedButton(
-                                onClick = { onUpdate(entry.copy(photoPath = null)) },
-                                modifier = Modifier.weight(1f),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.error
-                                ),
-                                border = ButtonDefaults.outlinedButtonBorder.copy(
-                                    brush = androidx.compose.ui.graphics.SolidColor(
-                                        MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
+                                OutlinedButton(
+                                    onClick = onTakePhoto,
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(Icons.Default.Camera, null, Modifier.size(16.dp))
+                                    Spacer(Modifier.width(4.dp))
+                                    Text("重新拍攝")
+                                }
+                                OutlinedButton(
+                                    onClick = { onUpdate(entry.copy(photoPath = null)) },
+                                    modifier = Modifier.weight(1f),
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        contentColor = MaterialTheme.colorScheme.error
+                                    ),
+                                    border = ButtonDefaults.outlinedButtonBorder.copy(
+                                        brush = androidx.compose.ui.graphics.SolidColor(
+                                            MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
+                                        )
                                     )
-                                )
+                                ) {
+                                    Icon(Icons.Default.Delete, null, Modifier.size(16.dp))
+                                    Spacer(Modifier.width(4.dp))
+                                    Text("刪除照片")
+                                }
+                            }
+                        }
+                    } else {
+                        // B2: File was deleted externally — show error state and let user clear
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                Modifier.padding(12.dp).fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(Icons.Default.Delete, null, Modifier.size(16.dp))
-                                Spacer(Modifier.width(4.dp))
-                                Text("刪除照片")
+                                Text(
+                                    "⚠️ 照片檔案已遺失",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                                OutlinedButton(onClick = { onUpdate(entry.copy(photoPath = null)) }) {
+                                    Text("清除記錄")
+                                }
                             }
                         }
                     }
@@ -592,7 +754,7 @@ private fun CoreQuestionsCard(
             // E8: Cleaning (moved from extended to core) — single-select
             QuestionSection(title = "今天是否清潔了貞操鎖？") {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Constants.CLEANING_TYPES.chunked(2).forEach { row ->
+                    CLEANING_TYPES_ROWS.forEach { row -> // P4: use pre-computed constant
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             row.forEach { option ->
                                 FilterChip(
@@ -720,7 +882,8 @@ private fun RotatingQuestionItem(q: RotatingQuestion, entry: DailyEntry, onUpdat
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExtendedQuestionsCard(entry: DailyEntry, onUpdate: (DailyEntry) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
+    // Q1: Key on entry.date so switching dates auto-collapses the notes section
+    var expanded by remember(entry.date) { mutableStateOf(false) }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column {
             TextButton(
@@ -767,6 +930,7 @@ private fun DailyEntryTabContent(
     onUpdate: (DailyEntry) -> Unit,
     onSave: () -> Unit,
     outerPadding: PaddingValues,
+    scrollState: ScrollState,
     isMorning: Boolean,
     isMale: Boolean = true,
     selectedDate: LocalDate = LocalDate.now(),
@@ -782,7 +946,8 @@ private fun DailyEntryTabContent(
     Column(
         Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
+            .imePadding()  // H-6: shift content above the soft keyboard
             .padding(
                 start = 16.dp, end = 16.dp, top = 12.dp,
                 bottom = outerPadding.calculateBottomPadding() + 16.dp
@@ -1206,10 +1371,17 @@ private fun generateDailyNarrative(entry: DailyEntry): String {
            else parts.joinToString("\n• ", prefix = "• ")
 }
 
-// ─── Helper ───────────────────────────────────────────────────────────────────
-private fun createCameraImageUri(context: Context): Uri {
-    val ts = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-    val dir = File(context.getExternalFilesDir("Pictures"), "").also { it.mkdirs() }
-    return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider",
-        File(dir, "PHOTO_$ts.jpg"))
+// H-1: Calculate inSampleSize to load camera photos at display resolution, preventing OOM.
+private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    val origHeight = options.outHeight
+    val origWidth  = options.outWidth
+    var inSampleSize = 1
+    if (origHeight > reqHeight || origWidth > reqWidth) {
+        val halfHeight = origHeight / 2
+        val halfWidth  = origWidth  / 2
+        while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+            inSampleSize *= 2
+        }
+    }
+    return inSampleSize
 }
