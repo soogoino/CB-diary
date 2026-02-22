@@ -7,7 +7,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -21,9 +25,15 @@ import com.chastity.diary.ui.screens.SettingsScreen
 import com.chastity.diary.viewmodel.DailyEntryViewModel
 
 /**
- * Keep-alive navigation: all 4 screens stay composed at all times.
- * Switching is instant — no destroy/recreate cost.
- * Invisible screens have alpha=0 and all pointer events consumed.
+ * Keep-alive navigation: screens stay composed once visited.
+ * DailyEntry is always pre-composed (default screen).
+ * Other screens are lazily first-composed on first visit, then kept alive.
+ *
+ * PERF: Composing all 4 screens simultaneously caused HistoryScreen's
+ * MoodCalendarSection to be JIT-compiled immediately on startup, blocking
+ * the render thread for ~8 seconds (4.2 MB JIT compile). With lazy
+ * first-compose, that cost only occurs when the user explicitly navigates
+ * to History for the first time.
  */
 @Composable
 fun NavGraph(
@@ -34,22 +44,39 @@ fun NavGraph(
     // Shared ViewModel so HistoryScreen can call selectDate before switching
     val dailyEntryViewModel: DailyEntryViewModel = viewModel()
 
+    // Track which screens have been visited at least once.
+    // DailyEntry is pre-seeded so it's always composed from the start.
+    var visitedRoutes by remember { mutableStateOf(setOf(Screen.DailyEntry.route)) }
+    LaunchedEffect(currentRoute) {
+        if (currentRoute !in visitedRoutes) {
+            visitedRoutes = visitedRoutes + currentRoute
+        }
+    }
+
     Box(Modifier.fillMaxSize()) {
+        // DailyEntry: always pre-composed (warm ViewModel + DB data before unlock)
         KeepAliveScreen(currentRoute == Screen.DailyEntry.route) {
             DailyEntryScreen(viewModel = dailyEntryViewModel, outerPadding = outerPadding)
         }
-        KeepAliveScreen(currentRoute == Screen.Dashboard.route) {
-            DashboardScreen(outerPadding = outerPadding)
+        // Remaining screens: compose on first visit, then stay alive
+        if (Screen.Dashboard.route in visitedRoutes) {
+            KeepAliveScreen(currentRoute == Screen.Dashboard.route) {
+                DashboardScreen(outerPadding = outerPadding)
+            }
         }
-        KeepAliveScreen(currentRoute == Screen.History.route) {
-            HistoryScreen(
-                dailyEntryViewModel = dailyEntryViewModel,
-                onNavigateToDailyEntry = { onNavigate(Screen.DailyEntry.route) },
-                outerPadding = outerPadding
-            )
+        if (Screen.History.route in visitedRoutes) {
+            KeepAliveScreen(currentRoute == Screen.History.route) {
+                HistoryScreen(
+                    dailyEntryViewModel = dailyEntryViewModel,
+                    onNavigateToDailyEntry = { onNavigate(Screen.DailyEntry.route) },
+                    outerPadding = outerPadding
+                )
+            }
         }
-        KeepAliveScreen(currentRoute == Screen.Settings.route) {
-            SettingsScreen(outerPadding = outerPadding)
+        if (Screen.Settings.route in visitedRoutes) {
+            KeepAliveScreen(currentRoute == Screen.Settings.route) {
+                SettingsScreen(outerPadding = outerPadding)
+            }
         }
     }
 }

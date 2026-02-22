@@ -2,6 +2,7 @@ package com.chastity.diary
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -133,42 +134,56 @@ class MainActivity : FragmentActivity() {
                 ) {
                     // startupData is null only while SplashScreen is showing — render nothing
                     val data = startupData ?: return@Surface
-                    when {
-                        !data.onboardingCompleted -> OnboardingScreen(
-                            // B-1: Update in-memory flag so UI immediately transitions to MainScreen
-                            // without requiring a restart. _startupData was loaded once at splash;
-                            // we patch it here instead of re-reading from DataStore.
+
+                    if (!data.onboardingCompleted) {
+                        // B-1: onboarding not done — show onboarding only
+                        OnboardingScreen(
                             onComplete = {
                                 _startupData.value = data.copy(onboardingCompleted = true)
                             }
                         )
-                        locked -> {
-                            LockScreen(
-                                onUnlockWithBiometric = {
-                                    biometricHelper.authenticate(
-                                        activity = this@MainActivity,
-                                        onSuccess = {
-                                            _isLocked.value = false
-                                            errorMessage = null
+                    } else {
+                        // PERF: Always compose MainScreen so all ViewModels/DB queries warm up
+                        // before the user unlocks. LockScreen is overlaid on top when locked.
+                        // This eliminates the "cold-compose" jank that appeared immediately after
+                        // fingerprint/PIN unlock (all 4 KeepAliveScreens + ViewModels were
+                        // freshly composed at the moment of unlock, blocking the main thread).
+                        androidx.compose.foundation.layout.Box(Modifier.fillMaxSize()) {
+                            MainScreen()
+                            if (locked) {
+                                // Opaque overlay — user cannot see or interact with MainScreen
+                                androidx.compose.foundation.layout.Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(MaterialTheme.colorScheme.background)
+                                ) {
+                                    LockScreen(
+                                        onUnlockWithBiometric = {
+                                            biometricHelper.authenticate(
+                                                activity = this@MainActivity,
+                                                onSuccess = {
+                                                    _isLocked.value = false
+                                                    errorMessage = null
+                                                },
+                                                onError = { error -> errorMessage = error },
+                                                onFailed = { errorMessage = getString(R.string.error_biometric_failed) }
+                                            )
                                         },
-                                        onError = { error -> errorMessage = error },
-                                        onFailed = { errorMessage = getString(R.string.error_biometric_failed) }
+                                        onUnlockWithPin = { pin ->
+                                            val savedPin = encryptedPrefs.getString(Constants.KEY_PIN_CODE, "")
+                                            if (pin == savedPin) {
+                                                _isLocked.value = false
+                                                errorMessage = null
+                                            } else {
+                                                errorMessage = getString(R.string.error_pin_incorrect)
+                                            }
+                                        },
+                                        biometricAvailable = biometricHelper.isBiometricAvailable(),
+                                        errorMessage = errorMessage
                                     )
-                                },
-                                onUnlockWithPin = { pin ->
-                                    val savedPin = encryptedPrefs.getString(Constants.KEY_PIN_CODE, "")
-                                    if (pin == savedPin) {
-                                        _isLocked.value = false
-                                        errorMessage = null
-                                    } else {
-                                        errorMessage = getString(R.string.error_pin_incorrect)
-                                    }
-                                },
-                                biometricAvailable = biometricHelper.isBiometricAvailable(),
-                                errorMessage = errorMessage
-                            )
+                                }
+                            }
                         }
-                        else -> MainScreen()
                     }
                 }
             }

@@ -35,9 +35,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -295,13 +293,14 @@ fun DailyEntryScreen(
         // HorizontalPager keeps both tabs composed simultaneously —
         // switching is instant (just slides viewport) with no destroy/recreate cost.
         val pagerState = rememberPagerState(initialPage = currentTab) { 2 }
-        val coroutineScope = rememberCoroutineScope()
 
         // Sync: user swipes pager → ViewModel (settledPage avoids mid-scroll noise)
         LaunchedEffect(pagerState.settledPage) {
             viewModel.selectTab(pagerState.settledPage)
         }
-        // Sync: ViewModel tab changed programmatically → animate pager
+        // Sync: ViewModel tab changed → animate pager.
+        // LaunchedEffect 在 key 改變時自動取消上一次動畫，確保同一時間只有一個
+        // animateScrollToPage 在執行，從根本避免多協程競爭導致 pager 卡住。
         LaunchedEffect(currentTab) {
             if (pagerState.settledPage != currentTab) {
                 pagerState.animateScrollToPage(currentTab)
@@ -313,7 +312,8 @@ fun DailyEntryScreen(
             TabRow(selectedTabIndex = pagerState.currentPage) {
                 Tab(
                     selected = pagerState.currentPage == 0,
-                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(0) } },
+                    // 只更新 ViewModel；LaunchedEffect(currentTab) 負責動畫
+                    onClick = { viewModel.selectTab(0) },
                     text = {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -328,7 +328,7 @@ fun DailyEntryScreen(
                 )
                 Tab(
                     selected = pagerState.currentPage == 1,
-                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
+                    onClick = { viewModel.selectTab(1) },
                     text = { Text(stringResource(R.string.tab_evening)) }
                 )
             }
