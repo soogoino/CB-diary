@@ -8,15 +8,18 @@ import com.chastity.diary.data.local.database.AppDatabase
 import com.chastity.diary.data.repository.EntryRepository
 import com.chastity.diary.data.repository.StreakRepository
 import com.chastity.diary.domain.model.DailyEntry
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 /**
  * ViewModel for dashboard/statistics
+ *
+ * D-2: Reactive Flow pipeline — getAllEntries() is a Room-backed Flow that auto-emits
+ * whenever the database changes. combine() with timeRange means DashboardState updates
+ * instantly after any insert/update/delete, with no manual refresh needed.
+ * Stats (avgDesire, pornCount, etc.) are computed in-memory from the entry list,
+ * eliminating 6 redundant DB round-trips from the old suspend-based loadStatistics().
  */
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
     
@@ -27,9 +30,44 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     
     private val _timeRange = MutableStateFlow(TimeRange.WEEK)
     val timeRange: StateFlow<TimeRange> = _timeRange.asStateFlow()
-    
-    private val _dashboardState = MutableStateFlow<DashboardState>(DashboardState.Loading)
-    val dashboardState: StateFlow<DashboardState> = _dashboardState.asStateFlow()
+
+    // H-1: All entries as reactive stream — used by HistoryScreen calendar (needs full history,
+    // not just the selected time range).
+    val allEntries: StateFlow<List<DailyEntry>> = repository.getAllEntries()
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    // D-2: Reactive dashboard state — auto-refreshes whenever DB changes OR time range changes.
+    // Stats are derived in-memory; no extra DB queries needed.
+    val dashboardState: StateFlow<DashboardState> = combine(
+        _timeRange,
+        repository.getAllEntries()
+    ) { range, allEntries ->
+        val (startDate, endDate) = getDateRange(range)
+        val rangeEntries = allEntries.filter {
+            !it.date.isBefore(startDate) && !it.date.isAfter(endDate)
+        }
+        val totalDaysInRange = ChronoUnit.DAYS.between(startDate, endDate).toInt() + 1
+        val completionRate = if (totalDaysInRange > 0)
+            rangeEntries.size.toFloat() / totalDaysInRange * 100f else 0f
+
+        // 型別明確宣告為 DashboardState 供 Kotlin 推斷 combine 泛型 R = DashboardState，
+        // 否則推斷為 DashboardState.Success 導致 .catch { emit(Error) } 型別不符。
+        val result: DashboardState = DashboardState.Success(
+            totalDays        = allEntries.size,
+            completionRate   = completionRate,
+            entries          = rangeEntries,
+            averageDesireLevel  = rangeEntries.mapNotNull { it.desireLevel?.toFloat() }
+                .average().let { if (it.isNaN()) 0f else it.toFloat() },
+            averageComfortRating = rangeEntries.mapNotNull { it.comfortRating?.toFloat() }
+                .average().let { if (it.isNaN()) 0f else it.toFloat() },
+            pornViewCount       = rangeEntries.count { it.viewedPorn },
+            masturbationCount   = rangeEntries.count { it.masturbated },
+            exerciseCount       = rangeEntries.count { it.exercised }
+        )
+        result
+    }
+    .catch { e -> emit(DashboardState.Error(e.message ?: "載入失敗")) }
+    .stateIn(viewModelScope, SharingStarted.Lazily, DashboardState.Loading)
     
     val currentStreak = streakRepository.currentStreak
         .stateIn(viewModelScope, SharingStarted.Lazily, 0)
@@ -37,54 +75,8 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     val longestStreak = streakRepository.longestStreak
         .stateIn(viewModelScope, SharingStarted.Lazily, 0)
     
-    init {
-        loadStatistics()
-    }
-    
     fun setTimeRange(range: TimeRange) {
         _timeRange.value = range
-        loadStatistics()
-    }
-    
-    private fun loadStatistics() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val (startDate, endDate) = getDateRange(_timeRange.value)
-                val totalDaysInRange = ChronoUnit.DAYS.between(startDate, endDate).toInt() + 1
-
-                // D-1: Run all 7 DB queries in parallel — total wait = slowest query, not sum of all
-                val entriesDeferred      = async { repository.getEntriesInRangeSync(startDate, endDate) }
-                val totalEntriesDeferred = async { repository.getTotalCount() }
-                val avgDesireDeferred    = async { repository.getAverageDesireLevel(startDate, endDate) }
-                val avgComfortDeferred   = async { repository.getAverageComfortRating(startDate, endDate) }
-                val pornDeferred         = async { repository.getPornViewCount(startDate, endDate) }
-                val mastDeferred         = async { repository.getMasturbationCount(startDate, endDate) }
-                val exerciseDeferred     = async { repository.getExerciseCount(startDate, endDate) }
-
-                val entries           = entriesDeferred.await()
-                val totalEntries      = totalEntriesDeferred.await()
-                val completionRate    = if (totalDaysInRange > 0) entries.size.toFloat() / totalDaysInRange * 100f else 0f
-                val avgDesire         = avgDesireDeferred.await() ?: 0f
-                val avgComfort        = avgComfortDeferred.await() ?: 0f
-                val pornCount         = pornDeferred.await()
-                val masturbationCount = mastDeferred.await()
-                val exerciseCount     = exerciseDeferred.await()
-
-                _dashboardState.value = DashboardState.Success(
-                    totalDays = totalEntries,
-                    completionRate = completionRate,
-                    entries = entries,
-                    averageDesireLevel = avgDesire,
-                    averageComfortRating = avgComfort,
-                    pornViewCount = pornCount,
-                    masturbationCount = masturbationCount,
-                    exerciseCount = exerciseCount,
-                    moodTrend = entries.mapNotNull { getMoodScore(it.mood) }
-                )
-            } catch (e: Exception) {
-                _dashboardState.value = DashboardState.Error(e.message ?: "載入失敗")
-            }
-        }
     }
     
     private fun getDateRange(range: TimeRange): Pair<LocalDate, LocalDate> {
@@ -96,22 +88,6 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             TimeRange.ALL -> end.minusYears(10) // Arbitrary old date
         }
         return start to end
-    }
-    
-    /**
-     * Convert mood string to numeric score for charting
-     */
-    private fun getMoodScore(mood: String?): Float? {
-        if (mood == null) return null
-        return when (mood) {
-            "開心" -> 5f
-            "平靜" -> 4f
-            "普通" -> 3f
-            "沮喪" -> 2f
-            "焦慮" -> 1.5f
-            "挫折" -> 1f
-            else -> null
-        }
     }
 }
 
@@ -129,8 +105,7 @@ sealed class DashboardState {
         val averageComfortRating: Float,
         val pornViewCount: Int,
         val masturbationCount: Int,
-        val exerciseCount: Int,
-        val moodTrend: List<Float>
+        val exerciseCount: Int
     ) : DashboardState()
     data class Error(val message: String) : DashboardState()
 }

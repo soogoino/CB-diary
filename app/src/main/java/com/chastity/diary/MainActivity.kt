@@ -133,7 +133,14 @@ class MainActivity : FragmentActivity() {
                     // startupData is null only while SplashScreen is showing — render nothing
                     val data = startupData ?: return@Surface
                     when {
-                        !data.onboardingCompleted -> OnboardingScreen()
+                        !data.onboardingCompleted -> OnboardingScreen(
+                            // B-1: Update in-memory flag so UI immediately transitions to MainScreen
+                            // without requiring a restart. _startupData was loaded once at splash;
+                            // we patch it here instead of re-reading from DataStore.
+                            onComplete = {
+                                _startupData.value = data.copy(onboardingCompleted = true)
+                            }
+                        )
                         locked -> {
                             LockScreen(
                                 onUnlockWithBiometric = {

@@ -66,14 +66,28 @@ fun DashboardScreen(
                     )
                 }
                 is DashboardState.Success -> {
-                    // P2: Cache derived list operations — avoid recomputing mapNotNull on every recomposition
-                    val desireTrend = remember(state.entries) {
-                        state.entries.takeLast(14).mapNotNull { it.desireLevel?.toFloat() }
+                    // P2: Cache derived pairs (date, value) — X-axis labels stay coupled to data points
+                    val dateFmt = remember { java.time.format.DateTimeFormatter.ofPattern("M/d") }
+                    val desirePairs = remember(state.entries) {
+                        state.entries.takeLast(14)
+                            .mapNotNull { e -> e.desireLevel?.let { e.date to it.toFloat() } }
                     }
-                    val comfortTrend = remember(state.entries) {
-                        state.entries.takeLast(14).mapNotNull { it.comfortRating?.toFloat() }
+                    val comfortPairs = remember(state.entries) {
+                        state.entries.takeLast(14)
+                            .mapNotNull { e -> e.comfortRating?.let { e.date to it.toFloat() } }
                     }
-                    val moodTrend14 = remember(state.moodTrend) { state.moodTrend.takeLast(14) }
+                    val moodPairs = remember(state.entries) {
+                        state.entries.takeLast(14).mapNotNull { e ->
+                            val score = when (e.mood) {
+                                "開心" -> 5f; "平靜" -> 4f; "普通" -> 3f
+                                "沮喪" -> 2f; "焦慮" -> 1.5f; "挫折" -> 1f; else -> null
+                            }
+                            score?.let { e.date to it }
+                        }
+                    }
+                    val desireLabels  = remember(desirePairs)  { desirePairs.map  { it.first.format(dateFmt) } }
+                    val comfortLabels = remember(comfortPairs) { comfortPairs.map { it.first.format(dateFmt) } }
+                    val moodLabels    = remember(moodPairs)    { moodPairs.map    { it.first.format(dateFmt) } }
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -156,24 +170,27 @@ fun DashboardScreen(
                         )
                         
                         // Mood Trend Chart
-                        if (moodTrend14.isNotEmpty()) {
+                        if (moodPairs.isNotEmpty()) {
                             TrendLineChart(
                                 title = "心情趨勢 (1=挫折 → 5=開心)",
-                                data = moodTrend14  // P2: use cached
+                                data = moodPairs.map { it.second },
+                                labels = moodLabels
                             )
                         }
                         
                         // Desire Level Trend
                         TrendLineChart(
                             title = "性慾強度趨勢 (1-10)",
-                            data = desireTrend,  // P2: use cached
+                            data = desirePairs.map { it.second },
+                            labels = desireLabels,
                             intYAxis = true
                         )
                         
                         // Comfort Rating Trend
                         TrendLineChart(
                             title = "舒適度趨勢 (0-10)",
-                            data = comfortTrend,  // P2: use cached
+                            data = comfortPairs.map { it.second },
+                            labels = comfortLabels,
                             intYAxis = true
                         )
                         

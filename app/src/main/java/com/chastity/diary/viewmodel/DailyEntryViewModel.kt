@@ -148,7 +148,12 @@ class DailyEntryViewModel(application: Application) : AndroidViewModel(applicati
             is EntryFormState.Loaded -> state.entry
             is EntryFormState.Empty -> DailyEntry(date = _selectedDate.value)
         }
-        _entryState.value = EntryFormState.Loaded(updater(currentEntry))
+        val newEntry = updater(currentEntry)
+        // PERF-FIX: 若 entry 語義相同（data class equals），直接 return，
+        // 避免發射相同內容的 StateFlow 值造成整個 DailyEntryScreen recompose。
+        // 常見場景：Slider 拖到同格數值、點擊已選中的選項。
+        if (newEntry == currentEntry) return
+        _entryState.value = EntryFormState.Loaded(newEntry)
         _hasUnsavedChanges.value = true
     }
 

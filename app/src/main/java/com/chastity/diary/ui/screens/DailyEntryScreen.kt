@@ -16,7 +16,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -326,17 +325,14 @@ fun DailyEntryScreen(
                 )
             }
 
-            // Crossfade between loading spinner and the actual pager — no jarring content swap
-            Crossfade(
-                targetState = isLoading,
-                animationSpec = tween(durationMillis = 180),
-                label = "loadingCrossfade"
-            ) { loading ->
-            if (loading) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            } else {
+            // PERF-FIX: 使用 Box overlay 取代 Crossfade 包裹 HorizontalPager。
+            // 原本 Crossfade(isLoading) 每次 isLoading 切換（每次 save/load）都會
+            // 將整個 HorizontalPager 從 Composition 移除後重建，導致：
+            //   1. 兩個 Tab 的所有 Composable 重新 inflate（視覺卡頓）
+            //   2. 重新測量/繪製所有 Card、Chip、Slider 造成多個 frame 掉幀
+            // 改用 Box + AnimatedVisibility overlay：Pager 永遠留在 Composition，
+            // 儲存時只在上方疊加半透明 loading 遮罩，切回後狀態完全保留。
+            Box(Modifier.fillMaxSize()) {
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier.fillMaxSize(),
@@ -371,10 +367,23 @@ fun DailyEntryScreen(
                         )
                     }
                 }
-            }
-        }   // closes Crossfade { loading -> }
-    }       // closes Column
-}           // closes Scaffold { padding -> }
+
+                // Loading overlay — 疊加在 Pager 上方，不破壞 Pager 的 Composition 樹。
+                // 不用 AnimatedVisibility 是因為 BoxScope 與 ColumnScope 的 receiver 衝突；
+                // 簡單 if 區塊即足夠，主要效益來自「Pager 不被 Crossfade 管理」。
+                if (isLoading) {
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.65f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }   // closes Box
+        }       // closes Column
+}               // closes Scaffold { padding -> }
 
     if (showDatePicker) {
         DatePickerDialog(
@@ -529,14 +538,15 @@ private fun CoreQuestionsCard(
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     val wearing = entry.deviceCheckPassed
                     if (wearing) {
-                        Button(onClick = { onUpdate(entry.copy(deviceCheckPassed = true)) },
+                        // PERF-FIX: 已選中的按鈕加 guard，避免點擊相同值觸發無效 updateEntry → recompose
+                        Button(onClick = { /* already selected — no-op */ },
                             modifier = Modifier.weight(1f)) { Text("✓ 有佩戴") }
                         OutlinedButton(onClick = { onUpdate(entry.copy(deviceCheckPassed = false)) },
                             modifier = Modifier.weight(1f)) { Text("✗ 沒有") }
                     } else {
                         OutlinedButton(onClick = { onUpdate(entry.copy(deviceCheckPassed = true)) },
                             modifier = Modifier.weight(1f)) { Text("✓ 有佩戴") }
-                        Button(onClick = { onUpdate(entry.copy(deviceCheckPassed = false)) },
+                        Button(onClick = { /* already selected — no-op */ },
                             modifier = Modifier.weight(1f),
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) {
                             Text("✗ 沒有")

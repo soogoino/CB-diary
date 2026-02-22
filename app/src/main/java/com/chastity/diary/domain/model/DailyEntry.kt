@@ -1,12 +1,18 @@
 package com.chastity.diary.domain.model
 
+import androidx.compose.runtime.Stable
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
 /**
- * Domain model for daily entry
+ * Domain model for daily entry.
+ *
+ * @Stable: 告知 Compose 編譯器此 data class 的 equals() 結果可信，
+ * 讓 DailyEntryTabContent 等 Composable 在 entry 語義相等時能跳過 recompose。
+ * 契約承諾：本 codebase 始終透過 .copy() 建立新實例，從不就地修改 List/Map 欄位。
  */
+@Stable
 data class DailyEntry(
     val id: Long = 0,
     val date: LocalDate,

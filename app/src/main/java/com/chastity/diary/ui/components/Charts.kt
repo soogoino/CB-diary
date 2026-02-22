@@ -6,6 +6,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,26 +45,33 @@ fun TrendLineChart(
             )
             
             if (data.isNotEmpty()) {
-                val entries = remember(data) {
-                    data.mapIndexed { index, value ->
-                        entryOf(index.toFloat(), value)
+                // C-3: Fixed producer reference — Vico's Chart does not react to a replaced
+                // ChartEntryModelProducer instance. Keep the same reference and update
+                // content via setEntries() inside LaunchedEffect instead.
+                val producer = remember { ChartEntryModelProducer() }
+                LaunchedEffect(data) {
+                    producer.setEntries(
+                        data.mapIndexed { index, value -> entryOf(index.toFloat(), value) }
+                    )
+                }
+
+                // X-axis: show date labels when supplied, fall back to numeric index
+                val bottomFormatter = remember(labels) {
+                    AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, _ ->
+                        labels.getOrNull(value.toInt()) ?: value.toInt().toString()
                     }
                 }
-                
-                val chartEntryModelProducer = remember(entries) {
-                    ChartEntryModelProducer(entries)
-                }
-                
+
                 ProvideChartStyle {
                     val intFormatter = AxisValueFormatter<AxisPosition.Vertical.Start> { value, _ ->
                         value.toInt().toString()
                     }
                     Chart(
                         chart = lineChart(),
-                        chartModelProducer = chartEntryModelProducer,
+                        chartModelProducer = producer,
                         startAxis = if (intYAxis) rememberStartAxis(valueFormatter = intFormatter)
                                     else rememberStartAxis(),
-                        bottomAxis = rememberBottomAxis(),
+                        bottomAxis = rememberBottomAxis(valueFormatter = bottomFormatter),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)

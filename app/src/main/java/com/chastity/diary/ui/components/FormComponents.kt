@@ -43,6 +43,14 @@ fun QuestionSection(
 
 /**
  * Labeled slider
+ *
+ * PERF-FIX: 使用本地緩衝 state 分離「拖動中顯示值」與「提交至 ViewModel 的值」。
+ * 原本每次拖動都呼叫 onValueChange → updateEntry → _entryState 改變 →
+ * 整個 DailyEntryTabContent（含另一個 Tab）觸發 Recompose，一秒可能發生數十次。
+ * 改為：
+ *   • 拖動中：僅更新 localValue（只影響此 Composable，成本極低）
+ *   • 手指放開：透過 onValueChangeFinished 才提交一次到 ViewModel
+ * remember(value) 確保從外部載入新日記時 localValue 會同步重置。
  */
 @Composable
 fun SliderWithLabel(
@@ -54,6 +62,8 @@ fun SliderWithLabel(
     valueFormatter: (Float) -> String = { it.toInt().toString() },
     modifier: Modifier = Modifier
 ) {
+    var localValue by remember(value) { mutableStateOf(value) }
+
     Column(modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -64,14 +74,15 @@ fun SliderWithLabel(
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = valueFormatter(value),
+                text = valueFormatter(localValue),   // 顯示即時本地值，回饋無延遲
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary
             )
         }
         Slider(
-            value = value,
-            onValueChange = onValueChange,
+            value = localValue,
+            onValueChange = { localValue = it },                    // 僅更新本地 UI，不觸發外部狀態
+            onValueChangeFinished = { onValueChange(localValue) },  // 放開後才提交一次
             valueRange = valueRange,
             steps = steps
         )
@@ -130,8 +141,10 @@ fun MoodSelector(
     onMoodSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // PERF-FIX: 用 remember(moods) 快取 chunked 結果，避免每次 recompose 都建立新 List
+    val rows = remember(moods) { moods.chunked(4) }
     Column(modifier = modifier) {
-        moods.chunked(4).forEach { rowMoods ->
+        rows.forEach { rowMoods ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -172,11 +185,13 @@ fun MultiSelectChipGroup(
     onSelectionChange: (List<String>) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // PERF-FIX: 快取 chunked 結果，避免每次 recompose 都建立新 List 物件
+    val rows = remember(options) { options.chunked(3) }
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        options.chunked(3).forEach { rowOptions ->
+        rows.forEach { rowOptions ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)

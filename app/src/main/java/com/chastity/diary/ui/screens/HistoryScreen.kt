@@ -36,6 +36,9 @@ fun HistoryScreen(
     outerPadding: PaddingValues = PaddingValues()
 ) {
     val dashboardState by viewModel.dashboardState.collectAsState()
+    // H-1: Use allEntries for the calendar so every recorded date is visible regardless
+    // of the currently selected time range (which defaults to WEEK on DashboardScreen).
+    val allEntries by viewModel.allEntries.collectAsState()
 
     Scaffold(
         topBar = {
@@ -62,7 +65,7 @@ fun HistoryScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         MoodCalendarSection(
-                            entries = state.entries,
+                            entries = allEntries,
                             onDateClick = { date ->
                                 dailyEntryViewModel.selectDate(date)
                                 onNavigateToDailyEntry()

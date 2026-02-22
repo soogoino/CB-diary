@@ -172,7 +172,7 @@ private fun NewUserOnboarding(
                     1 -> ProfilePage(viewModel)
                     2 -> DevicePage(viewModel)
                     3 -> SecurityPage(viewModel)
-                    4 -> ReminderPage(viewModel, onComplete)
+                    4 -> ReminderPage(viewModel)
                 }
             }
 
@@ -196,8 +196,17 @@ private fun NewUserOnboarding(
                         onClick = { scope.launch { pagerState.animateScrollToPage(currentPage + 1) } },
                         modifier = Modifier.weight(1f).height(52.dp)
                     ) { Text("下一步") }
+                } else {
+                    // Last page: Complete button unified in nav bar
+                    Button(
+                        onClick = onComplete,
+                        modifier = Modifier.weight(1f).height(52.dp)
+                    ) {
+                        Icon(Icons.Default.CheckCircle, null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("完成設定！", style = MaterialTheme.typography.titleSmall)
+                    }
                 }
-                // Page 4 has its own "完成" button inside ReminderPage
             }
         }
     }
@@ -524,7 +533,7 @@ private fun SecurityRow(
 
 // ─── Page 4: Reminder ─────────────────────────────────────────────────────────
 @Composable
-private fun ReminderPage(viewModel: OnboardingViewModel, onComplete: () -> Unit) {
+private fun ReminderPage(viewModel: OnboardingViewModel) {
     val reminderEnabled by viewModel.reminderEnabled.collectAsState()
     val reminderHour by viewModel.reminderHour.collectAsState()
     val reminderMinute by viewModel.reminderMinute.collectAsState()
@@ -589,17 +598,6 @@ private fun ReminderPage(viewModel: OnboardingViewModel, onComplete: () -> Unit)
             }
         }
 
-        Spacer(Modifier.height(24.dp))
-
-        // Complete button
-        Button(
-            onClick = onComplete,
-            modifier = Modifier.fillMaxWidth().height(56.dp)
-        ) {
-            Icon(Icons.Default.CheckCircle, null)
-            Spacer(Modifier.width(8.dp))
-            Text("完成設定，開始記錄！", style = MaterialTheme.typography.titleMedium)
-        }
     }
 
     if (showTimePicker) {
