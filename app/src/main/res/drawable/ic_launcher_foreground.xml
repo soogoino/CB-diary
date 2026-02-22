@@ -1,32 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path
-        android:fillColor="#3DDC84"
-        android:pathData="M0,0h108v108h-108z" />
-    <path
-        android:fillColor="#00000000"
-        android:pathData="M9,0L9,108"
-        android:strokeWidth="0.8"
-        android:strokeColor="#33FFFFFF" />
+    <!-- 簡約鎖頭圖示（參考 CB-diary-B 設計） -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M54,30
-                         C 44,30 36,38 36,48
-                         C 36,58 44,66 54,66
-                         C 64,66 72,58 72,48
-                         C 72,38 64,30 54,30
-                         M 54,36
-                         C 60.6,36 66,41.4 66,48
-                         C 66,54.6 60.6,60 54,60
-                         C 47.4,60 42,54.6 42,48
-                         C 42,41.4 47.4,36 54,36
-                         M 30,54
-                         L 24,54
-                         L 24,78
-                         L 84,78
-                         L 84,54
-                         L 78,54" />
+        android:pathData="M54,28 C46.3,28 40,34.3 40,42 L40,48 L36,48 C33.8,48 32,49.8 32,52 L32,76 C32,78.2 33.8,80 36,80 L72,80 C74.2,80 76,78.2 76,76 L76,52 C76,49.8 74.2,48 72,48 L68,48 L68,42 C68,34.3 61.7,28 54,28 Z M54,36 C57.3,36 60,38.7 60,42 L60,48 L48,48 L48,42 C48,38.7 50.7,36 54,36 Z M54,58 C56.2,58 58,59.8 58,62 C58,63.6 57.1,65 55.8,65.7 L57,72 L51,72 L52.2,65.7 C50.9,65 50,63.6 50,62 C50,59.8 51.8,58 54,58 Z"/>
 </vector>

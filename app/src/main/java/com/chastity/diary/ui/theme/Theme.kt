@@ -15,22 +15,46 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryDark,
-    secondary = SecondaryDark,
-    tertiary = TertiaryDark
+private val LightColorScheme = lightColorScheme(
+    primary              = PrimaryLight,
+    onPrimary            = OnPrimaryLight,
+    primaryContainer     = PrimaryContainerLight,
+    onPrimaryContainer   = OnPrimaryContainerLight,
+    secondary            = SecondaryLight,
+    onSecondary          = OnSecondaryLight,
+    secondaryContainer   = SecondaryContainerLight,
+    onSecondaryContainer = OnSecondaryContainerLight,
+    tertiary             = TertiaryLight,
+    onTertiary           = OnTertiaryLight,
+    tertiaryContainer    = TertiaryContainerLight,
+    onTertiaryContainer  = OnTertiaryContainerLight,
+    background           = BackgroundLight,
+    surface              = SurfaceLight,
+    error                = ErrorLight,
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = PrimaryLight,
-    secondary = SecondaryLight,
-    tertiary = TertiaryLight
+private val DarkColorScheme = darkColorScheme(
+    primary              = PrimaryDark,
+    onPrimary            = OnPrimaryDark,
+    primaryContainer     = PrimaryContainerDark,
+    onPrimaryContainer   = OnPrimaryContainerDark,
+    secondary            = SecondaryDark,
+    onSecondary          = OnSecondaryDark,
+    secondaryContainer   = SecondaryContainerDark,
+    onSecondaryContainer = OnSecondaryContainerDark,
+    tertiary             = TertiaryDark,
+    onTertiary           = OnTertiaryDark,
+    tertiaryContainer    = TertiaryContainerDark,
+    onTertiaryContainer  = OnTertiaryContainerDark,
+    background           = BackgroundDark,
+    surface              = SurfaceDark,
+    error                = ErrorDark,
 )
 
 @Composable
 fun DiaryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false, // 關閉動態色彩，確保紫色主題始終生效
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

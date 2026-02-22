@@ -166,6 +166,7 @@ fun DailyEntryScreen(
     // C-1: Guard dialog when navigating away with unsaved changes
     var showUnsavedChangesDialog by remember { mutableStateOf(false) }
     var showNarrativeSheet by rememberSaveable { mutableStateOf(false) }
+    var showRecordInfoDialog by remember { mutableStateOf(false) }
     // B5: Capture generated narrative so BottomSheet displays the same text that was saved
     var lastNarrativeText by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -257,6 +258,9 @@ fun DailyEntryScreen(
                         if (loaded.id != 0L) {
                             IconButton(onClick = { showDeleteDialog = true }) {
                                 Icon(Icons.Default.Delete, "刪除", tint = MaterialTheme.colorScheme.error)
+                            }
+                            IconButton(onClick = { showRecordInfoDialog = true }) {
+                                Icon(Icons.Default.Info, "紀錄訊息")
                             }
                         }
                     }
@@ -463,6 +467,52 @@ fun DailyEntryScreen(
                     Text(" 好的 👍 ")
                 }
             }
+        }
+    }
+
+    // 紀錄訊息 Dialog
+    if (showRecordInfoDialog) {
+        val loadedEntry = (entryState as? EntryFormState.Loaded)?.entry
+        if (loadedEntry != null && loadedEntry.id != 0L) {
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { showRecordInfoDialog = false },
+                title = { Text("紀錄訊息") },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.Add, null,
+                                Modifier.size(16.dp),
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+                            )
+                            Text(
+                                "建立：${loadedEntry.createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.Edit, null,
+                                Modifier.size(16.dp),
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+                            )
+                            Text(
+                                "更新：${loadedEntry.updatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = { showRecordInfoDialog = false }) { Text("關閉") }
+                }
+            )
         }
     }
 }
@@ -1158,6 +1208,8 @@ private fun DailyEntryTabContent(
                 }
             }
 
+            ExtendedQuestionsCard(entry = entry, onUpdate = onUpdate)
+
         } else {
             // ── 🌙 Evening cards ───────────────────────────────────────────────
             DayStatusCard(entry, selectedDate)
@@ -1167,22 +1219,8 @@ private fun DailyEntryTabContent(
                 entry = entry,
                 onUpdate = onUpdate
             )
-            ExtendedQuestionsCard(entry = entry, onUpdate = onUpdate)
             EveningMasturbationCard(entry = entry, onUpdate = onUpdate)
-            if (isExisting) {
-                Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
-                    Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text("記錄信息", style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("建立：${entry.createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("更新：${entry.updatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                }
-            }
+            ExtendedQuestionsCard(entry = entry, onUpdate = onUpdate)
         }
 
         // ── Shared save button ─────────────────────────────────────────────────
@@ -1323,7 +1361,7 @@ private fun generateDailyNarrative(entry: DailyEntry): String {
             })
         }
     } else {
-        parts.add("今天沒有佩戴裝置。")
+        parts.add("今天沒有佩戴貞操鎖。")
     }
 
     // 運動
