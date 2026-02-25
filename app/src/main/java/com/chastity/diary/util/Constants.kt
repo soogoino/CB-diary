@@ -1,75 +1,76 @@
 package com.chastity.diary.util
 
 object Constants {
-    // Mood options
+    // Mood options (English — default locale)
     val MOODS = listOf(
-        "😊 開心", "😌 平靜", "😐 普通", "😔 沮喪",
-        "😰 焦慮", "😤 挫折", "🥵 興奮", "😴 無聊", 
-        "😳 羞恥", "😎 自豪", "🤩 期待", "😬 緊張", 
-        "🧘 放鬆", "😕 困惑", "💪 充實", "😶 空虛"
+        "😊 Happy", "😌 Calm", "😐 Neutral", "😔 Down",
+        "😰 Anxious", "😤 Frustrated", "🥵 Excited", "😴 Bored",
+        "😳 Ashamed", "😎 Proud", "🤩 Eager", "😬 Nervous",
+        "🧘 Relaxed", "😕 Confused", "💪 Fulfilled", "😶 Empty"
     )
-    
+
     // Exercise types
     val EXERCISE_TYPES = listOf(
-        "跑步", "健身", "游泳", "瑜伽", "騎車", 
-        "球類運動", "散步", "重訓", "有氧運動", "其他"
+        "Running", "Gym", "Swimming", "Yoga", "Cycling",
+        "Ball sports", "Walking", "Weight training", "Cardio", "Other"
     )
-    
+
     // Locations for exposed lock
     val EXPOSED_LOCATIONS = listOf(
-        "家中", "健身房", "游泳池", "公共浴室", "戶外", 
-        "更衣室", "醫院", "朋友家", "工作場所", "其他公共場所"
+        "Home", "Gym", "Swimming pool", "Public bath", "Outdoors",
+        "Locker room", "Hospital", "Friend's place", "Workplace", "Other public place"
     )
-    
+
     // Discomfort areas
     val DISCOMFORT_AREAS = listOf(
-        "陰莖", "睪丸", "會陰", "大腿根部", "恥骨", "尿道", "其他"
+        "Penis", "Testicles", "Perineum", "Inner thigh", "Pubic area", "Urethra", "Other"
     )
-    
+
     // Leakage amounts
-    val LEAKAGE_AMOUNTS = listOf("少量", "中等", "大量")
-    
+    val LEAKAGE_AMOUNTS = listOf("Small", "Moderate", "Large")
+
     // Edging methods
     val EDGING_METHODS = listOf(
-        "視覺刺激", "觸摸", "聲音", "想像", "閱讀", "影片", "其他"
+        "Visual", "Touch", "Audio", "Imagination", "Reading", "Video", "Other"
     )
-    
+
     // Keyholder interaction types
     val INTERACTION_TYPES = listOf(
-        "訊息聊天", "語音通話", "視訊", "實體見面", 
-        "任務指派", "獎勵", "懲罰", "檢查", "其他"
+        "Text chat", "Voice call", "Video call", "In person",
+        "Task assigned", "Reward", "Punishment", "Check-in", "Other"
     )
-    
-    // Cleaning types
-    val CLEANING_TYPES = listOf("未清潔", "簡單沖洗", "深度清潔", "完全取下清潔")
-    
+
+    // Cleaning types (index 0 = "no cleaning")
+    val CLEANING_TYPES = listOf("No cleaning", "Quick rinse", "Deep clean", "Fully removed & cleaned")
+
     // Removal reasons
     val REMOVAL_REASONS = listOf(
-        "清潔", "醫療", "工作需求", "緊急狀況", 
-        "Keyholder允許", "不適", "其他"
+        "Cleaning", "Medical", "Work requirement", "Emergency",
+        "Keyholder approved", "Discomfort", "Other"
     )
-    
+
     // Social activities
     val SOCIAL_ACTIVITIES = listOf(
-        "外出用餐", "健身房", "游泳", "親友聚會", 
-        "工作會議", "約會", "購物", "旅行", "其他"
+        "Dining out", "Gym", "Swimming", "Family / friends gathering",
+        "Work meeting", "Date", "Shopping", "Travel", "Other"
     )
-    
+
     // Emotions (extended)
     val EMOTIONS = listOf(
-        "興奮", "焦慮", "沮喪", "平靜", "挫折", 
-        "滿足", "羞恥", "自豪", "無聊", "期待",
-        "緊張", "放鬆", "困惑", "充實", "空虛"
+        "Excited", "Anxious", "Down", "Calm", "Frustrated",
+        "Satisfied", "Ashamed", "Proud", "Bored", "Eager",
+        "Nervous", "Relaxed", "Confused", "Fulfilled", "Empty"
     )
-    
+
     // Time duration quick options (minutes)
     val DURATION_OPTIONS = listOf(
         5, 10, 15, 30, 45, 60, 90, 120, 180, 240
     )
-    
-    // Night erection quick options (maps to nightErections: Int?)
-    val NIGHT_ERECTION_OPTIONS = listOf("無", "偶爾", "頻繁")
-    val NIGHT_ERECTION_VALUES = mapOf("無" to 0, "偶爾" to 5, "頻繁" to 10)
+
+    // Night erection — index-based: 0=None, 1=Occasional, 2=Frequent
+    // Displayed labels come from stringArrayResource(R.array.night_erection_options_array)
+    val NIGHT_ERECTION_OPTIONS_KEYS = listOf("None", "Occasional", "Frequent")
+    val NIGHT_ERECTION_SCORE_FOR_INDEX = listOf(0, 5, 10)
 
     // Time duration quick-pick chips shown in the UI (6 items, 2 rows of 3)
     val DURATION_QUICK_OPTIONS = listOf(5, 10, 15, 30, 60, 120)

@@ -65,46 +65,46 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
+import androidx.annotation.StringRes
 
 // ─── Rotating question pool (R1–R33, 32 total; EAV-backed) ──────────────────
 private enum class RotatingQuestion(
     val key: String,
-    val title: String,
-    val feedback: String,
+    @StringRes val titleRes: Int,
     val isMaleOnly: Boolean = false
 ) {
-    R1 ("R1",  "今日是否有分泌物洩漏？",                           "不論有沒有分泌物，記得別害羞地忽略清潔，身體會感謝你的。"),
-    R2 ("R2",  "今日是否有主動頂鎖/摩擦，尋求快感？",                        "不管有沒有試探那份衝動，誠實面對自己就已經很勇敢了。", isMaleOnly = true),
-    R3 ("R3",  "今日是否進行邊緣訓練？",                           "無論你是逗留邊緣還是退縮，能覺察這種誘惑本身就值得一點羞澀的笑。"),
-    R4 ("R4",  "今日是否與Keyholder互動？",                        "不論有沒有說出來，關係的細節常常比結果更值得回味。"),
-    R6 ("R6",  "今日是否帶著鎖進入公眾場合？",                   "在人前帶著這個小秘密，不管敢不敢暴露，這種心跳都是你的獎勵。"),
-    R7 ("R7",  "今日是否曾短暫解除鎖？",                         "不管有沒有偷偷鬆開一秒，記得對自己誠實，並負起責任照顧好自己。"),
-    R8 ("R8",  "今日是否有意展示或洩露鎖蹤跡？",                 "故意或不小心露出一點點，都會讓你心裡暗自發笑——接受這份小調皮吧。"),
-    R9 ("R9",  "今日是否接觸成人內容？",                           "有沒有看，那種慾望的拉扯本身就值得你輕輕自嘲一下。"),
-    R10("R10", "今日是否解鎖或進行自慰？",                         "不論今天怎麼做，承認自己的感受比隱瞞更誠實，也更有療癒力。"),
-    R11("R11", "今日是否進行乳頭開發/玩弄？",                      "無論有沒有逗弄，發現新的敏感點總讓人又尷尬又好奇。"),
-    R12("R12", "今日是否進行後庭開發/探索？",                      "不管有沒有探索，這類私密體驗的存在本身就會讓人面紅心跳。"),
-    R13("R13", "今天你有沒有感受到鎖帶來的不適或調整需求？",     "有沒有不舒服都要記下來，照顧好身體比硬撐更值得一點羞澀。"),
-    R14("R14", "今天佩戴鎖是否讓你感覺到內心的平靜或成就？",    "不論感覺如何，察覺到微妙的安心或不適都是成長的一部分。"),
-    R15("R15", "今天有沒有想起Keyholder，並感受到連結的溫暖？",   "想或不想，這些小念頭讓你忍不住臉紅，證明了情感的存在。"),
-    R16("R16", "今天鎖是否已融入你的日常routine中，感覺自然？", "無論像不像日常，發現自己適應或反彈都是值得悄悄慶祝的事。"),
-    R17("R17", "今天有沒有將慾望轉向其他活動，如運動或創作？",    "試圖轉移注意力成功與否，都是在跟自己較勁的一種小勝利。"),
-    R18("R18", "今天在人群中，你有沒有特別注意到自己的隱密狀態？","在人群裡的那點心跳感，不管你有沒有留意，都是你的秘密奢侈品。"),
-    R19("R19", "今天有沒有進行放鬆活動來緩解可能的壓力？",        "不論有沒有刻意放鬆，對自己好一點的念頭本身就值得鼓勵。"),
-    R20("R20", "今天醒來後，有沒有回想起與鎖相關的夢境？",      "做或沒做夢都無妨，夢裡的那些畫面只是偷偷告訴你內心的小秘密。"),
-    R21("R21", "今天其他感官（如觸覺或聽覺）是否變得更敏銳？",    "感覺變細膩或平常無感，都是身體在跟你說話，別害羞聽它說完。"),
-    R22("R22", "今天有沒有與Keyholder分享你的感受或想法？",       "說或不說都會讓人臉紅，能意識到想分享就是進步。"),
-    R23("R23", "今天在不同環境中，鎖帶來的感受如何？",          "站著、坐著、走路時的那些小提醒，不管有沒有注意到，都是真實的回響。"),
-    R24("R24", "今天有沒有遇到讓你猶豫或掙扎的時刻？",           "猶豫過或沒有，能回想起那瞬間就證明你還有人性（還有點可愛的弱點）。"),
-    R25("R25", "今天佩戴是否帶來任何意外的正面體驗？",           "發現一點小樂子或完全沒有，承認它們會讓你覺得又羞又甜。"),
-    R26("R26", "今天有沒有特別注意清潔或保濕等保養？",           "不管做了沒，對細節的在意其實是在偷偷寵自己，別不好意思接受。"),
-    R27("R27", "今天有沒有透過寫作或藝術表達你的體驗？",         "寫或畫出來會讓自己臉紅，但這種表達很療癒，值得一點羞澀的驕傲。"),
-    R28("R28", "今天時間感覺過得快還是慢，受鎖影響？",         "時間感的拉扯不管你注意沒注意，都在提醒你這段經驗有趣又奇怪。"),
-    R29("R29", "今天有沒有在匿名社群分享或閱讀相關經驗？",       "偷看或分享都會讓人心裡有點小偷笑，這種連結感其實挺暖的。"),
-    R30("R30", "今天有沒有在想萬一鎖取不下來該怎麼辦？",         "想過或沒想，準備備案本身就是成熟且有責任感的一步，給自己一個點讚。"),
-    R31("R31", "今天情緒是否有起伏，與鎖相關？",               "情緒忽上忽下不需要羞愧，能覺察就是在進步，帶點自嘲也沒關係。"),
-    R32("R32", "今天有沒有想像未來繼續佩戴的畫面？",             "想像或不想像都好，能看到未來的自己代表你在慢慢接受這件事。"),
-    R33("R33", "今日是否有剔除陰毛？",                            "不論有沒有修整，這種私密的小事值得溫柔對待和好好衛生照護。"),
+    R1 ("R1",  R.string.rq_r1_title),
+    R2 ("R2",  R.string.rq_r2_title, isMaleOnly = true),
+    R3 ("R3",  R.string.rq_r3_title),
+    R4 ("R4",  R.string.rq_r4_title),
+    R6 ("R6",  R.string.rq_r6_title),
+    R7 ("R7",  R.string.rq_r7_title),
+    R8 ("R8",  R.string.rq_r8_title),
+    R9 ("R9",  R.string.rq_r9_title),
+    R10("R10", R.string.rq_r10_title),
+    R11("R11", R.string.rq_r11_title),
+    R12("R12", R.string.rq_r12_title),
+    R13("R13", R.string.rq_r13_title),
+    R14("R14", R.string.rq_r14_title),
+    R15("R15", R.string.rq_r15_title),
+    R16("R16", R.string.rq_r16_title),
+    R17("R17", R.string.rq_r17_title),
+    R18("R18", R.string.rq_r18_title),
+    R19("R19", R.string.rq_r19_title),
+    R20("R20", R.string.rq_r20_title),
+    R21("R21", R.string.rq_r21_title),
+    R22("R22", R.string.rq_r22_title),
+    R23("R23", R.string.rq_r23_title),
+    R24("R24", R.string.rq_r24_title),
+    R25("R25", R.string.rq_r25_title),
+    R26("R26", R.string.rq_r26_title),
+    R27("R27", R.string.rq_r27_title),
+    R28("R28", R.string.rq_r28_title),
+    R29("R29", R.string.rq_r29_title),
+    R30("R30", R.string.rq_r30_title),
+    R31("R31", R.string.rq_r31_title),
+    R32("R32", R.string.rq_r32_title),
+    R33("R33", R.string.rq_r33_title),
 }
 
 private fun getRotatingQuestionsForDate(date: LocalDate, isMale: Boolean): List<RotatingQuestion> {
@@ -208,7 +208,7 @@ fun DailyEntryScreen(
                 is EntryFormState.Loaded -> s.entry
                 is EntryFormState.Empty -> DailyEntry(date = selectedDate)
             }
-            val narrativeText = generateDailyNarrative(narrativeEntry)
+            val narrativeText = generateDailyNarrative(context, narrativeEntry)
             lastNarrativeText = narrativeText
             // B3: Clear flag immediately
             viewModel.clearSaveSuccess()
@@ -242,7 +242,7 @@ fun DailyEntryScreen(
                         label = "dateTitle"
                     ) { date ->
                         Column {
-                            Text(date.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")))
+                            Text(date.format(DateTimeFormatter.ofPattern(stringResource(R.string.date_pattern))))
                             if (entryState is EntryFormState.Loaded) {
                                 Text(stringResource(R.string.edit_mode), style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.primary)
@@ -255,10 +255,10 @@ fun DailyEntryScreen(
                         val loaded = (entryState as EntryFormState.Loaded).entry
                         if (loaded.id != 0L) {
                             IconButton(onClick = { showDeleteDialog = true }) {
-                                Icon(Icons.Default.Delete, "刪除", tint = MaterialTheme.colorScheme.error)
+                                Icon(Icons.Default.Delete, stringResource(R.string.topbar_delete_cd), tint = MaterialTheme.colorScheme.error)
                             }
                             IconButton(onClick = { showRecordInfoDialog = true }) {
-                                Icon(Icons.Default.Info, "紀錄訊息")
+                                Icon(Icons.Default.Info, stringResource(R.string.entry_record_info_title))
                             }
                         }
                     }
@@ -267,7 +267,7 @@ fun DailyEntryScreen(
                         if (hasUnsavedChanges) showUnsavedChangesDialog = true
                         else showDatePicker = true
                     }) {
-                        Icon(Icons.Default.CalendarToday, "選擇日期")
+                        Icon(Icons.Default.CalendarToday, stringResource(R.string.topbar_calendar_cd))
                     }
                 }
             )
@@ -403,7 +403,7 @@ fun DailyEntryScreen(
     if (showDeleteDialog) {
         DeleteConfirmDialog(
             title = stringResource(R.string.delete_dialog_title),
-            message = "確定要刪除 ${selectedDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日"))} 的記錄嗎？\n\n此操作無法復原。",
+            message = stringResource(R.string.delete_dialog_message, selectedDate.format(DateTimeFormatter.ofPattern(stringResource(R.string.date_pattern)))),
             onConfirm = { viewModel.deleteEntry() },
             onDismiss = { showDeleteDialog = false }
         )
@@ -413,17 +413,17 @@ fun DailyEntryScreen(
     if (showUnsavedChangesDialog) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showUnsavedChangesDialog = false },
-            title = { Text("有未儲存的變更") },
-            text = { Text("切換日期將放棄目前尚未儲存的內容，確定要繼續？") },
+            title = { Text(stringResource(R.string.unsaved_changes_title)) },
+            text = { Text(stringResource(R.string.unsaved_changes_message)) },
             confirmButton = {
                 TextButton(onClick = {
                     showUnsavedChangesDialog = false
                     showDatePicker = true
-                }) { Text("直接切換") }
+                }) { Text(stringResource(R.string.unsaved_changes_confirm)) }
             },
             dismissButton = {
                 TextButton(onClick = { showUnsavedChangesDialog = false }) {
-                    Text("取消")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -443,19 +443,19 @@ fun DailyEntryScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    "📝 今日摘要",
+                    stringResource(R.string.entry_narrative_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                 )
                 Text(
-                    selectedDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")),
+                    selectedDate.format(DateTimeFormatter.ofPattern(stringResource(R.string.date_pattern))),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
                 Divider()
                 // B5: Use captured text (same as what was saved to notes), not a fresh call
                 Text(
-                    text = lastNarrativeText.ifBlank { generateDailyNarrative(narrativeEntry) },
+                    text = lastNarrativeText.ifBlank { generateDailyNarrative(context, narrativeEntry) },
                     style = MaterialTheme.typography.bodyMedium,
                     lineHeight = androidx.compose.ui.unit.TextUnit.Unspecified
                 )
@@ -464,7 +464,7 @@ fun DailyEntryScreen(
                     onClick = { showNarrativeSheet = false },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(" 好的 👍 ")
+                    Text(stringResource(R.string.ok_thumbs_up))
                 }
             }
         }
@@ -476,7 +476,7 @@ fun DailyEntryScreen(
         if (loadedEntry != null && loadedEntry.id != 0L) {
             androidx.compose.material3.AlertDialog(
                 onDismissRequest = { showRecordInfoDialog = false },
-                title = { Text("紀錄訊息") },
+                title = { Text(stringResource(R.string.entry_record_info_title)) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Row(
@@ -489,7 +489,7 @@ fun DailyEntryScreen(
                                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
                             )
                             Text(
-                                "建立：${loadedEntry.createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}",
+                                stringResource(R.string.entry_created_prefix, loadedEntry.createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -503,14 +503,14 @@ fun DailyEntryScreen(
                                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
                             )
                             Text(
-                                "更新：${loadedEntry.updatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}",
+                                stringResource(R.string.entry_updated_prefix, loadedEntry.updatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
                     }
                 },
                 confirmButton = {
-                    TextButton(onClick = { showRecordInfoDialog = false }) { Text("關閉") }
+                    TextButton(onClick = { showRecordInfoDialog = false }) { Text(stringResource(R.string.entry_close)) }
                 }
             )
         }
@@ -533,13 +533,13 @@ private fun DayStatusCard(entry: DailyEntry, selectedDate: LocalDate) {
             verticalAlignment = Alignment.CenterVertically) {
             Column {
                 Text(
-                    if (isToday) "今日記錄" else selectedDate.format(DateTimeFormatter.ofPattern("MM月dd日")),
+                    if (isToday) stringResource(R.string.entry_today_title) else selectedDate.format(DateTimeFormatter.ofPattern(stringResource(R.string.date_short_pattern))),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    if (score <= 2) "尚未開始記錄（可填 $total 題）" else "核心題目完成 $score / $total",
+                    if (score <= 2) stringResource(R.string.entry_no_record_prompt, total) else stringResource(R.string.entry_completion_status, score, total),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                 )
@@ -580,37 +580,37 @@ private fun CoreQuestionsCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.Star, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(6.dp))
-                Text("核心問題", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.section_core_questions), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.weight(1f))
-                AssistChip(onClick = {}, label = { Text("每日必填", style = MaterialTheme.typography.labelSmall) })
+                AssistChip(onClick = {}, label = { Text(stringResource(R.string.section_core_daily_required), style = MaterialTheme.typography.labelSmall) })
             }
 
             Divider()
 
             // C2: Device worn (BRANCHING ROOT) — now first
-            QuestionSection(title = "今天有佩戴鎖嗎？") {
+            QuestionSection(title = stringResource(R.string.q_device_worn)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     val wearing = entry.deviceCheckPassed
                     if (wearing) {
                         // PERF-FIX: 已選中的按鈕加 guard，避免點擊相同值觸發無效 updateEntry → recompose
                         Button(onClick = { /* already selected — no-op */ },
-                            modifier = Modifier.weight(1f)) { Text("✓ 有佩戴") }
+                            modifier = Modifier.weight(1f)) { Text(stringResource(R.string.chip_worn_yes)) }
                         OutlinedButton(onClick = { onUpdate(entry.copy(deviceCheckPassed = false)) },
-                            modifier = Modifier.weight(1f)) { Text("✗ 沒有") }
+                            modifier = Modifier.weight(1f)) { Text(stringResource(R.string.chip_worn_no)) }
                     } else {
                         OutlinedButton(onClick = { onUpdate(entry.copy(deviceCheckPassed = true)) },
-                            modifier = Modifier.weight(1f)) { Text("✓ 有佩戴") }
+                            modifier = Modifier.weight(1f)) { Text(stringResource(R.string.chip_worn_yes)) }
                         Button(onClick = { /* already selected — no-op */ },
                             modifier = Modifier.weight(1f),
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) {
-                            Text("✗ 沒有")
+                            Text(stringResource(R.string.chip_worn_no))
                         }
                     }
                 }
             }
 
             // C1: Mood (merged, emoji+text, single-select)
-            QuestionSection(title = "今天的心情狀態", subtitle = "選一個最接近的情緒") {
+            QuestionSection(title = stringResource(R.string.q_mood_title), subtitle = stringResource(R.string.q_mood_subtitle)) {
                 MoodSelector(
                     selectedMood = entry.mood,
                     moods = Constants.MOODS,
@@ -652,9 +652,9 @@ private fun CoreQuestionsCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text("打卡照片", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                        Text(stringResource(R.string.q_photo_title), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
                         Text(
-                            if (entry.photoPath.isNullOrBlank()) "可選 · 視覺紀念" else "✓ 已拍攝",
+                            if (entry.photoPath.isNullOrBlank()) stringResource(R.string.q_photo_subtitle_optional) else stringResource(R.string.q_photo_taken),
                             style = MaterialTheme.typography.bodySmall,
                             color = if (entry.photoPath.isNullOrBlank())
                                 MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
@@ -665,7 +665,7 @@ private fun CoreQuestionsCard(
                         OutlinedButton(onClick = onTakePhoto) {
                             Icon(Icons.Default.Camera, null, Modifier.size(16.dp))
                             Spacer(Modifier.width(4.dp))
-                            Text("拍照")
+                            Text(stringResource(R.string.action_take_photo))
                         }
                     }
                 }
@@ -723,7 +723,7 @@ private fun CoreQuestionsCard(
                                     .clickable { photoRevealed = !photoRevealed }
                             ) {
                                 Image(
-                                    bitmap!!.asImageBitmap(), "打卡照片",
+                                    bitmap!!.asImageBitmap(), stringResource(R.string.q_photo_title),
                                     Modifier.matchParentSize(),
                                     contentScale = ContentScale.Crop
                                 )
@@ -742,7 +742,7 @@ private fun CoreQuestionsCard(
                                             )
                                             Spacer(Modifier.height(4.dp))
                                             Text(
-                                                "點擊查看照片",
+                                                stringResource(R.string.q_photo_tap_to_view),
                                                 style = MaterialTheme.typography.labelSmall,
                                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                                             )
@@ -762,7 +762,7 @@ private fun CoreQuestionsCard(
                                 ) {
                                     Icon(Icons.Default.Camera, null, Modifier.size(16.dp))
                                     Spacer(Modifier.width(4.dp))
-                                    Text("重新拍攝")
+                                    Text(stringResource(R.string.action_retake_photo))
                                 }
                                 OutlinedButton(
                                     onClick = { onUpdate(entry.copy(photoPath = null)) },
@@ -778,7 +778,7 @@ private fun CoreQuestionsCard(
                                 ) {
                                     Icon(Icons.Default.Delete, null, Modifier.size(16.dp))
                                     Spacer(Modifier.width(4.dp))
-                                    Text("刪除照片")
+                                    Text(stringResource(R.string.action_delete_photo))
                                 }
                             }
                         }
@@ -796,12 +796,12 @@ private fun CoreQuestionsCard(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    "⚠️ 照片檔案已遺失",
+                                    stringResource(R.string.error_photo_missing),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onErrorContainer
                                 )
                                 OutlinedButton(onClick = { onUpdate(entry.copy(photoPath = null)) }) {
-                                    Text("清除記錄")
+                                    Text(stringResource(R.string.action_clear_record))
                                 }
                             }
                         }
@@ -811,12 +811,12 @@ private fun CoreQuestionsCard(
 
             // E7: Exercise (moved from extended to core)
             Divider()
-            QuestionSection(title = "是否運動？") {
-                YesNoToggle(entry.exercised, { onUpdate(entry.copy(exercised = it)) }, "有運動")
+            QuestionSection(title = stringResource(R.string.q_exercise_title)) {
+                YesNoToggle(entry.exercised, { onUpdate(entry.copy(exercised = it)) }, stringResource(R.string.q_exercise_label))
             }
 
             // E8: Cleaning (moved from extended to core) — single-select
-            QuestionSection(title = "今天是否清潔了貞操鎖？") {
+            QuestionSection(title = stringResource(R.string.q_cleaning_title)) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     CLEANING_TYPES_ROWS.forEach { row -> // P4: use pre-computed constant
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -865,10 +865,10 @@ private fun RotatingQuestionsCard(
                 Icon(Icons.Default.Casino, null,
                     tint = MaterialTheme.colorScheme.onSecondaryContainer, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(6.dp))
-                Text("今日輪換題", style = MaterialTheme.typography.titleSmall,
+                Text(stringResource(R.string.section_rotating_questions), style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSecondaryContainer)
                 Spacer(Modifier.weight(1f))
-                Text("每日更替", style = MaterialTheme.typography.labelSmall,
+                Text(stringResource(R.string.section_rotating_daily_label), style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f))
             }
             questions.forEach { q ->
@@ -887,7 +887,7 @@ private fun RotatingQuestionItem(q: RotatingQuestion, entry: DailyEntry, onUpdat
     val answerIsYes = rawValue == "true"
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(q.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+        Text(stringResource(q.titleRes), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(
@@ -896,7 +896,7 @@ private fun RotatingQuestionItem(q: RotatingQuestion, entry: DailyEntry, onUpdat
                     val newAnswers = entry.rotatingAnswers.toMutableMap().also { it[q.key] = "true" }
                     onUpdate(entry.copy(rotatingAnswers = newAnswers))
                 },
-                label = { Text("有") },
+                label = { Text(stringResource(R.string.chip_yes)) },
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = MaterialTheme.colorScheme.primary,
                     selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
@@ -912,7 +912,7 @@ private fun RotatingQuestionItem(q: RotatingQuestion, entry: DailyEntry, onUpdat
                     val newAnswers = entry.rotatingAnswers.toMutableMap().also { it[q.key] = "false" }
                     onUpdate(entry.copy(rotatingAnswers = newAnswers))
                 },
-                label = { Text("沒有") },
+                label = { Text(stringResource(R.string.chip_no)) },
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = MaterialTheme.colorScheme.primary,
                     selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
@@ -959,10 +959,10 @@ private fun ExtendedQuestionsCard(entry: DailyEntry, onUpdate: (DailyEntry) -> U
                 Icon(if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                     null, Modifier.size(20.dp))
                 Spacer(Modifier.width(8.dp))
-                Text(if (expanded) "收起備註" else "我想記錄更多 →",
+                Text(if (expanded) stringResource(R.string.notes_collapse) else stringResource(R.string.notes_expand),
                     style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.weight(1f))
-                Text("選填", style = MaterialTheme.typography.labelSmall,
+                Text(stringResource(R.string.notes_optional), style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
             }
             AnimatedVisibility(visible = expanded, enter = expandVertically(), exit = shrinkVertically()) {
@@ -971,12 +971,12 @@ private fun ExtendedQuestionsCard(entry: DailyEntry, onUpdate: (DailyEntry) -> U
                     Divider()
 
                     // X5: 備註（唯一保留項目；其餘問題已整合至核心題或輪換題）
-                    QuestionSection("備註", subtitle = "任何想補充的想法") {
+                    QuestionSection(stringResource(R.string.section_notes), subtitle = stringResource(R.string.section_notes_subtitle)) {
                         OutlinedTextField(
                             value = entry.notes ?: "",
                             onValueChange = { onUpdate(entry.copy(notes = it)) },
                             modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("輸入備註...") },
+                            placeholder = { Text(stringResource(R.string.notes_placeholder)) },
                             minLines = 3, maxLines = 6
                         )
                     }
@@ -1055,14 +1055,14 @@ private fun DailyEntryTabContent(
                         Icon(Icons.Default.Nightlight, null,
                             tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(6.dp))
-                        Text("睡眠記錄", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.section_sleep_record), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     }
                     Divider()
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                         Column {
-                            Text("就寢時間", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                            Text(stringResource(R.string.q_bedtime_title), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
                             Text(
-                                entry.bedtime?.format(timeFmt) ?: "未設定",
+                                entry.bedtime?.format(timeFmt) ?: stringResource(R.string.not_set),
                                 style = MaterialTheme.typography.headlineSmall,
                                 color = if (entry.bedtime != null) MaterialTheme.colorScheme.primary
                                         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
@@ -1072,14 +1072,14 @@ private fun DailyEntryTabContent(
                         OutlinedButton(onClick = { showBedtimePicker = true }) {
                             Icon(Icons.Default.Bedtime, null, Modifier.size(16.dp))
                             Spacer(Modifier.width(4.dp))
-                            Text("設定")
+                            Text(stringResource(R.string.action_set))
                         }
                     }
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                         Column {
-                            Text("起床時間", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                            Text(stringResource(R.string.q_wake_time_title), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
                             Text(
-                                entry.wakeTime?.format(timeFmt) ?: "未設定",
+                                entry.wakeTime?.format(timeFmt) ?: stringResource(R.string.not_set),
                                 style = MaterialTheme.typography.headlineSmall,
                                 color = if (entry.wakeTime != null) MaterialTheme.colorScheme.primary
                                         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
@@ -1089,7 +1089,7 @@ private fun DailyEntryTabContent(
                         OutlinedButton(onClick = { showWakeTimePicker = true }) {
                             Icon(Icons.Default.WbSunny, null, Modifier.size(16.dp))
                             Spacer(Modifier.width(4.dp))
-                            Text("設定")
+                            Text(stringResource(R.string.action_set))
                         }
                     }
                     if (entry.bedtime != null && entry.wakeTime != null) {
@@ -1105,32 +1105,32 @@ private fun DailyEntryTabContent(
                             Row(Modifier.padding(10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Default.Schedule, null,
                                     tint = MaterialTheme.colorScheme.onSecondaryContainer, modifier = Modifier.size(16.dp))
-                                Text("睡眠時長：${h}小時${if (m > 0) " ${m}分" else ""}",
+                                Text(if (m > 0) stringResource(R.string.sleep_duration_hours_minutes, h, m) else stringResource(R.string.sleep_duration_hours, h),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer)
                             }
                         }
                     }
                     Divider()
-                    QuestionSection(title = "睡眠品質", subtitle = "1 = 很差   10 = 極佳") {
+                    QuestionSection(title = stringResource(R.string.q_sleep_quality_title), subtitle = stringResource(R.string.q_sleep_quality_subtitle)) {
                         SliderWithLabel(
                             entry.sleepQuality?.toFloat() ?: 5f,
                             { onUpdate(entry.copy(sleepQuality = it.toInt())) },
-                            valueRange = 1f..10f, steps = 8, label = "睡眠品質"
+                            valueRange = 1f..10f, steps = 8, label = stringResource(R.string.q_sleep_quality_label)
                         )
                     }
-                    QuestionSection(title = "因佩戴鎖而醒來？") {
+                    QuestionSection(title = stringResource(R.string.q_woke_from_device_title)) {
                         YesNoToggle(
                             value = entry.wokeUpDueToDevice,
                             onValueChange = { onUpdate(entry.copy(wokeUpDueToDevice = it)) },
-                            label = "因佩戴鎖而醒來"
+                            label = stringResource(R.string.q_woke_from_device_label)
                         )
                     }
-                    QuestionSection(title = "昨晚有春夢？") {
+                    QuestionSection(title = stringResource(R.string.q_erotic_dream_title)) {
                         YesNoToggle(
                             value = entry.hadEroticDream,
                             onValueChange = { onUpdate(entry.copy(hadEroticDream = it)) },
-                            label = "昨晚有春夢"
+                            label = stringResource(R.string.q_erotic_dream_label)
                         )
                     }
                 }
@@ -1144,16 +1144,16 @@ private fun DailyEntryTabContent(
                             Icon(Icons.Default.FitnessCenter, null,
                                 tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(6.dp))
-                            Text("身體狀況", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.section_body_status), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                         }
                         Divider()
-                        QuestionSection(title = "晨勃") {
-                            YesNoToggle(entry.morningErection, { onUpdate(entry.copy(morningErection = it)) }, "有晨勃")
+                        QuestionSection(title = stringResource(R.string.q_morning_erection_title)) {
+                            YesNoToggle(entry.morningErection, { onUpdate(entry.copy(morningErection = it)) }, stringResource(R.string.q_morning_erection_label))
                         }
-                        QuestionSection(title = "昨晚夜間勃起", subtitle = "大概的感受即可") {
+                        QuestionSection(title = stringResource(R.string.q_night_erection_title), subtitle = stringResource(R.string.q_night_erection_subtitle)) {
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Constants.NIGHT_ERECTION_OPTIONS.forEach { label ->
-                                    val value = Constants.NIGHT_ERECTION_VALUES[label] ?: 0
+                                Constants.NIGHT_ERECTION_OPTIONS_KEYS.forEachIndexed { index, label ->
+                                    val value = Constants.NIGHT_ERECTION_SCORE_FOR_INDEX.getOrElse(index) { 0 }
                                     FilterChip(
                                         selected = entry.nightErections == value,
                                         onClick = { onUpdate(entry.copy(nightErections = value)) },
@@ -1170,11 +1170,11 @@ private fun DailyEntryTabContent(
                                 }
                             }
                         }
-                        QuestionSection(title = "因夜間勃起而醒來？") {
+                        QuestionSection(title = stringResource(R.string.q_woke_from_night_erection_title)) {
                             YesNoToggle(
                                 value = entry.wokeUpFromErection,
                                 onValueChange = { onUpdate(entry.copy(wokeUpFromErection = it)) },
-                                label = "因夜間勃起而醒來"
+                                label = stringResource(R.string.q_woke_from_night_erection_label)
                             )
                         }
                     }
@@ -1188,21 +1188,21 @@ private fun DailyEntryTabContent(
                         Icon(Icons.Default.EmojiEmotions, null,
                             tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(6.dp))
-                        Text("起床狀態", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.section_morning_wakeup), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     }
                     Divider()
-                    QuestionSection(title = "起床後心情") {
+                    QuestionSection(title = stringResource(R.string.q_morning_mood_title)) {
                         MoodSelector(
                             selectedMood = entry.morningMood,
                             moods = Constants.MOODS,
                             onMoodSelected = { onUpdate(entry.copy(morningMood = it)) }
                         )
                     }
-                    QuestionSection(title = "起床能量指數", subtitle = "1 = 極度疲憊   10 = 精力充沛") {
+                    QuestionSection(title = stringResource(R.string.q_morning_energy_title), subtitle = stringResource(R.string.q_morning_energy_subtitle)) {
                         SliderWithLabel(
                             entry.morningEnergy?.toFloat() ?: 5f,
                             { onUpdate(entry.copy(morningEnergy = it.toInt())) },
-                            valueRange = 1f..10f, steps = 8, label = "起床能量"
+                            valueRange = 1f..10f, steps = 8, label = stringResource(R.string.q_morning_energy_label)
                         )
                     }
                 }
@@ -1277,12 +1277,12 @@ private fun EveningMasturbationCard(entry: DailyEntry, onUpdate: (DailyEntry) ->
     ) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
-                "💧 自慰小記",
+                stringResource(R.string.section_masturbation),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
             com.chastity.diary.ui.components.QuestionSection(
-                title = "今天是否有自慰？"
+                title = stringResource(R.string.q_masturbated_title)
             ) {
                 com.chastity.diary.ui.components.YesNoToggle(
                     value = entry.masturbated,
@@ -1292,7 +1292,7 @@ private fun EveningMasturbationCard(entry: DailyEntry, onUpdate: (DailyEntry) ->
                             masturbationCount = if (!v) null else entry.masturbationCount
                         ))
                     },
-                    label = "有自慰"
+                    label = stringResource(R.string.q_masturbated_label)
                 )
                 if (entry.masturbated) {
                     Spacer(Modifier.height(12.dp))
@@ -1302,7 +1302,7 @@ private fun EveningMasturbationCard(entry: DailyEntry, onUpdate: (DailyEntry) ->
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            "次數：",
+                            stringResource(R.string.q_masturbation_count),
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.alignByBaseline()
                         )
@@ -1312,7 +1312,7 @@ private fun EveningMasturbationCard(entry: DailyEntry, onUpdate: (DailyEntry) ->
                                 if (cur > 1) onUpdate(entry.copy(masturbationCount = cur - 1))
                             }
                         ) {
-                            Icon(Icons.Default.Remove, contentDescription = "減少")
+                            Icon(Icons.Default.Remove, contentDescription = stringResource(R.string.cd_decrease))
                         }
                         Text(
                             text = "${entry.masturbationCount ?: 1}",
@@ -1326,7 +1326,7 @@ private fun EveningMasturbationCard(entry: DailyEntry, onUpdate: (DailyEntry) ->
                                 onUpdate(entry.copy(masturbationCount = cur + 1))
                             }
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = "增加")
+                            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.cd_increase))
                         }
                     }
                 }
@@ -1336,61 +1336,66 @@ private fun EveningMasturbationCard(entry: DailyEntry, onUpdate: (DailyEntry) ->
 }
 
 // ─── Daily Narrative ──────────────────────────────────────────────────────────
-private fun generateDailyNarrative(entry: DailyEntry): String {
+private fun generateDailyNarrative(context: Context, entry: DailyEntry): String {
     val parts = mutableListOf<String>()
 
-    // 心情
-    entry.mood?.let { parts.add("今天心情是 $it") }
+    // Mood
+    entry.mood?.let { parts.add(context.getString(R.string.narrative_mood, it)) }
 
-    // 性慾
+    // Desire
     entry.desireLevel?.let {
         parts.add(when {
-            it >= 8 -> "性慾強度 $it/10，今天是高峰日——但你撐過來了 💪"
-            it <= 3 -> "性慾強度 $it/10，今天異常平靜 😌"
-            else    -> "性慾強度 $it/10，處於正常範圍"
+            it >= 8 -> context.getString(R.string.narrative_desire_high, it)
+            it <= 3 -> context.getString(R.string.narrative_desire_low, it)
+            else    -> context.getString(R.string.narrative_desire_normal, it)
         })
     }
 
-    // 佩戴
+    // Device worn
     if (entry.deviceCheckPassed) {
         entry.comfortRating?.let { r ->
-            parts.add("佩戴舒適度 $r/10" + when {
-                r >= 8 -> "，狀況很好！"
-                r <= 3 -> "，記得調整佩戴方式。"
-                else   -> "。"
+            parts.add(when {
+                r >= 8 -> context.getString(R.string.narrative_comfort_high, r)
+                r <= 3 -> context.getString(R.string.narrative_comfort_low, r)
+                else   -> context.getString(R.string.narrative_comfort_normal, r)
             })
         }
     } else {
-        parts.add("今天沒有佩戴貞操鎖。")
+        parts.add(context.getString(R.string.narrative_not_worn))
     }
 
-    // 運動
+    // Exercise
     if (entry.exercised) {
-        parts.add("有運動" + (entry.exerciseDuration?.let { "（${it} 分鐘）" } ?: "") + "，自律 +1 🏃")
+        val dur = entry.exerciseDuration
+        parts.add(if (dur != null) context.getString(R.string.narrative_exercised_with_duration, dur)
+                  else context.getString(R.string.narrative_exercised))
     }
 
-    // 清潔
-    entry.cleaningType?.takeIf { it != "未清潔" }?.let { parts.add("清潔類型：$it 🧹") }
+    // Cleaning — uses localised "no cleaning" key
+    val noCleaning = context.getString(R.string.narrative_cleaning_none)
+    entry.cleaningType?.takeIf { it != noCleaning }?.let {
+        parts.add(context.getString(R.string.narrative_cleaning, it))
+    }
 
     // Keyholder
-    if (entry.keyholderInteraction) parts.add("今天與 Keyholder 保持了連結 💬")
+    if (entry.keyholderInteraction) parts.add(context.getString(R.string.narrative_keyholder))
 
-    // 打卡照
-    if (entry.photoPath != null) parts.add("📷 今天有留下打卡照片")
+    // Photo
+    if (entry.photoPath != null) parts.add(context.getString(R.string.narrative_photo))
 
-    // 解鎖
-    if (entry.unlocked) parts.add("今天解鎖了——誠實記錄是好事 🔓")
+    // Unlocked
+    if (entry.unlocked) parts.add(context.getString(R.string.narrative_unlocked))
 
-    // 自慰
+    // Masturbation
     if (entry.masturbated) {
         val cnt = entry.masturbationCount ?: 1
-        parts.add("今天有自慰 $cnt 次 💧")
+        parts.add(context.getString(R.string.narrative_masturbated, cnt))
     }
 
-    // 邊緣
-    if (entry.hadEdging) parts.add("邊緣訓練完成，耐力值 UP 😈")
+    // Edging
+    if (entry.hadEdging) parts.add(context.getString(R.string.narrative_edging))
 
-    return if (parts.isEmpty()) "今日記錄已儲存，繼續保持！"
+    return if (parts.isEmpty()) context.getString(R.string.narrative_default)
            else parts.joinToString("\n• ", prefix = "• ")
 }
 

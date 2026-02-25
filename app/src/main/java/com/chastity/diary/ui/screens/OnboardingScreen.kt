@@ -30,12 +30,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chastity.diary.domain.model.Gender
+import com.chastity.diary.R
 import com.chastity.diary.ui.components.DatePickerDialog
 import com.chastity.diary.ui.components.TimePickerDialog
 import com.chastity.diary.viewmodel.OnboardingViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import androidx.compose.ui.res.stringResource
 
 // ─── Entry Point ──────────────────────────────────────────────────────────────
 @Composable
@@ -91,14 +93,10 @@ private fun ExistingUserWelcomePage(onContinue: () -> Unit) {
             Icon(Icons.Default.AutoAwesome, null,
                 modifier = Modifier.size(72.dp),
                 tint = MaterialTheme.colorScheme.primary)
-            Text("全新升級 ✨", style = MaterialTheme.typography.headlineMedium,
+            Text(stringResource(R.string.onboarding_new_upgrade), style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
             Text(
-                "• 每日記錄 — 漸進式卡片設計\n" +
-                "• 每日輪換題目（8 題池）\n" +
-                "• 即時反饋與情緒追蹤\n" +
-                "• CSV 匯出 / 匯入\n" +
-                "• 個人資料與暱稱",
+                stringResource(R.string.onboarding_upgrade_features),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Start,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -108,7 +106,7 @@ private fun ExistingUserWelcomePage(onContinue: () -> Unit) {
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth().height(52.dp)
             ) {
-                Text("進入應用程式", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.onboarding_get_started), style = MaterialTheme.typography.titleMedium)
             }
         }
     }
@@ -146,7 +144,7 @@ private fun NewUserOnboarding(
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    TextButton(onClick = onSkip) { Text("跳過") }
+                    TextButton(onClick = onSkip) { Text(stringResource(R.string.onboarding_skip)) }
                 }
                 LinearProgressIndicator(
                     progress = progress,
@@ -187,7 +185,7 @@ private fun NewUserOnboarding(
                     OutlinedButton(
                         onClick = { scope.launch { pagerState.animateScrollToPage(currentPage - 1) } },
                         modifier = Modifier.weight(1f).height(52.dp)
-                    ) { Text("上一步") }
+                    ) { Text(stringResource(R.string.onboarding_back)) }
                 } else {
                     Spacer(Modifier.weight(1f))
                 }
@@ -195,7 +193,7 @@ private fun NewUserOnboarding(
                     Button(
                         onClick = { scope.launch { pagerState.animateScrollToPage(currentPage + 1) } },
                         modifier = Modifier.weight(1f).height(52.dp)
-                    ) { Text("下一步") }
+                    ) { Text(stringResource(R.string.onboarding_next)) }
                 } else {
                     // Last page: Complete button unified in nav bar
                     Button(
@@ -204,7 +202,7 @@ private fun NewUserOnboarding(
                     ) {
                         Icon(Icons.Default.CheckCircle, null)
                         Spacer(Modifier.width(8.dp))
-                        Text("完成設定！", style = MaterialTheme.typography.titleSmall)
+                        Text(stringResource(R.string.onboarding_finish), style = MaterialTheme.typography.titleSmall)
                     }
                 }
             }
@@ -234,14 +232,14 @@ private fun WelcomePage() {
                 tint = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         Spacer(Modifier.height(32.dp))
-        Text("歡迎使用\nChastity Diary",
+        Text(stringResource(R.string.welcome_title),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.ExtraBold,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.primary)
         Spacer(Modifier.height(16.dp))
         Text(
-            "記錄你的貞操佩戴旅程\n追蹤每日感受與成長",
+            stringResource(R.string.welcome_subtitle),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -251,9 +249,9 @@ private fun WelcomePage() {
             horizontalArrangement = Arrangement.spacedBy(32.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            FeatureItem(Icons.Default.BarChart, "每日追蹤")
-            FeatureItem(Icons.Default.EmojiEvents, "連續記錄")
-            FeatureItem(Icons.Default.Shield, "安全私密")
+            FeatureItem(Icons.Default.BarChart, stringResource(R.string.welcome_feat_daily))
+            FeatureItem(Icons.Default.EmojiEvents, stringResource(R.string.welcome_feat_streak))
+            FeatureItem(Icons.Default.Shield, stringResource(R.string.welcome_feat_private))
         }
     }
 }
@@ -279,14 +277,14 @@ private fun ProfilePage(viewModel: OnboardingViewModel) {
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        PageHeader(Icons.Default.Person, "個人身份", "讓我們認識你一點（可跳過此頁）")
+        PageHeader(Icons.Default.Person, stringResource(R.string.profile_page_title), stringResource(R.string.profile_page_subtitle))
 
         // Nickname
         OutlinedTextField(
             value = nickname,
             onValueChange = { viewModel.nickname.value = it },
-            label = { Text("暱稱") },
-            placeholder = { Text("例如：小鎖") },
+            label = { Text(stringResource(R.string.profile_nickname)) },
+            placeholder = { Text(stringResource(R.string.profile_nickname_hint)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
@@ -294,7 +292,7 @@ private fun ProfilePage(viewModel: OnboardingViewModel) {
         )
 
         // Gender
-        Text("性別", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Medium)
+        Text(stringResource(R.string.profile_gender), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Medium)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Gender.values().forEach { g ->
                 FilterChip(
@@ -302,9 +300,9 @@ private fun ProfilePage(viewModel: OnboardingViewModel) {
                     onClick = { viewModel.gender.value = g },
                     label = {
                         Text(when (g) {
-                            Gender.MALE -> "男性 ♂"
-                            Gender.FEMALE -> "女性 ♀"
-                            Gender.OTHER -> "其他"
+                            Gender.MALE -> stringResource(R.string.settings_gender_male)
+                            Gender.FEMALE -> stringResource(R.string.settings_gender_female)
+                            Gender.OTHER -> stringResource(R.string.settings_gender_other)
                         })
                     },
                     modifier = Modifier.weight(1f),
@@ -323,7 +321,7 @@ private fun ProfilePage(viewModel: OnboardingViewModel) {
         Divider()
 
         // Optional body stats
-        Text("體型資料（選填）",
+        Text(stringResource(R.string.profile_body_section),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -334,8 +332,8 @@ private fun ProfilePage(viewModel: OnboardingViewModel) {
         // Height slider
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("身高", style = MaterialTheme.typography.bodyMedium)
-                Text(if (height != null) "$height cm" else "未設定",
+                Text(stringResource(R.string.profile_height), style = MaterialTheme.typography.bodyMedium)
+                Text(if (height != null) "$height cm" else stringResource(R.string.not_set),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary)
             }
@@ -350,8 +348,8 @@ private fun ProfilePage(viewModel: OnboardingViewModel) {
         // Weight slider
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("體重", style = MaterialTheme.typography.bodyMedium)
-                Text(if (weight != null) "${"%.1f".format(weight)} kg" else "未設定",
+                Text(stringResource(R.string.profile_weight), style = MaterialTheme.typography.bodyMedium)
+                Text(if (weight != null) "${"%.1f".format(weight)} kg" else stringResource(R.string.not_set),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary)
             }
@@ -380,13 +378,13 @@ private fun DevicePage(viewModel: OnboardingViewModel) {
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        PageHeader(Icons.Default.Lock, "貞操鎖", "記錄你的鎖資訊（可跳過此頁）")
+        PageHeader(Icons.Default.Lock, stringResource(R.string.device_page_title), stringResource(R.string.device_page_subtitle))
 
         OutlinedTextField(
             value = deviceName,
             onValueChange = { viewModel.deviceName.value = it },
-            label = { Text("鎖名稱") },
-            placeholder = { Text("例如：CB-6000、Bon4 ...") },
+            label = { Text(stringResource(R.string.device_lock_name)) },
+            placeholder = { Text(stringResource(R.string.device_lock_name_hint)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
             leadingIcon = { Icon(Icons.Default.DeviceHub, null) }
@@ -405,11 +403,11 @@ private fun DevicePage(viewModel: OnboardingViewModel) {
                 Icon(Icons.Default.CalendarToday, null,
                     tint = MaterialTheme.colorScheme.primary)
                 Column(Modifier.weight(1f)) {
-                    Text("鎖定開始日期", style = MaterialTheme.typography.bodyMedium,
+                    Text(stringResource(R.string.device_start_date), style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium)
                     Text(
-                        startDate?.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日"))
-                            ?: "點選選擇日期",
+                        startDate?.format(DateTimeFormatter.ofPattern(stringResource(R.string.date_pattern)))
+                            ?: stringResource(R.string.device_tap_to_set_date),
                         style = MaterialTheme.typography.bodySmall,
                         color = if (startDate != null) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.onSurfaceVariant
@@ -431,7 +429,7 @@ private fun DevicePage(viewModel: OnboardingViewModel) {
                     Icon(Icons.Default.EmojiEvents, null,
                         tint = MaterialTheme.colorScheme.onPrimaryContainer)
                     Text(
-                        if (days >= 0) "已佩戴 $days 天 🎉" else "即將開始！",
+                        if (days >= 0) stringResource(R.string.device_wearing_days, days) else stringResource(R.string.device_starting_soon),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontWeight = FontWeight.Bold
@@ -463,22 +461,22 @@ private fun SecurityPage(viewModel: OnboardingViewModel) {
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        PageHeader(Icons.Default.Security, "安全與隱私", "保護你的記錄（可跳過此頁）")
+        PageHeader(Icons.Default.Security, stringResource(R.string.security_page_title), stringResource(R.string.security_page_subtitle))
 
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 SecurityRow(
                     icon = Icons.Default.Fingerprint,
-                    title = "生物辨識鎖定",
-                    subtitle = "使用指紋或面部辨識解鎖",
+                    title = stringResource(R.string.security_biometric),
+                    subtitle = stringResource(R.string.security_biometric_desc),
                     checked = biometric,
                     onCheckedChange = { viewModel.biometricEnabled.value = it }
                 )
                 Divider()
                 SecurityRow(
                     icon = Icons.Default.Pin,
-                    title = "PIN 碼鎖定",
-                    subtitle = "使用數字密碼解鎖（可在設定中設置）",
+                    title = stringResource(R.string.security_pin),
+                    subtitle = stringResource(R.string.security_pin_desc),
                     checked = pin,
                     onCheckedChange = { viewModel.pinEnabled.value = it }
                 )
@@ -498,7 +496,7 @@ private fun SecurityPage(viewModel: OnboardingViewModel) {
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,
                         modifier = Modifier.size(20.dp))
                     Text(
-                        "詳細的安全設定可在設定頁面調整",
+                        stringResource(R.string.security_note),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
@@ -546,7 +544,7 @@ private fun ReminderPage(viewModel: OnboardingViewModel) {
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        PageHeader(Icons.Default.Notifications, "每日提醒", "設定每日記錄提醒時間")
+        PageHeader(Icons.Default.Notifications, stringResource(R.string.reminder_page_title), stringResource(R.string.reminder_page_subtitle))
 
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -558,9 +556,9 @@ private fun ReminderPage(viewModel: OnboardingViewModel) {
                     Icon(Icons.Default.NotificationsActive, null,
                         tint = MaterialTheme.colorScheme.primary)
                     Column(Modifier.weight(1f)) {
-                        Text("啟用每日提醒", style = MaterialTheme.typography.bodyMedium,
+                        Text(stringResource(R.string.reminder_enable), style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium)
-                        Text("每天在選定時間提醒你記錄", style = MaterialTheme.typography.bodySmall,
+                        Text(stringResource(R.string.reminder_enable_desc), style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Switch(checked = reminderEnabled, onCheckedChange = { viewModel.reminderEnabled.value = it })
@@ -581,7 +579,7 @@ private fun ReminderPage(viewModel: OnboardingViewModel) {
                             Icon(Icons.Default.AccessTime, null,
                                 tint = MaterialTheme.colorScheme.primary)
                             Column(Modifier.weight(1f)) {
-                                Text("提醒時間", style = MaterialTheme.typography.bodyMedium)
+                                Text(stringResource(R.string.reminder_time), style = MaterialTheme.typography.bodyMedium)
                                 Text(
                                     "%02d:%02d".format(reminderHour, reminderMinute),
                                     style = MaterialTheme.typography.headlineSmall,

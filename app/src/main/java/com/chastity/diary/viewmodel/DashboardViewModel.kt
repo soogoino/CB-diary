@@ -3,6 +3,7 @@ package com.chastity.diary.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.chastity.diary.R
 import com.chastity.diary.data.datastore.PreferencesManager
 import com.chastity.diary.data.local.database.AppDatabase
 import com.chastity.diary.data.repository.EntryRepository
@@ -76,7 +77,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         )
         result
     }
-    .catch { e -> emit(DashboardState.Error(e.message ?: "載入失敗")) }
+    .catch { e -> emit(DashboardState.Error(e.message ?: getApplication<Application>().getString(R.string.error_load_failed))) }
     .stateIn(viewModelScope, SharingStarted.Lazily, DashboardState.Loading)
     
     val currentStreak = streakRepository.currentStreak

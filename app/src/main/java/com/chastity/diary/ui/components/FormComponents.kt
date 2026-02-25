@@ -5,7 +5,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.chastity.diary.R
 
 /**
  * Question section wrapper
@@ -324,7 +326,7 @@ fun YesNoToggle(
         FilterChip(
             selected = value,
             onClick = { onValueChange(true) },
-            label = { Text("是") },
+            label = { Text(stringResource(R.string.yes_chip)) },
             colors = FilterChipDefaults.filterChipColors(
                 selectedContainerColor = MaterialTheme.colorScheme.primary,
                 selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
@@ -337,7 +339,7 @@ fun YesNoToggle(
         FilterChip(
             selected = !value,
             onClick = { onValueChange(false) },
-            label = { Text("否") },
+            label = { Text(stringResource(R.string.no_chip)) },
             colors = FilterChipDefaults.filterChipColors(
                 selectedContainerColor = MaterialTheme.colorScheme.primary,
                 selectedLabelColor = MaterialTheme.colorScheme.onPrimary,

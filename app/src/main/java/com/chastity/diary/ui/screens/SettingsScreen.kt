@@ -150,24 +150,24 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(stringResource(R.string.settings_profile), style = MaterialTheme.typography.titleMedium)
-                        TextButton(onClick = { showProfileDialog = true }) { Text("編輯") }
+                        TextButton(onClick = { showProfileDialog = true }) { Text(stringResource(R.string.settings_edit)) }
                     }
 
                     if (!userSettings.nickname.isNullOrBlank())
-                        Text("暱稱: ${userSettings.nickname}", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.settings_nickname_prefix, userSettings.nickname!!), style = MaterialTheme.typography.bodyMedium)
 
                     Text(
-                        text = "開始日期: ${userSettings.startDate?.toString() ?: "未設定"}",
+                        text = stringResource(R.string.settings_start_date_prefix, userSettings.startDate?.toString() ?: stringResource(R.string.settings_start_date_not_set)),
                         style = MaterialTheme.typography.bodyMedium
                     )
 
-                    // 生理性別（直接可點）
+                    // Gender chips
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("生理性別", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.settings_gender), style = MaterialTheme.typography.bodyMedium)
                         val genderOptions = listOf(
-                            Gender.MALE to "男性 ♂",
-                            Gender.FEMALE to "女性 ♀",
-                            Gender.OTHER to "其他"
+                            Gender.MALE to stringResource(R.string.settings_gender_male),
+                            Gender.FEMALE to stringResource(R.string.settings_gender_female),
+                            Gender.OTHER to stringResource(R.string.settings_gender_other)
                         )
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             genderOptions.forEach { (gender, label) ->
@@ -189,15 +189,15 @@ fun SettingsScreen(
                     }
 
                     if (userSettings.height != null)
-                        Text("身高: ${userSettings.height} cm", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.settings_height_format, userSettings.height.toString()), style = MaterialTheme.typography.bodyMedium)
                     if (userSettings.weight != null)
-                        Text("體重: ${userSettings.weight} kg", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.settings_weight_format, userSettings.weight.toString()), style = MaterialTheme.typography.bodyMedium)
 
                     if (!userSettings.currentDeviceName.isNullOrBlank()) {
                         val sizeLabel = if (!userSettings.currentDeviceSize.isNullOrBlank())
                             " (${userSettings.currentDeviceSize})"
                         else ""
-                        Text("貞操鎖: ${userSettings.currentDeviceName}$sizeLabel",
+                        Text(stringResource(R.string.settings_device_format, "${userSettings.currentDeviceName}$sizeLabel"),
                             style = MaterialTheme.typography.bodyMedium)
                     }
 
@@ -265,7 +265,7 @@ fun SettingsScreen(
                         ) {
                             Icon(Icons.Default.AccessTime, null, modifier = Modifier.size(20.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("提醒時間: ${String.format("%02d:%02d", userSettings.morningReminderHour, userSettings.morningReminderMinute)}")
+                            Text(stringResource(R.string.settings_reminder_time_prefix, String.format("%02d:%02d", userSettings.morningReminderHour, userSettings.morningReminderMinute)))
                         }
                     }
 
@@ -304,16 +304,16 @@ fun SettingsScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Notifications,
-                                contentDescription = "晚安提醒",
+                                contentDescription = stringResource(R.string.settings_goodnight_reminder_icon_desc),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Column {
                                 Text(
-                                    text = "🌙 晚安提醒",
+                                    text = stringResource(R.string.settings_goodnight_reminder),
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 Text(
-                                    text = if (userSettings.reminderEnabled) "已啟用" else "已停用",
+                                    text = if (userSettings.reminderEnabled) stringResource(R.string.settings_reminder_enabled) else stringResource(R.string.settings_reminder_disabled),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -351,11 +351,11 @@ fun SettingsScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.AccessTime,
-                                contentDescription = "設定時間",
+                                contentDescription = stringResource(R.string.settings_time_icon_desc),
                                 modifier = Modifier.size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("提醒時間: ${String.format("%02d:%02d", userSettings.reminderHour, userSettings.reminderMinute)}")
+                            Text(stringResource(R.string.settings_reminder_time_prefix, String.format("%02d:%02d", userSettings.reminderHour, userSettings.reminderMinute)))
                         }
                     }
 
@@ -398,19 +398,19 @@ fun SettingsScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Lock,
-                                contentDescription = "生物辨識",
+                                contentDescription = stringResource(R.string.settings_biometric_cd),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Column {
                                 Text(
-                                    text = "生物辨識解鎖",
+                                    text = stringResource(R.string.settings_biometric_unlock),
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                                 Text(
-                                    text = if (biometricHelper.isBiometricAvailable()) 
-                                        "使用指紋或臉部識別"
-                                    else 
-                                        "裝置不支援生物辨識",
+                                    text = if (biometricHelper.isBiometricAvailable())
+                                        stringResource(R.string.settings_biometric_desc)
+                                    else
+                                        stringResource(R.string.settings_biometric_unsupported),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -443,12 +443,12 @@ fun SettingsScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.VpnKey,
-                                contentDescription = "PIN 碼",
+                                contentDescription = stringResource(R.string.settings_pin_cd),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Column {
                                 Text(
-                                    text = "PIN 碼鎖定",
+                                    text = stringResource(R.string.settings_pin_lock),
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                                 Text(
@@ -477,7 +477,7 @@ fun SettingsScreen(
                             onClick = { showPinSetupDialog = true },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("修改 PIN 碼")
+                            Text(stringResource(R.string.settings_pin_change))
                         }
                     }
                     
@@ -494,7 +494,7 @@ fun SettingsScreen(
                                 modifier = Modifier.size(16.dp)
                             )
                             Text(
-                                text = "應用程式已啟用鎖定保護，每次進入時需要驗證",
+                                text = stringResource(R.string.settings_lock_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.tertiary
                             )
@@ -515,16 +515,16 @@ fun SettingsScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.PhotoCamera,
-                                contentDescription = "照片模糊",
+                                contentDescription = stringResource(R.string.settings_photo_blur_cd),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Column {
                                 Text(
-                                    text = "照片預設模糊",
+                                    text = stringResource(R.string.settings_photo_blur),
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                                 Text(
-                                    text = "瀏覽記錄時打卡照片自動模糊",
+                                    text = stringResource(R.string.settings_photo_blur_desc),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -552,15 +552,15 @@ fun SettingsScreen(
                     )
 
                     Text(
-                        text = "顯示主題",
+                        text = stringResource(R.string.settings_theme),
                         style = MaterialTheme.typography.bodyMedium
                     )
 
                     // T3: Dark mode selector — three-option FilterChip row
                     val darkModeOptions = listOf(
-                        Triple(DarkMode.LIGHT,  Icons.Default.LightMode,  "淺色"),
-                        Triple(DarkMode.DARK,   Icons.Default.DarkMode,   "深色"),
-                        Triple(DarkMode.SYSTEM, Icons.Default.Brightness6, "跟隨系統")
+                        Triple(DarkMode.LIGHT,  Icons.Default.LightMode,  stringResource(R.string.settings_theme_light)),
+                        Triple(DarkMode.DARK,   Icons.Default.DarkMode,   stringResource(R.string.settings_theme_dark)),
+                        Triple(DarkMode.SYSTEM, Icons.Default.Brightness6, stringResource(R.string.settings_theme_system))
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -600,7 +600,7 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "資料管理",
+                        text = stringResource(R.string.settings_data_management),
                         style = MaterialTheme.typography.titleMedium
                     )
                     
@@ -624,7 +624,7 @@ fun SettingsScreen(
                                 modifier = Modifier.size(16.dp)
                             )
                             Text(
-                                "雲端同步：開發中，敬請期待 ☁️",
+                                stringResource(R.string.settings_cloud_coming_soon),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -664,7 +664,7 @@ fun SettingsScreen(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "關於",
+                        text = stringResource(R.string.settings_about),
                         style = MaterialTheme.typography.titleMedium
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -726,7 +726,7 @@ fun SettingsScreen(
                 text = { Text(stringResource(R.string.biometric_unavailable_message)) },
                 confirmButton = {
                     TextButton(onClick = { showBiometricWarning = false }) {
-                        Text("確定")
+                        Text(stringResource(R.string.confirm_ok))
                     }
                 }
             )

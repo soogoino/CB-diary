@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -23,6 +25,27 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            // Values are read from environment variables (CI) or local.properties (local dev).
+            // Never commit keystore passwords to source control.
+            val localProps = rootProject.file("local.properties")
+            val props = if (localProps.exists()) {
+                Properties().also { it.load(localProps.inputStream()) }
+            } else null
+            storeFile = file(
+                System.getenv("KEYSTORE_PATH")
+                    ?: props?.getProperty("KEYSTORE_PATH") ?: "../cb-diary-release.jks"
+            )
+            storePassword = System.getenv("KEYSTORE_PASS")
+                ?: props?.getProperty("KEYSTORE_PASS") ?: ""
+            keyAlias = System.getenv("KEY_ALIAS")
+                ?: props?.getProperty("KEY_ALIAS") ?: "cb-diary"
+            keyPassword = System.getenv("KEY_PASS")
+                ?: props?.getProperty("KEY_PASS") ?: ""
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -30,6 +53,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
         debug {
             isMinifyEnabled = false

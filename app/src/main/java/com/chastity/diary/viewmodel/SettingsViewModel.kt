@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import androidx.work.*
+import com.chastity.diary.R
 import com.chastity.diary.data.datastore.PreferencesManager
 import com.chastity.diary.data.local.database.AppDatabase
 import com.chastity.diary.data.repository.EntryRepository
@@ -248,7 +249,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun generateTestData() {
         viewModelScope.launch {
             try {
-                _testDataMessage.value = "正在生成測試數據..."
+                _testDataMessage.value = getApplication<Application>().getString(R.string.status_generating_test_data)
                 val testEntries = TestDataGenerator.generateSampleEntries(30)
                 var successCount = 0
                 testEntries.forEach { entry ->
@@ -259,9 +260,9 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                         // Skip duplicates or errors
                     }
                 }
-                _testDataMessage.value = "成功生成 $successCount 筆測試數據！"
+                _testDataMessage.value = getApplication<Application>().getString(R.string.status_generated_test_data, successCount)
             } catch (e: Exception) {
-                _testDataMessage.value = "生成失敗: ${e.message}"
+                _testDataMessage.value = getApplication<Application>().getString(R.string.status_generate_failed, e.message ?: "")
             }
         }
     }
@@ -286,7 +287,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun exportCsv(uri: Uri) {
         viewModelScope.launch {
             try {
-                _exportImportMessage.value = "正在匯出..."
+                _exportImportMessage.value = getApplication<Application>().getString(R.string.status_exporting)
                 val entries = entryRepository.getAllEntriesSync()
                 val csvContent = CsvHelper.toCsv(entries)
                 getApplication<Application>().contentResolver.openOutputStream(uri)?.use { stream ->
@@ -294,9 +295,9 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                         writer.write(csvContent)
                     }
                 }
-                _exportImportMessage.value = "匯出成功！共 ${entries.size} 筆記錄"
+                _exportImportMessage.value = getApplication<Application>().getString(R.string.status_export_success, entries.size)
             } catch (e: Exception) {
-                _exportImportMessage.value = "匯出失敗: ${e.message}"
+                _exportImportMessage.value = getApplication<Application>().getString(R.string.status_export_failed, e.message ?: "")
             }
         }
     }
@@ -308,15 +309,15 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun importCsv(uri: Uri) {
         viewModelScope.launch {
             try {
-                _exportImportMessage.value = "正在匯入..."
+                _exportImportMessage.value = getApplication<Application>().getString(R.string.status_importing)
                 val csvContent = getApplication<Application>().contentResolver
                     .openInputStream(uri)?.use { stream ->
                         BufferedReader(InputStreamReader(stream, Charsets.UTF_8))
                             .readText()
-                    } ?: throw IllegalStateException("無法開啟檔案")
+                    } ?: throw IllegalStateException(getApplication<Application>().getString(R.string.error_file_open))
                 val entries = CsvHelper.fromCsv(csvContent)
                 if (entries.isEmpty()) {
-                    _exportImportMessage.value = "匯入失敗: 沒有有效資料或格式不符"
+                    _exportImportMessage.value = getApplication<Application>().getString(R.string.error_import_invalid)
                     return@launch
                 }
                 var successCount = 0
@@ -327,9 +328,9 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                         successCount++
                     } catch (e: Exception) { /* skip */ }
                 }
-                _exportImportMessage.value = "匯入成功！共匯入 $successCount 筆記錄"
+                _exportImportMessage.value = getApplication<Application>().getString(R.string.status_import_success, successCount)
             } catch (e: Exception) {
-                _exportImportMessage.value = "匯入失敗: ${e.message}"
+                _exportImportMessage.value = getApplication<Application>().getString(R.string.status_import_failed, e.message ?: "")
             }
         }
     }

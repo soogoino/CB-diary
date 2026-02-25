@@ -250,7 +250,7 @@ private fun RecentEntriesSection(entries: List<DailyEntry>) {
 }
 
 // E-3: Top-level constant avoids rebuilding DateTimeFormatter on every EntryRow recompose
-private val ENTRY_DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd (EEE)", java.util.Locale.TAIWAN)
+private val ENTRY_DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd (EEE)", java.util.Locale.getDefault())
 
 @Composable
 private fun EntryRow(entry: DailyEntry) {

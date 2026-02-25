@@ -1,0 +1,16 @@
+Initial release.
+
+- Daily diary with mood, desire, comfort, and focus tracking
+- Sleep record: bedtime, wake time, quality, and night erection data
+- Morning state: mood and energy
+- Body status: morning and night erection, device worn
+- Rotating pool of 33 optional questions (changes daily)
+- Optional photo check-in with blur-by-default in history
+- CSV export and import
+- Streak tracking (current and longest)
+- Dashboard with mood/desire/exercise charts and heatmap
+- Full English and Traditional Chinese localisation
+- PIN and biometric lock
+- Morning and evening reminders
+- Dark / Light / System theme
+- No internet — 100% offline

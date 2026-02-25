@@ -30,8 +30,8 @@ local.properties
 *.jks
 *.keystore
 
-# Google Services (if you want to ignore Firebase config)
-# app/google-services.json
+# Google Services — Firebase config should not be committed
+app/google-services.json
 
 # Backup files
 *.bak

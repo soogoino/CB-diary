@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-release:
+    name: Build Signed APK & Create GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > /tmp/cb-diary-release.jks
+
+      - name: Build release APK
+        env:
+          KEYSTORE_PATH: /tmp/cb-diary-release.jks
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.KEY_PASS }}
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Rename APK
+        run: |
+          mv app/build/outputs/apk/release/app-release.apk \
+             app/build/outputs/apk/release/ChastityDiary-${{ steps.version.outputs.VERSION }}.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Chastity Diary ${{ github.ref_name }}"
+          body: |
+            ## Chastity Diary ${{ github.ref_name }}
+
+            See [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/fastlane/metadata/android/en-US/changelogs/${{ steps.version.outputs.VERSION }}.txt) for details.
+
+            ### Install
+            Download the APK below and install it on your Android device (minSdk 24 / Android 7.0+).
+            You may need to enable "Install from unknown sources" in your device settings.
+          files: app/build/outputs/apk/release/ChastityDiary-*.apk
+          draft: false
+          prerelease: false
