@@ -15,8 +15,8 @@ Categories:
 License: MIT
 
 AuthorName: Chastity Diary Contributors
-SourceCode: https://github.com/YOUR_USERNAME/CB-diary-A
-IssueTracker: https://github.com/YOUR_USERNAME/CB-diary-A/issues
+SourceCode: https://github.com/soogoino/CB-diary
+IssueTracker: https://github.com/soogoino/CB-diary/issues
 
 Name: Chastity Diary
 Summary: Private daily diary for chastity lifestyle tracking. No internet. No tracking.
@@ -33,7 +33,7 @@ Description: |
   No internet permission. No analytics. No crash reporting.
 
 RepoType: git
-Repo: https://github.com/YOUR_USERNAME/CB-diary-A
+Repo: https://github.com/soogoino/CB-diary
 
 Builds:
   - versionName: 1.0.0

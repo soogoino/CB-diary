@@ -30,6 +30,11 @@ local.properties
 *.jks
 *.keystore
 
+# SSH keys — never commit
+id_ed25519*
+id_rsa*
+*.pub
+
 # Google Services — Firebase config should not be committed
 app/google-services.json
 
