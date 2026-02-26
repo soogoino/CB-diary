@@ -45,14 +45,30 @@ jobs:
 
       - name: Get version from tag
         id: version
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+            echo "IS_TAG=true" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+            echo "IS_TAG=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Rename APK
         run: |
           mv app/build/outputs/apk/release/app-release.apk \
              app/build/outputs/apk/release/ChastityDiary-${{ steps.version.outputs.VERSION }}.apk
 
+      - name: Upload APK artifact (workflow_dispatch)
+        if: steps.version.outputs.IS_TAG == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ChastityDiary-${{ steps.version.outputs.VERSION }}
+          path: app/build/outputs/apk/release/ChastityDiary-*.apk
+          retention-days: 7
+
       - name: Create GitHub Release
+        if: steps.version.outputs.IS_TAG == 'true'
         uses: softprops/action-gh-release@v2
         with:
           name: "Chastity Diary ${{ github.ref_name }}"
