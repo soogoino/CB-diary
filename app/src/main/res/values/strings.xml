@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Chastity Diary</string>
+
+    <!-- Navigation -->
+    <string name="nav_daily_entry">Daily Log</string>
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Common -->
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="confirm">Confirm</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="confirm_ok">OK</string>
+    <string name="not_set">Not set</string>
+
+    <!-- Daily Entry Questions -->
+    <string name="q1_mood">How are you feeling today?</string>
+    <string name="q2_porn">Did you actively seek out adult content today?</string>
+    <string name="q2_duration">How long?</string>
+    <string name="q3_erection">Did you have an erection today?</string>
+    <string name="q4_exercise">Did you exercise today?</string>
+    <string name="q4_type">What type of exercise?</string>
+    <string name="q5_unlocked">Was the device unlocked?</string>
+    <string name="q5_masturbated">Did you masturbate?</string>
+    <string name="q6_exposed">Was the device exposed in public?</string>
+    <string name="q6_locations">Where?</string>
+    <string name="q7_photo">Check-in Photo</string>
+    <string name="q8_desire">How strong was your desire today?</string>
+    <string name="q9_comfort">Wearing comfort rating</string>
+    <string name="q10_discomfort">Any discomfort or pain?</string>
+    <string name="q11_cleaned">Did you clean the device?</string>
+    <string name="q12_leakage">Any leakage?</string>
+    <string name="q13_edging">Any edging or teasing?</string>
+    <string name="q14_keyholder">Interaction with Keyholder / partner</string>
+    <string name="q15_sleep">How was last night\'s sleep quality?</string>
+    <string name="q16_removed">Was the device briefly removed today?</string>
+    <string name="q17_night_erection">Nocturnal erections</string>
+    <string name="q18_focus">Impact on focus</string>
+    <string name="q19_tasks">Challenges / tasks completed today</string>
+    <string name="q20_emotions">Main emotions today</string>
+
+    <!-- Biometric -->
+    <string name="biometric_title">Unlock App</string>
+    <string name="biometric_subtitle">Verify your identity with biometrics</string>
+    <string name="biometric_description">Please authenticate to access your diary</string>
+    <string name="biometric_negative_button">Use PIN</string>
+
+    <!-- Notifications - Daily -->
+    <string name="notification_channel_name">Daily Reminder</string>
+    <string name="notification_channel_description">Reminds you to log your diary entry for today</string>
+    <string name="notification_title">No entry yet today!</string>
+    <string name="notification_text">Don\'t forget to check in 📝</string>
+
+    <!-- Notifications - Morning -->
+    <string name="morning_notification_channel_name">Morning Check-in</string>
+    <string name="morning_notification_channel_description">Reminds you to record morning sleep and status</string>
+    <string name="morning_notification_title">☀️ Morning Check-in</string>
+    <string name="morning_notification_text">Log last night\'s sleep and this morning\'s status — just takes a moment!</string>
+
+    <!-- Errors -->
+    <string name="error_biometric_failed">Authentication failed, please try again</string>
+    <string name="error_pin_incorrect">Incorrect PIN</string>
+    <string name="error_prefix">Error: %s</string>
+
+    <!-- Lock Screen -->
+    <string name="lock_screen_title">Chastity Diary Locked</string>
+    <string name="lock_icon_desc">Locked</string>
+    <string name="lock_biometric_button">Unlock with Biometrics</string>
+    <string name="lock_or_pin">or use PIN</string>
+    <string name="lock_pin_label">PIN</string>
+    <string name="lock_unlock_button">Unlock</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">Dashboard</string>
+    <string name="time_range_week">This week</string>
+    <string name="time_range_month">This month</string>
+    <string name="time_range_3months">3 months</string>
+    <string name="time_range_all">All time</string>
+    <string name="stat_total_days">Total days worn</string>
+    <string name="stat_completion_rate">Log completion</string>
+    <string name="stat_streak">Current streak</string>
+    <string name="stat_longest_streak">Longest streak</string>
+    <string name="chart_mood_trend">Mood trend (1=frustrated → 5=happy)</string>
+    <string name="chart_metric_trend">Wellbeing trend (1–10)</string>
+    <string name="section_summary">Summary</string>
+    <string name="summary_avg_desire">Avg. desire level</string>
+    <string name="summary_avg_comfort">Avg. comfort</string>
+    <string name="summary_masturbation_count">Masturbation count (total)</string>
+    <string name="summary_exercise_count">Exercise sessions</string>
+
+    <!-- History Screen -->
+    <string name="history_title">History</string>
+    <string name="history_all_records">All Records</string>
+    <string name="history_has_record">Logged</string>
+    <string name="history_no_record">No entry</string>
+
+    <!-- Daily Entry Screen -->
+    <string name="save_success">Saved!</string>
+    <string name="morning_save_success">☀️ Morning entry saved!</string>
+    <string name="delete_success">Deleted!</string>
+    <string name="edit_mode">Edit mode</string>
+    <string name="tab_morning">☀️ Morning</string>
+    <string name="tab_evening">🌙 Evening</string>
+    <string name="delete_dialog_title">Confirm Delete</string>
+    <string name="delete_dialog_message">Delete record for %s?\n\nThis action cannot be undone.</string>
+    <string name="morning_done_title">Morning entry complete ☀️</string>
+    <string name="morning_done_subtitle">You can update your morning entry any time</string>
+    <string name="save_button_update_morning">Update morning entry</string>
+    <string name="save_button_complete_morning">Complete morning entry</string>
+    <string name="entry_created_prefix">Created: %s</string>
+    <string name="entry_updated_prefix">Updated: %s</string>
+    <string name="entry_today_title">Today\'s Entry</string>
+    <string name="date_pattern">MMMM d, yyyy</string>
+    <string name="date_short_pattern">MMMM d</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_version_format">Chastity Diary v%s</string>
+    <string name="settings_profile">Profile</string>
+    <string name="settings_no_profile">No profile set up yet</string>
+    <string name="settings_edit">Edit</string>
+    <string name="settings_nickname_prefix">Nickname: %s</string>
+    <string name="settings_start_date_prefix">Start date: %s</string>
+    <string name="settings_start_date_not_set">Not set</string>
+    <string name="settings_gender">Gender</string>
+    <string name="settings_gender_male">Male ♂</string>
+    <string name="settings_gender_female">Female ♀</string>
+    <string name="settings_gender_other">Other</string>
+    <string name="settings_height_format">Height: %s cm</string>
+    <string name="settings_weight_format">Weight: %s kg</string>
+    <string name="settings_device_format">Device: %s</string>
+    <string name="settings_morning_reminder">☀️ Morning Reminder</string>
+    <string name="settings_reminder_icon_desc">Morning reminder</string>
+    <string name="settings_reminder_enabled">Enabled</string>
+    <string name="settings_reminder_disabled">Disabled</string>
+    <string name="settings_reminder_time_prefix">Reminder time: %s</string>
+    <string name="settings_goodnight_reminder_icon_desc">Goodnight reminder</string>
+    <string name="settings_goodnight_reminder">🌙 Goodnight Reminder</string>
+    <string name="settings_security">Security</string>
+    <string name="settings_time_icon_desc">Set time</string>
+    <string name="settings_biometric_unlock">Biometric Unlock</string>
+    <string name="settings_biometric_desc">Use fingerprint or face recognition</string>
+    <string name="settings_biometric_cd">Biometric</string>
+    <string name="settings_biometric_unsupported">Biometrics not supported on this device</string>
+    <string name="settings_pin_lock">PIN Lock</string>
+    <string name="settings_pin_cd">PIN</string>
+    <string name="settings_pin_change">Change PIN</string>
+    <string name="settings_pin_set">Set</string>
+    <string name="settings_pin_not_set">Not set</string>
+    <string name="settings_lock_desc">App is protected — authentication required on each launch</string>
+    <string name="settings_photo_blur">Default Photo Blur</string>
+    <string name="settings_photo_blur_desc">Auto-blur check-in photos when browsing history</string>
+    <string name="settings_photo_blur_cd">Photo blur</string>
+    <string name="settings_ui">Display</string>
+    <string name="settings_theme">Display Theme</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_data_management">Data Management</string>
+    <string name="settings_cloud_coming_soon">Cloud Sync: coming soon ☁️</string>
+    <string name="settings_export_csv">Export Data (CSV)</string>
+    <string name="settings_import_csv">Import Data (CSV)</string>
+    <string name="settings_about">About</string>
+    <string name="biometric_unavailable_title">Biometrics Unavailable</string>
+    <string name="biometric_unavailable_message">Your device does not support biometrics, or no fingerprint / face has been enrolled. Please set up biometrics in your system settings first.</string>
+    <string name="save_button_update">Update record</string>
+    <string name="save_button_save_today">Save today\'s entry</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_new_upgrade">What\'s New ✨</string>
+    <string name="onboarding_upgrade_features">• Daily log — progressive card design\n• Daily rotating questions (pool of 33)\n• Real-time feedback &amp; emotion tracking\n• CSV export / import\n• Personal profile &amp; nickname</string>
+    <string name="onboarding_get_started">Enter App</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_back">Back</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_finish">Done!</string>
+    <string name="welcome_title">Welcome to\nChastity Diary</string>
+    <string name="welcome_subtitle">Track your chastity journey\nRecord daily feelings &amp; growth</string>
+    <string name="welcome_feat_daily">Daily Tracking</string>
+    <string name="welcome_feat_streak">Streak Records</string>
+    <string name="welcome_feat_private">Safe &amp; Private</string>
+    <string name="profile_page_title">Your Profile</string>
+    <string name="profile_page_subtitle">Tell us a bit about yourself (skippable)</string>
+    <string name="profile_nickname">Nickname</string>
+    <string name="profile_nickname_hint">e.g., Little Lock</string>
+    <string name="profile_gender">Gender</string>
+    <string name="profile_body_section">Body Data (Optional)</string>
+    <string name="profile_height">Height</string>
+    <string name="profile_weight">Weight</string>
+    <string name="device_page_title">Chastity Device</string>
+    <string name="device_page_subtitle">Log your device info (skippable)</string>
+    <string name="device_lock_name">Device Name</string>
+    <string name="device_lock_name_hint">e.g., CB-6000, Bon4 …</string>
+    <string name="device_start_date">Lock Start Date</string>
+    <string name="device_tap_to_set_date">Tap to set date</string>
+    <string name="device_wearing_days">Wearing for %d days 🎉</string>
+    <string name="device_starting_soon">Starting soon!</string>
+    <string name="security_page_title">Security &amp; Privacy</string>
+    <string name="security_page_subtitle">Protect your records (skippable)</string>
+    <string name="security_biometric">Biometric Lock</string>
+    <string name="security_biometric_desc">Unlock with fingerprint or face</string>
+    <string name="security_pin">PIN Lock</string>
+    <string name="security_pin_desc">Unlock with a numeric PIN (configurable in Settings)</string>
+    <string name="security_note">Detailed security settings are available in the Settings tab</string>
+    <string name="reminder_page_title">Daily Reminder</string>
+    <string name="reminder_page_subtitle">Set your daily logging reminder time</string>
+    <string name="reminder_enable">Enable Daily Reminder</string>
+    <string name="reminder_enable_desc">Get notified at your chosen time each day</string>
+    <string name="reminder_time">Reminder Time</string>
+
+    <!-- ViewModel status messages -->
+    <string name="status_generating_test_data">Generating test data…</string>
+    <string name="status_generated_test_data">Generated %d test records!</string>
+    <string name="status_generate_failed">Generation failed: %s</string>
+    <string name="status_exporting">Exporting…</string>
+    <string name="status_export_success">Exported! %d records total</string>
+    <string name="status_export_failed">Export failed: %s</string>
+    <string name="status_importing">Importing…</string>
+    <string name="error_file_open">Cannot open file</string>
+    <string name="error_import_invalid">Import failed: no valid data or wrong format</string>
+    <string name="status_import_success">Imported! %d records</string>
+    <string name="status_import_failed">Import failed: %s</string>
+    <string name="error_load_failed">Load failed</string>
+    <string name="error_load_failed_detail">Load failed: %s</string>
+
+    <!-- DailyEntryScreen sections and chips -->
+    <string name="section_core_questions">Core Questions</string>
+    <string name="section_rotating_questions">Today\'s Rotating Questions</string>
+    <string name="section_rotating_daily_label">Changes daily</string>
+    <string name="chip_yes">Yes</string>
+    <string name="chip_no">No</string>
+    <string name="entry_no_record_prompt">Not recorded yet (up to %d questions)</string>
+    <string name="entry_completion_status">Core: %1$d / %2$d completed</string>
+    <string name="entry_narrative_title">📝 Today\'s Summary</string>
+    <string name="entry_record_info_title">Record Info</string>
+    <string name="entry_close">Close</string>
+    <string name="unsaved_changes_title">Unsaved Changes</string>
+    <string name="unsaved_changes_message">Switching dates will discard unsaved changes. Continue?</string>
+    <string name="unsaved_changes_confirm">Switch anyway</string>
+    <string name="section_notes">Notes</string>
+    <string name="section_notes_subtitle">Any additional thoughts?</string>
+    <string name="notes_placeholder">Type your notes…</string>
+    <string name="notes_expand">Add more →</string>
+    <string name="notes_collapse">Collapse notes</string>
+    <string name="notes_optional">Optional</string>
+    <string name="section_sleep_record">Sleep Record</string>
+    <string name="section_body_status">Body Status</string>
+    <string name="section_morning_wakeup">Morning State</string>
+    <string name="topbar_delete_cd">Delete</string>
+    <string name="topbar_calendar_cd">Select date</string>
+    <string name="ok_thumbs_up">OK 👍</string>
+
+    <!-- Core Questions Card -->
+    <string name="section_core_daily_required">Required daily</string>
+    <string name="q_device_worn">Wearing the device today?</string>
+    <string name="chip_worn_yes">✓ Wearing</string>
+    <string name="chip_worn_no">✗ Not today</string>
+    <string name="q_mood_title">Today\'s mood</string>
+    <string name="q_mood_subtitle">Pick the feeling closest to you</string>
+    <string name="q_desire_title">Today\'s desire level</string>
+    <string name="q_desire_subtitle">1 = Very low   10 = Very strong</string>
+    <string name="q_desire_label">Desire</string>
+    <string name="q_comfort_title">Wearing comfort</string>
+    <string name="q_comfort_subtitle">1 = Very uncomfortable   10 = Very comfortable</string>
+    <string name="q_comfort_label">Comfort</string>
+    <string name="q_focus_title">Today\'s focus</string>
+    <string name="q_focus_subtitle">1 = Highly distracted   10 = Highly focused</string>
+    <string name="q_focus_label">Focus</string>
+    <string name="q_photo_title">Check-in photo</string>
+    <string name="q_photo_subtitle_optional">Optional · visual milestone</string>
+    <string name="q_photo_taken">✓ Taken</string>
+    <string name="action_take_photo">Take photo</string>
+    <string name="q_photo_tap_to_view">Tap to view</string>
+    <string name="action_retake_photo">Retake</string>
+    <string name="action_delete_photo">Delete photo</string>
+    <string name="error_photo_missing">⚠️ Photo file is missing</string>
+    <string name="action_clear_record">Clear record</string>
+    <string name="q_exercise_title">Exercise today?</string>
+    <string name="q_exercise_label">Exercised</string>
+    <string name="q_cleaning_title">Did you clean the device today?</string>
+
+    <!-- Sleep Record Card -->
+    <string name="q_bedtime_title">Bedtime</string>
+    <string name="q_wake_time_title">Wake-up time</string>
+    <string name="action_set">Set</string>
+    <string name="sleep_duration_hours">Sleep: %dh</string>
+    <string name="sleep_duration_hours_minutes">Sleep: %1$dh %2$dm</string>
+    <string name="q_sleep_quality_title">Sleep quality</string>
+    <string name="q_sleep_quality_subtitle">1 = Very poor   10 = Excellent</string>
+    <string name="q_sleep_quality_label">Sleep quality</string>
+    <string name="q_woke_from_device_title">Woken by the device?</string>
+    <string name="q_woke_from_device_label">Woken by device</string>
+    <string name="q_erotic_dream_title">Erotic dream last night?</string>
+    <string name="q_erotic_dream_label">Erotic dream</string>
+
+    <!-- Body Status Card -->
+    <string name="q_morning_erection_title">Morning erection</string>
+    <string name="q_morning_erection_label">Morning erection</string>
+    <string name="q_night_erection_title">Nocturnal erections last night</string>
+    <string name="q_night_erection_subtitle">A rough feeling is fine</string>
+    <string name="q_woke_from_night_erection_title">Woken by nocturnal erection?</string>
+    <string name="q_woke_from_night_erection_label">Woken by erection</string>
+
+    <!-- Morning State Card -->
+    <string name="q_morning_mood_title">Morning mood</string>
+    <string name="q_morning_energy_title">Morning energy index</string>
+    <string name="q_morning_energy_subtitle">1 = Exhausted   10 = Energized</string>
+    <string name="q_morning_energy_label">Energy</string>
+
+    <!-- Masturbation Card -->
+    <string name="section_masturbation">💧 Masturbation Notes</string>
+    <string name="q_masturbated_title">Did you masturbate today?</string>
+    <string name="q_masturbated_label">Masturbated</string>
+    <string name="q_masturbation_count">Count:</string>
+    <string name="cd_decrease">Decrease</string>
+    <string name="cd_increase">Increase</string>
+
+    <!-- YesNoToggle chips -->
+    <string name="yes_chip">Yes</string>
+    <string name="no_chip">No</string>
+
+    <!-- Duration picker time unit suffixes -->
+    <string name="unit_min">min</string>
+    <string name="unit_hr">hr</string>
+
+    <!-- Daily narrative sentences -->
+    <string name="narrative_mood">Mood today: %s</string>
+    <string name="narrative_desire_high">Desire %1$d/10 — a peak day, but you held on 💪</string>
+    <string name="narrative_desire_low">Desire %1$d/10 — unusually calm today 😌</string>
+    <string name="narrative_desire_normal">Desire %1$d/10 — within normal range</string>
+    <string name="narrative_comfort_high">Comfort %1$d/10 — wearing well today!</string>
+    <string name="narrative_comfort_low">Comfort %1$d/10 — you may want to adjust the fit.</string>
+    <string name="narrative_comfort_normal">Comfort %1$d/10.</string>
+    <string name="narrative_not_worn">No device worn today.</string>
+    <string name="narrative_exercised">Exercised — self-discipline +1 🏃</string>
+    <string name="narrative_exercised_with_duration">Exercised (%d min) — self-discipline +1 🏃</string>
+    <string name="narrative_cleaning">Cleaning: %s 🧹</string>
+    <string name="narrative_keyholder">Connected with Keyholder today 💬</string>
+    <string name="narrative_photo">📷 A check-in photo was taken today</string>
+    <string name="narrative_unlocked">Device unlocked today — honesty is the best policy 🔓</string>
+    <string name="narrative_masturbated">Masturbated %d time(s) today 💧</string>
+    <string name="narrative_edging">Edging training complete — endurance up 😈</string>
+    <string name="narrative_default">Today\'s record saved — keep it up!</string>
+    <string name="narrative_cleaning_none">No cleaning</string>
+
+    <!-- Rotating question feedbacks -->
+    <string-array name="daily_rotating_feedback_generic">
+        <item>Looks like you slipped a little — don\'t let it run wild.</item>
+        <item>Hmm… this little situation deserves a moment of honest reflection.</item>
+        <item>A bit awkward, but noticing it is already progress.</item>
+        <item>These small slip-ups happen — try harder next time!</item>
+    </string-array>
+
+    <!-- Rotating questions -->
+    <string name="rq_r1_title">Any leakage today?</string>
+    <string name="rq_r1_feedback">Whether or not there was leakage, don\'t shy away from cleaning — your body will thank you.</string>
+    <string name="rq_r2_title">Did you grind against or rub the device seeking stimulation today?</string>
+    <string name="rq_r2_feedback">Whether or not you acted on that urge, being honest with yourself takes courage.</string>
+    <string name="rq_r3_title">Any edging today?</string>
+    <string name="rq_r3_feedback">Lingering at the edge or pulling back — noticing that temptation is worth a shy smile.</string>
+    <string name="rq_r4_title">Did you interact with your Keyholder today?</string>
+    <string name="rq_r4_feedback">Whether or not you spoke up, the details of connection often matter more than the outcome.</string>
+    <string name="rq_r6_title">Did you wear the device in a public place today?</string>
+    <string name="rq_r6_feedback">Carrying that little secret in public — whether you dared to show it or not — is its own reward.</string>
+    <string name="rq_r7_title">Was the device briefly unlocked today?</string>
+    <string name="rq_r7_feedback">Whether or not you sneaked a moment off, be honest with yourself and take proper care.</string>
+    <string name="rq_r8_title">Did you intentionally display or hint at the device today?</string>
+    <string name="rq_r8_feedback">Deliberate or accidental, a little peek can make you quietly laugh — embrace the mischief.</string>
+    <string name="rq_r9_title">Did you access adult content today?</string>
+    <string name="rq_r9_feedback">Watched or not, the pull of desire is worth a gentle self-deprecating smile.</string>
+    <string name="rq_r10_title">Did you unlock or masturbate today?</string>
+    <string name="rq_r10_feedback">Whatever happened, acknowledging your feelings is more honest — and healing — than hiding them.</string>
+    <string name="rq_r11_title">Any nipple stimulation today?</string>
+    <string name="rq_r11_feedback">Teased or not, discovering new sensitive spots is both embarrassing and fascinating.</string>
+    <string name="rq_r12_title">Any anal exploration today?</string>
+    <string name="rq_r12_feedback">Explored or not, these private experiences are inherently blush-worthy.</string>
+    <string name="rq_r13_title">Did the device cause discomfort or need adjusting today?</string>
+    <string name="rq_r13_feedback">Note it either way — caring for your body is braver than just enduring.</string>
+    <string name="rq_r14_title">Did wearing the device bring inner calm or a sense of achievement today?</string>
+    <string name="rq_r14_feedback">Whatever the feeling, noticing subtle peace or discomfort is part of growth.</string>
+    <string name="rq_r15_title">Did you think of your Keyholder and feel a warm connection today?</string>
+    <string name="rq_r15_feedback">Thought of them or not, those little moments prove feelings are real.</string>
+    <string name="rq_r16_title">Did wearing the device feel natural and part of your routine today?</string>
+    <string name="rq_r16_feedback">Whether it feels normal or not, noticing adaptation or resistance is quietly worth celebrating.</string>
+    <string name="rq_r17_title">Did you redirect desire into another activity like exercise or creativity today?</string>
+    <string name="rq_r17_feedback">Success or not, the attempt itself is a small victory in the inner struggle.</string>
+    <string name="rq_r18_title">Were you especially aware of your hidden state in public today?</string>
+    <string name="rq_r18_feedback">That little heartbeat in a crowd — noticed or not — is your secret luxury.</string>
+    <string name="rq_r19_title">Did you do anything to relax and ease stress today?</string>
+    <string name="rq_r19_feedback">Intentional or not, the thought of being kind to yourself is already encouraging.</string>
+    <string name="rq_r20_title">Did you wake up recalling device-related dreams today?</string>
+    <string name="rq_r20_feedback">Dreamed or not, those images quietly tell you your inner secrets.</string>
+    <string name="rq_r21_title">Did other senses (touch, sound) feel heightened today?</string>
+    <string name="rq_r21_feedback">Sensitive or not, your body is talking — listen without shyness.</string>
+    <string name="rq_r22_title">Did you share your feelings or thoughts with your Keyholder today?</string>
+    <string name="rq_r22_feedback">Said or unsaid, even wanting to share is progress.</string>
+    <string name="rq_r23_title">How did the device feel in different settings today?</string>
+    <string name="rq_r23_feedback">Standing, sitting, walking — those little reminders are real, noticed or not.</string>
+    <string name="rq_r24_title">Did you face a moment of hesitation or struggle today?</string>
+    <string name="rq_r24_feedback">Hesitated or not, recalling that instant proves you still have humanity — and a cute little weakness.</string>
+    <string name="rq_r25_title">Did wearing the device bring any unexpected positive experience today?</string>
+    <string name="rq_r25_feedback">Found a small joy or nothing at all — admitting it feels bittersweet.</string>
+    <string name="rq_r26_title">Did you pay special attention to cleaning or moisturising today?</string>
+    <string name="rq_r26_feedback">Done or not, caring about the details is secretly pampering yourself — accept it.</string>
+    <string name="rq_r27_title">Did you express your experience through writing or art today?</string>
+    <string name="rq_r27_feedback">Written or not, that expression is therapeutic and worth a shy kind of pride.</string>
+    <string name="rq_r28_title">Did time feel faster or slower today, affected by the device?</string>
+    <string name="rq_r28_feedback">Noticed or not, that sense of time is a reminder that this experience is wonderfully strange.</string>
+    <string name="rq_r29_title">Did you share or read related experiences in an anonymous community today?</string>
+    <string name="rq_r29_feedback">Lurked or shared, that sense of connection is genuinely warm.</string>
+    <string name="rq_r30_title">Did you think about what you\'d do if the device got stuck today?</string>
+    <string name="rq_r30_feedback">Thought about it or not, having a backup plan is mature and responsible — give yourself a thumbs-up.</string>
+    <string name="rq_r31_title">Did your emotions fluctuate today, related to the device?</string>
+    <string name="rq_r31_feedback">Ups and downs are nothing to be ashamed of — noticing them is progress.</string>
+    <string name="rq_r32_title">Did you imagine continuing to wear the device in the future today?</string>
+    <string name="rq_r32_feedback">Imagined or not, being able to picture a future self means you\'re slowly accepting this.</string>
+    <string name="rq_r33_title">Did you trim your pubic hair today?</string>
+    <string name="rq_r33_feedback">Trimmed or not, this intimate detail deserves gentle care and good hygiene.</string>
+
+    <!-- Option arrays -->
+    <string-array name="moods_array">
+        <item>😊 Happy</item>
+        <item>😌 Calm</item>
+        <item>😐 Neutral</item>
+        <item>😔 Down</item>
+        <item>😰 Anxious</item>
+        <item>😤 Frustrated</item>
+        <item>🥵 Excited</item>
+        <item>😴 Bored</item>
+        <item>😳 Ashamed</item>
+        <item>😎 Proud</item>
+        <item>🤩 Eager</item>
+        <item>😬 Nervous</item>
+        <item>🧘 Relaxed</item>
+        <item>😕 Confused</item>
+        <item>💪 Fulfilled</item>
+        <item>😶 Empty</item>
+    </string-array>
+    <string-array name="exercise_types_array">
+        <item>Running</item>
+        <item>Gym</item>
+        <item>Swimming</item>
+        <item>Yoga</item>
+        <item>Cycling</item>
+        <item>Ball sports</item>
+        <item>Walking</item>
+        <item>Weight training</item>
+        <item>Cardio</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="exposed_locations_array">
+        <item>Home</item>
+        <item>Gym</item>
+        <item>Swimming pool</item>
+        <item>Public bath</item>
+        <item>Outdoors</item>
+        <item>Locker room</item>
+        <item>Hospital</item>
+        <item>Friend\'s place</item>
+        <item>Workplace</item>
+        <item>Other public</item>
+    </string-array>
+    <string-array name="discomfort_areas_array">
+        <item>Penis</item>
+        <item>Testicles</item>
+        <item>Perineum</item>
+        <item>Inner thigh</item>
+        <item>Pubic bone</item>
+        <item>Urethra</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="leakage_amounts_array">
+        <item>Light</item>
+        <item>Moderate</item>
+        <item>Heavy</item>
+    </string-array>
+    <string-array name="edging_methods_array">
+        <item>Visual stimulation</item>
+        <item>Touch</item>
+        <item>Audio</item>
+        <item>Fantasy</item>
+        <item>Reading</item>
+        <item>Video</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="interaction_types_array">
+        <item>Messaging</item>
+        <item>Voice call</item>
+        <item>Video call</item>
+        <item>In person</item>
+        <item>Task assigned</item>
+        <item>Reward</item>
+        <item>Punishment</item>
+        <item>Check-in</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="cleaning_types_array">
+        <item>No cleaning</item>
+        <item>Quick rinse</item>
+        <item>Deep clean</item>
+        <item>Fully removed &amp; cleaned</item>
+    </string-array>
+    <string-array name="removal_reasons_array">
+        <item>Cleaning</item>
+        <item>Medical</item>
+        <item>Work requirement</item>
+        <item>Emergency</item>
+        <item>Keyholder approved</item>
+        <item>Discomfort</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="social_activities_array">
+        <item>Dining out</item>
+        <item>Gym</item>
+        <item>Swimming</item>
+        <item>Family / friends gathering</item>
+        <item>Work meeting</item>
+        <item>Date</item>
+        <item>Shopping</item>
+        <item>Travel</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="emotions_array">
+        <item>Excited</item>
+        <item>Anxious</item>
+        <item>Down</item>
+        <item>Calm</item>
+        <item>Frustrated</item>
+        <item>Satisfied</item>
+        <item>Ashamed</item>
+        <item>Proud</item>
+        <item>Bored</item>
+        <item>Eager</item>
+        <item>Nervous</item>
+        <item>Relaxed</item>
+        <item>Confused</item>
+        <item>Fulfilled</item>
+        <item>Empty</item>
+    </string-array>
+    <string-array name="night_erection_options_array">
+        <item>None</item>
+        <item>Occasional</item>
+        <item>Frequent</item>
+    </string-array>
+</resources>

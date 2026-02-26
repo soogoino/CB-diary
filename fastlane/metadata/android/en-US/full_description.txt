@@ -1,0 +1,49 @@
+Chastity Diary is a private, offline-first Android app for tracking your chastity lifestyle. All data stays on your device — no internet connection is required or used.
+
+## Features
+
+**Daily Logging**
+- Record whether you are wearing your device today
+- Track mood, desire level, comfort, and mental focus with intuitive sliders
+- Log sleep quality, bedtime and wake time
+- Record morning and night erection data
+- Optional daily photo check-in (stored locally, blurred by default in history view)
+- Rotating pool of 33 optional questions to keep your journaling fresh
+- Notes field for any additional thoughts
+
+**Streaks & Statistics**
+- Automatic streak tracking (longest streak, current streak)
+- Dashboard with charts: mood trends, desire levels, exercise frequency, and more
+- Heatmap view to visualise patterns over time
+
+**Privacy & Security**
+- PIN protection with configurable length (4–6 digits)
+- Biometric unlock (fingerprint / face recognition)
+- App lock: authentication required on every launch
+- Photos blurred by default in history — tap to reveal
+- Zero analytics, zero crash reporting, zero network access
+
+**Data Management**
+- Export all entries to a CSV file (via Android file picker)
+- Import from CSV to restore or migrate data
+- Fully offline — data never leaves your device unless you export it yourself
+
+**Accessibility & Customisation**
+- Full English + Traditional Chinese (繁體中文) localisation
+- Dark / Light / System theme
+- Morning and evening configurable reminders (local notifications only)
+
+## Permissions Used
+
+| Permission | Reason |
+|---|---|
+| CAMERA | Optional photo check-in |
+| POST_NOTIFICATIONS | Daily and morning reminders |
+| USE_BIOMETRIC | Biometric unlock |
+| VIBRATE | Notification haptic feedback |
+
+No INTERNET permission is requested.
+
+## License
+
+MIT License — see LICENSE file.
