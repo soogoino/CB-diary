@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -29,7 +30,10 @@ jobs:
 
       - name: Decode keystore
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > /tmp/cb-diary-release.jks
+          printf '%s' "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > /tmp/cb-diary-release.jks
+          # Verify the decoded file is a valid JKS/PKCS12
+          keytool -list -keystore /tmp/cb-diary-release.jks \
+            -storepass "${{ secrets.KEYSTORE_PASS }}" 2>&1 | head -5
 
       - name: Build release APK
         env:
