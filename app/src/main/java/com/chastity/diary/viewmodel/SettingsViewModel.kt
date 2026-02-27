@@ -33,6 +33,7 @@ import java.io.OutputStreamWriter
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit
+import java.util.Locale
 
 /**
  * ViewModel for settings screen
@@ -65,11 +66,15 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     }
     
     // Q4: Eagerly so the first frame always reads persisted settings (avoids isMale flicker)
+    // Use system locale as the initial UserSettings language to avoid incorrect
+    // initial selection before DataStore emits the persisted value.
+    val defaultLang = if (Locale.getDefault().toLanguageTag().startsWith("zh"))
+        AppLanguage.TRADITIONAL_CHINESE else AppLanguage.ENGLISH
     val userSettings: StateFlow<UserSettings> = repository.userSettings
         .stateIn(
             viewModelScope,
             SharingStarted.Eagerly,
-            UserSettings()
+            UserSettings(language = defaultLang)
         )
     
     private val _testDataMessage = MutableStateFlow<String?>(null)

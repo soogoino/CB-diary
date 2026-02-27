@@ -18,6 +18,7 @@ import com.chastity.diary.ui.theme.HeatmapLevel3
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.chastity.diary.domain.model.HeatmapQuestion
 import com.chastity.diary.domain.model.HeatmapTimeRange
@@ -94,7 +95,7 @@ fun TrendLineChart(
                 }
             } else {
                 Text(
-                    text = "暫無資料",
+                    text = stringResource(R.string.chart_no_data),
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(vertical = 32.dp)
                 )
@@ -152,14 +153,14 @@ fun StatColumnChart(
                 ) {
                     data.keys.take(5).forEach { label ->
                         Text(
-                            text = label.take(4), // 截短標籤避免過長
+                            text = label.take(4),
                             style = MaterialTheme.typography.labelSmall
                         )
                     }
                 }
             } else {
                 Text(
-                    text = "暫無資料",
+                    text = stringResource(R.string.chart_no_data),
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(vertical = 32.dp)
                 )
@@ -188,7 +189,7 @@ fun CalendarHeatmap(
             )
             
             Text(
-                text = "過去 7 天記錄完成情況",
+                text = stringResource(R.string.heatmap_past7_title),
                 style = MaterialTheme.typography.bodySmall
             )
             
@@ -220,8 +221,8 @@ fun CalendarHeatmap(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("少", style = MaterialTheme.typography.labelSmall)
-                Text("多", style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(R.string.heatmap_label_few), style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(R.string.heatmap_label_many), style = MaterialTheme.typography.labelSmall)
             }
         }
     }
@@ -359,11 +360,11 @@ fun ActionHeatmapSection(
             ) {
                 Box(modifier = Modifier.size(12.dp).background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(2.dp)))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("未做", style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(R.string.heatmap_label_not_done), style = MaterialTheme.typography.labelSmall)
                 Spacer(modifier = Modifier.width(8.dp))
                 Box(modifier = Modifier.size(12.dp).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.75f), RoundedCornerShape(2.dp)))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("完成", style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(R.string.heatmap_label_done), style = MaterialTheme.typography.labelSmall)
             }
         }
     }
@@ -451,7 +452,7 @@ fun MultiTrendLineChart(
                 }
             } else {
                 Text(
-                    text = "暫無資料",
+                    text = stringResource(R.string.chart_no_data),
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(vertical = 32.dp)
                 )

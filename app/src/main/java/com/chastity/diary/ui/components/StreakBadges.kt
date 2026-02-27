@@ -18,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.chastity.diary.R
 
 /**
  * Milestone definition for streak achievements
@@ -25,7 +27,7 @@ import androidx.compose.ui.unit.sp
 data class StreakMilestone(
     val days: Int,
     val emoji: String,
-    val label: String,
+    val labelRes: Int,
     val color: Color
 )
 
@@ -33,12 +35,12 @@ data class StreakMilestone(
  * All achievement milestones in order
  */
 val STREAK_MILESTONES = listOf(
-    StreakMilestone(7,   "🌱", "初學者",   Color(0xFF4CAF50.toInt())),
-    StreakMilestone(14,  "⚡", "進展中",   Color(0xFF2196F3.toInt())),
-    StreakMilestone(30,  "🔥", "一個月",   Color(0xFFFF9800.toInt())),
-    StreakMilestone(60,  "💪", "兩個月",   Color(0xFF9C27B0.toInt())),
-    StreakMilestone(100, "🏆", "百日勇士", Color(0xFFFFD700.toInt())),
-    StreakMilestone(365, "👑", "一年達人", Color(0xFFE91E63.toInt()))
+    StreakMilestone(7,   "🌱", R.string.streak_label_beginner,   Color(0xFF4CAF50.toInt())),
+    StreakMilestone(14,  "⚡", R.string.streak_label_progressing, Color(0xFF2196F3.toInt())),
+    StreakMilestone(30,  "🔥", R.string.streak_label_one_month,  Color(0xFFFF9800.toInt())),
+    StreakMilestone(60,  "💪", R.string.streak_label_two_months, Color(0xFF9C27B0.toInt())),
+    StreakMilestone(100, "🏆", R.string.streak_label_hundred_days, Color(0xFFFFD700.toInt())),
+    StreakMilestone(365, "👑", R.string.streak_label_one_year,   Color(0xFFE91E63.toInt()))
 )
 
 /**
@@ -65,12 +67,12 @@ fun StreakBadgesSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "成就徽章",
+                    text = stringResource(R.string.streak_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "最長 $longestStreak 天",
+                    text = stringResource(R.string.streak_longest_days, longestStreak),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -90,12 +92,16 @@ fun StreakBadgesSection(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "距離「${nextMilestone.emoji} ${nextMilestone.label}」",
+                            text = stringResource(
+                                R.string.streak_distance_to,
+                                nextMilestone.emoji,
+                                stringResource(nextMilestone.labelRes)
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "還差 ${nextMilestone.days - longestStreak} 天",
+                            text = stringResource(R.string.streak_days_remaining, nextMilestone.days - longestStreak),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Medium
@@ -114,7 +120,7 @@ fun StreakBadgesSection(
             } else {
                 // All milestones achieved!
                 Text(
-                    text = "🎉 所有里程碑已解鎖！",
+                    text = stringResource(R.string.streak_all_unlocked),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
@@ -184,7 +190,7 @@ fun StreakBadge(
         }
 
         Text(
-            text = "${milestone.days}天",
+            text = stringResource(R.string.streak_days_count, milestone.days),
             style = MaterialTheme.typography.labelSmall,
             fontWeight = if (achieved) FontWeight.Bold else FontWeight.Normal,
             color = if (achieved)
@@ -195,7 +201,7 @@ fun StreakBadge(
         )
 
         Text(
-            text = milestone.label,
+            text = stringResource(milestone.labelRes),
             style = MaterialTheme.typography.labelSmall,
             fontSize = 9.sp,
             color = if (achieved) milestone.color else MaterialTheme.colorScheme.onSurfaceVariant,

@@ -182,7 +182,7 @@ class DailyEntryViewModel(application: Application) : AndroidViewModel(applicati
                     _hasUnsavedChanges.value = false
                 }
             } catch (e: Exception) {
-                _errorMessage.value = "儲存失敗: ${e.message}"
+                _errorMessage.value = getApplication<Application>().getString(R.string.error_save_failed_detail, e.message ?: "")
             } finally {
                 _isLoading.value = false
             }
@@ -246,7 +246,7 @@ class DailyEntryViewModel(application: Application) : AndroidViewModel(applicati
                 _morningSaveSuccess.value = true
                 _hasUnsavedChanges.value = false
             } catch (e: Exception) {
-                _errorMessage.value = "早晨記錄失敗: ${e.message}"
+                _errorMessage.value = getApplication<Application>().getString(R.string.error_morning_save_failed_detail, e.message ?: "")
             } finally {
                 _isLoading.value = false
             }
@@ -271,7 +271,7 @@ class DailyEntryViewModel(application: Application) : AndroidViewModel(applicati
                     }
                 }
             } catch (e: Exception) {
-                _errorMessage.value = "刪除失敗: ${e.message}"
+                    _errorMessage.value = getApplication<Application>().getString(R.string.error_delete_failed_detail, e.message ?: "")
             } finally {
                 _isLoading.value = false
             }

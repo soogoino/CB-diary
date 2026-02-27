@@ -648,18 +648,18 @@ private fun CoreQuestionsCard(
             }
 
             // C3: Desire level
-            QuestionSection(title = "今日性慾強度", subtitle = "1 = 很低   10 = 很強烈") {
+            QuestionSection(title = stringResource(R.string.q_desire_title), subtitle = stringResource(R.string.q_desire_subtitle)) {
                 SliderWithLabel(entry.desireLevel?.toFloat() ?: 5f,
                     { onUpdate(entry.copy(desireLevel = it.toInt())) },
-                    valueRange = 1f..10f, steps = 8, label = "性慾強度")
+                    valueRange = 1f..10f, steps = 8, label = stringResource(R.string.q_desire_label))
             }
 
             // C4: Comfort (只在佩戴時)
             AnimatedVisibility(visible = entry.deviceCheckPassed) {
-                QuestionSection(title = "佩戴舒適度", subtitle = "1 = 非常不舒適  10 = 非常舒適") {
+                QuestionSection(title = stringResource(R.string.q_comfort_title), subtitle = stringResource(R.string.q_comfort_subtitle)) {
                     SliderWithLabel(entry.comfortRating?.toFloat() ?: 5f,
                         { onUpdate(entry.copy(comfortRating = it.toInt())) },
-                        valueRange = 1f..10f, steps = 8, label = "舒適度")
+                        valueRange = 1f..10f, steps = 8, label = stringResource(R.string.q_comfort_label))
                 }
             }
 

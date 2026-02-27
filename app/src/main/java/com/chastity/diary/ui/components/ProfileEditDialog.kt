@@ -1,27 +1,19 @@
 package com.chastity.diary.ui.components
 
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.KeyboardOptions
+import com.chastity.diary.R
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
-
-/**
- * Dialog for editing user profile information:
- * - Nickname (optional, free text)
- * - Start date (optional, yyyy-MM-dd)
- * - Height (cm): Optional, 100-250
- * - Weight (kg): Optional, 30-200
- * - Device Name: Optional, free text
- * - Device Size: Optional, free text (e.g. "S", "38mm")
- */
 @Composable
 fun ProfileEditDialog(
     currentNickname: String?,
@@ -51,12 +43,17 @@ fun ProfileEditDialog(
     var heightError by remember { mutableStateOf<String?>(null) }
     var weightError by remember { mutableStateOf<String?>(null) }
 
+    // Pre-fetch composable string resources into locals so non-composable helpers can use them
+    val errInvalidNumber = stringResource(R.string.error_invalid_number)
+    val errHeightRange = stringResource(R.string.error_height_range)
+    val errWeightRange = stringResource(R.string.error_weight_range)
+
     fun validateHeight(input: String): String? {
         if (input.isBlank()) return null
         val value = input.toIntOrNull()
         return when {
-            value == null -> "請輸入有效數字"
-            value < 100 || value > 250 -> "身高範圍: 100-250 cm"
+            value == null -> errInvalidNumber
+            value < 100 || value > 250 -> errHeightRange
             else -> null
         }
     }
@@ -65,8 +62,8 @@ fun ProfileEditDialog(
         if (input.isBlank()) return null
         val value = input.toFloatOrNull()
         return when {
-            value == null -> "請輸入有效數字"
-            value < 30f || value > 200f -> "體重範圍: 30-200 kg"
+            value == null -> errInvalidNumber
+            value < 30f || value > 200f -> errWeightRange
             else -> null
         }
     }
@@ -80,7 +77,7 @@ fun ProfileEditDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("編輯個人資料") },
+        title = { Text(stringResource(R.string.profile_edit_title)) },
         text = {
             Column(
                 modifier = Modifier
@@ -88,30 +85,24 @@ fun ProfileEditDialog(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // ── 暱稱 ──
                 OutlinedTextField(
                     value = nickname,
                     onValueChange = { nickname = it },
-                    label = { Text("暱稱") },
-                    placeholder = { Text("例如: 小鎖鎖") },
+                    label = { Text(stringResource(R.string.profile_nickname)) },
+                    placeholder = { Text(stringResource(R.string.profile_nickname_hint)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
-                    supportingText = { Text("選填") }
+                    supportingText = { Text(stringResource(R.string.notes_optional)) }
                 )
 
-                // ── 開始日期 ──
-                OutlinedButton(
-                    onClick = { showDatePicker = true },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                OutlinedButton(onClick = { showDatePicker = true }, modifier = Modifier.fillMaxWidth()) {
                     Icon(Icons.Default.CalendarMonth, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
-                    Text("鎖定開始日期: ${startDate?.toString() ?: "未設定"}")
+                    Text(stringResource(R.string.settings_start_date_prefix, startDate?.toString() ?: stringResource(R.string.not_set)))
                 }
 
                 Divider()
 
-                // ── 身高 ──
                 OutlinedTextField(
                     value = height,
                     onValueChange = {
@@ -120,17 +111,16 @@ fun ProfileEditDialog(
                             heightError = validateHeight(it)
                         }
                     },
-                    label = { Text("身高") },
-                    placeholder = { Text("例如: 175") },
+                    label = { Text(stringResource(R.string.profile_height)) },
+                    placeholder = { Text(stringResource(R.string.profile_example_height)) },
                     suffix = { Text("cm") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     isError = heightError != null,
-                    supportingText = { Text(heightError ?: "選填，範圍 100-250 cm") }
+                    supportingText = { Text(heightError ?: stringResource(R.string.optional_height_hint)) }
                 )
 
-                // ── 體重 ──
                 OutlinedTextField(
                     value = weight,
                     onValueChange = {
@@ -139,38 +129,36 @@ fun ProfileEditDialog(
                             weightError = validateWeight(it)
                         }
                     },
-                    label = { Text("體重") },
-                    placeholder = { Text("例如: 70.5") },
+                    label = { Text(stringResource(R.string.profile_weight)) },
+                    placeholder = { Text(stringResource(R.string.profile_example_weight)) },
                     suffix = { Text("kg") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     isError = weightError != null,
-                    supportingText = { Text(weightError ?: "選填，範圍 30-200 kg") }
+                    supportingText = { Text(weightError ?: stringResource(R.string.optional_weight_hint)) }
                 )
 
                 Divider()
 
-                // ── 貞操鎖名稱 ──
                 OutlinedTextField(
                     value = deviceName,
                     onValueChange = { deviceName = it },
-                    label = { Text("貞操鎖名稱") },
-                    placeholder = { Text("例如: Holy Trainer V4") },
+                    label = { Text(stringResource(R.string.device_lock_name)) },
+                    placeholder = { Text(stringResource(R.string.device_lock_name_hint)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
-                    supportingText = { Text("選填") }
+                    supportingText = { Text(stringResource(R.string.profile_optional)) }
                 )
 
-                // ── 貞操鎖尺寸 ──
                 OutlinedTextField(
                     value = deviceSize,
                     onValueChange = { deviceSize = it },
-                    label = { Text("貞操鎖尺寸") },
-                    placeholder = { Text("例如: S / M / 38mm") },
+                    label = { Text(stringResource(R.string.profile_device_size_label)) },
+                    placeholder = { Text(stringResource(R.string.profile_device_size_placeholder)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
-                    supportingText = { Text("選填，自由輸入") }
+                    supportingText = { Text(stringResource(R.string.profile_optional_free_input)) }
                 )
             }
         },
@@ -191,15 +179,16 @@ fun ProfileEditDialog(
                 },
                 enabled = isValid
             ) {
-                Text("儲存")
+                Text(stringResource(R.string.save))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("取消")
+                Text(stringResource(R.string.cancel))
             }
         }
     )
+
     if (showDatePicker) {
         DatePickerDialog(
             initialDate = startDate ?: LocalDate.now(),
@@ -209,4 +198,6 @@ fun ProfileEditDialog(
             },
             onDismiss = { showDatePicker = false }
         )
-    }}
+    }
+
+}

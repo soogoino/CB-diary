@@ -10,9 +10,9 @@ import kotlin.random.Random
  */
 object TestDataGenerator {
     
-    private val moods = listOf("開心", "平靜", "普通", "沮喪", "焦慮", "挫折")
-    private val exerciseTypes = listOf("跑步", "游泳", "健身", "瑜伽", "散步")
-    private val emotions = listOf("興奮", "平靜", "緊張", "滿足", "渴望", "無奈")
+    private val moods = listOf("Happy", "Calm", "Neutral", "Sad", "Anxious", "Frustrated")
+    private val exerciseTypes = listOf("Running", "Swimming", "Gym", "Yoga", "Walking")
+    private val emotions = listOf("Excited", "Calm", "Nervous", "Satisfied", "Longing", "Resigned")
     
     /**
      * Generate sample entries for the past N days
@@ -75,25 +75,25 @@ object TestDataGenerator {
             masturbationDuration = null,
             
             exposedLock = Random.nextDouble() < 0.2,
-            exposedLocations = if (Random.nextBoolean()) listOf("健身房") else emptyList(),
+            exposedLocations = if (Random.nextBoolean()) listOf("Gym") else emptyList(),
             
             photoPath = null,
             
             hasDiscomfort = Random.nextDouble() < 0.3,
-            discomfortAreas = if (Random.nextBoolean()) listOf("會陰部") else emptyList(),
+            discomfortAreas = if (Random.nextBoolean()) listOf("Groin") else emptyList(),
             discomfortLevel = if (Random.nextBoolean()) Random.nextInt(1, 6) else null,
             
-            cleaningType = if (Random.nextBoolean()) "淋浴沖洗" else null,
+            cleaningType = if (Random.nextBoolean()) "Shower rinse" else null,
             
             hadLeakage = Random.nextDouble() < 0.2,
-            leakageAmount = if (Random.nextBoolean()) "少量" else null,
+            leakageAmount = if (Random.nextBoolean()) "Small amount" else null,
             
             hadEdging = Random.nextDouble() < 0.15,
             edgingDuration = null,
             edgingMethods = emptyList(),
             
             keyholderInteraction = Random.nextDouble() < 0.3,
-            interactionTypes = if (Random.nextBoolean()) listOf("文字對話") else emptyList(),
+            interactionTypes = if (Random.nextBoolean()) listOf("Text chat") else emptyList(),
             
             temporarilyRemoved = Random.nextDouble() < 0.05,
             removalDuration = null,
@@ -104,10 +104,10 @@ object TestDataGenerator {
             
             completedTasks = emptyList(),
             
-            socialActivities = if (Random.nextBoolean()) listOf("與朋友聚會") else emptyList(),
+            socialActivities = if (Random.nextBoolean()) listOf("Hangout with friends") else emptyList(),
             socialAnxiety = if (Random.nextBoolean()) Random.nextInt(1, 6) else null,
             
-            notes = if (Random.nextDouble() < 0.3) "今天感覺不錯" else null
+            notes = if (Random.nextDouble() < 0.3) "Feeling good today" else null
         )
     }
 }

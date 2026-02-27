@@ -7,6 +7,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.chastity.diary.R
 import com.chastity.diary.domain.model.DailyEntry
@@ -38,12 +39,12 @@ fun ConditionalQuestionsSection(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "後續問題",
+                    text = stringResource(R.string.cq_followup_title),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
                 Text(
-                    text = "根據你的情況回答，某些問題可能不適用",
+                    text = stringResource(R.string.cq_followup_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                 )
@@ -87,15 +88,15 @@ private fun PornQuestion(
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
     QuestionSection(
-        title = "1. 今天是否觀看色情內容？",
-        subtitle = "如果有,記錄觀看時長"
+        title = stringResource(R.string.cq_q1_title),
+        subtitle = stringResource(R.string.cq_q1_subtitle)
     ) {
         YesNoToggle(
             value = entry.viewedPorn,
             onValueChange = { viewed ->
                 onEntryUpdate(entry.copy(viewedPorn = viewed))
             },
-            label = "觀看色情內容"
+            label = stringResource(R.string.cq_q1_label)
         )
         
         if (entry.viewedPorn) {
@@ -106,7 +107,7 @@ private fun PornQuestion(
                     onEntryUpdate(entry.copy(pornDuration = duration))
                 },
                 quickOptions = Constants.DURATION_QUICK_OPTIONS,
-                label = "觀看時長"
+                label = stringResource(R.string.cq_q1_duration_label)
             )
         }
     }
@@ -118,15 +119,15 @@ private fun ErectionQuestion(
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
     QuestionSection(
-        title = "2. 今天是否勃起？",
-        subtitle = "如果有,記錄勃起次數"
+        title = stringResource(R.string.cq_q2_title),
+        subtitle = stringResource(R.string.cq_q2_subtitle)
     ) {
         YesNoToggle(
             value = entry.hadErection,
             onValueChange = { had ->
                 onEntryUpdate(entry.copy(hadErection = had))
             },
-            label = "有勃起"
+            label = stringResource(R.string.cq_q2_label)
         )
         
         if (entry.hadErection) {
@@ -145,9 +146,9 @@ private fun ErectionQuestion(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("勃起次數") },
+                label = { Text(stringResource(R.string.cq_q2_count_label)) },
                 singleLine = true,
-                placeholder = { Text("輸入次數...") }
+                placeholder = { Text(stringResource(R.string.cq_q2_count_placeholder)) }
             )
         }
     }
@@ -159,28 +160,28 @@ private fun UnlockQuestion(
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
     QuestionSection(
-        title = "3. 今天是否解鎖？",
-        subtitle = "如果解鎖後自慰,記錄詳情"
+        title = stringResource(R.string.cq_q3_title),
+        subtitle = stringResource(R.string.cq_q3_subtitle)
     ) {
         YesNoToggle(
             value = entry.unlocked,
             onValueChange = { unlocked ->
                 onEntryUpdate(entry.copy(unlocked = unlocked))
             },
-            label = "有解鎖"
+            label = stringResource(R.string.cq_q3_label)
         )
         
         if (entry.unlocked) {
             Spacer(modifier = Modifier.height(12.dp))
             
-            Text("解鎖後有自慰？", style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(R.string.cq_q3_after_unlock_question), style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(6.dp))
             YesNoToggle(
                 value = entry.masturbated,
                 onValueChange = { masturbated ->
                     onEntryUpdate(entry.copy(masturbated = masturbated))
                 },
-                label = "解鎖後自慰"
+                label = stringResource(R.string.cq_q3_after_unlock_label)
             )
             
             if (entry.masturbated) {
@@ -191,7 +192,7 @@ private fun UnlockQuestion(
                         onEntryUpdate(entry.copy(masturbationDuration = duration))
                     },
                     quickOptions = Constants.DURATION_QUICK_OPTIONS,
-                    label = "自慰時長"
+                    label = stringResource(R.string.cq_q3_masturbation_duration_label)
                 )
             }
         }
@@ -204,22 +205,22 @@ private fun DiscomfortQuestion(
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
     QuestionSection(
-        title = "4. 今天是否感到不適或疼痛？",
-        subtitle = "如果有,記錄部位與程度"
+        title = stringResource(R.string.cq_q4_title),
+        subtitle = stringResource(R.string.cq_q4_subtitle)
     ) {
         YesNoToggle(
             value = entry.hasDiscomfort,
             onValueChange = { has ->
                 onEntryUpdate(entry.copy(hasDiscomfort = has))
             },
-            label = "有不適或疼痛"
+            label = stringResource(R.string.cq_q4_label)
         )
         
         if (entry.hasDiscomfort) {
             Spacer(modifier = Modifier.height(12.dp))
             
             Text(
-                text = "不適部位",
+                text = stringResource(R.string.cq_q4_discomfort_area_label),
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -241,7 +242,7 @@ private fun DiscomfortQuestion(
                     },
                     valueRange = 1f..10f,
                     steps = 8,
-                    label = "疼痛程度 (1=輕微, 10=劇烈)"
+                    label = stringResource(R.string.cq_q4_pain_level_label)
                 )
             }
         }
@@ -255,15 +256,15 @@ private fun LeakageQuestion(
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
     QuestionSection(
-        title = "5. 今天是否有洩漏情況？",
-        subtitle = "如果有,評估洩漏程度"
+        title = stringResource(R.string.cq_q5_title),
+        subtitle = stringResource(R.string.cq_q5_subtitle)
     ) {
         YesNoToggle(
             value = entry.hadLeakage,
             onValueChange = { had ->
                 onEntryUpdate(entry.copy(hadLeakage = had))
             },
-            label = "有洩漏"
+            label = stringResource(R.string.cq_q5_label)
         )
         
         if (entry.hadLeakage) {
@@ -303,15 +304,15 @@ private fun EdgingQuestion(
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
     QuestionSection(
-        title = "6. 今天是否進行邊緣訓練？",
-        subtitle = "如果有,記錄訓練詳情"
+        title = stringResource(R.string.cq_q6_title),
+        subtitle = stringResource(R.string.cq_q6_subtitle)
     ) {
         YesNoToggle(
             value = entry.hadEdging,
             onValueChange = { had ->
                 onEntryUpdate(entry.copy(hadEdging = had))
             },
-            label = "有邊緣訓練"
+            label = stringResource(R.string.cq_q6_label)
         )
         
         if (entry.hadEdging) {
@@ -323,13 +324,13 @@ private fun EdgingQuestion(
                     onEntryUpdate(entry.copy(edgingDuration = duration))
                 },
                 quickOptions = Constants.DURATION_QUICK_OPTIONS,
-                label = "訓練時長"
+                label = stringResource(R.string.cq_q6_duration_label)
             )
             
             Spacer(modifier = Modifier.height(12.dp))
             
             Text(
-                text = "訓練方式",
+                text = stringResource(R.string.cq_q6_methods_label),
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -351,15 +352,15 @@ private fun RemovalQuestion(
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
     QuestionSection(
-        title = "7. 今天是否臨時取下鎖？",
-        subtitle = "如果有,記錄取下詳情"
+        title = stringResource(R.string.cq_q7_title),
+        subtitle = stringResource(R.string.cq_q7_subtitle)
     ) {
         YesNoToggle(
             value = entry.temporarilyRemoved,
             onValueChange = { removed ->
                 onEntryUpdate(entry.copy(temporarilyRemoved = removed))
             },
-            label = "有臨時取下"
+            label = stringResource(R.string.cq_q7_label)
         )
         
         if (entry.temporarilyRemoved) {
@@ -371,13 +372,13 @@ private fun RemovalQuestion(
                     onEntryUpdate(entry.copy(removalDuration = duration))
                 },
                 quickOptions = Constants.DURATION_QUICK_OPTIONS,
-                label = "取下時長"
+                label = stringResource(R.string.cq_q7_duration_label)
             )
             
             Spacer(modifier = Modifier.height(12.dp))
             
             Text(
-                text = "取下原因",
+                text = stringResource(R.string.cq_q7_reason_label),
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -399,8 +400,8 @@ private fun NightErectionQuestion(
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
     QuestionSection(
-        title = "8. 昨晚是否有夜間勃起？",
-        subtitle = "如果有,記錄詳情"
+        title = stringResource(R.string.cq_q8_title),
+        subtitle = stringResource(R.string.cq_q8_subtitle)
     ) {
         var countText by remember(entry.nightErections) { 
             mutableStateOf(entry.nightErections?.toString() ?: "0") 
@@ -415,9 +416,9 @@ private fun NightErectionQuestion(
                 }
             },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("夜間勃起次數") },
+            label = { Text(stringResource(R.string.cq_q8_count_label)) },
             singleLine = true,
-            placeholder = { Text("輸入次數 (0 表示沒有)...") }
+            placeholder = { Text(stringResource(R.string.cq_q8_count_placeholder)) }
         )
         
         if ((entry.nightErections ?: 0) > 0) {
@@ -428,7 +429,7 @@ private fun NightErectionQuestion(
                 onValueChange = { woke ->
                     onEntryUpdate(entry.copy(wokeUpFromErection = woke))
                 },
-                label = "是否因勃起醒來"
+                label = stringResource(R.string.cq_q8_woke_label)
             )
         }
     }

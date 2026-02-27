@@ -2,7 +2,9 @@ package com.chastity.diary.ui.components
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Modifier
+import com.chastity.diary.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -36,12 +38,12 @@ fun DatePickerDialog(
                 }
                 onDismiss()
             }) {
-                Text("確定")
+                Text(stringResource(R.string.confirm))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("取消")
+                Text(stringResource(R.string.cancel))
             }
         }
     ) {

@@ -2,7 +2,9 @@ package com.chastity.diary.ui.components
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
+import com.chastity.diary.R
 import java.util.*
 
 /**
@@ -26,14 +28,14 @@ fun TimePickerDialog(
         onDismissRequest = onDismiss,
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("取消")
+                Text(stringResource(R.string.cancel))
             }
         },
         confirmButton = {
             TextButton(onClick = { 
                 onConfirm(timePickerState.hour, timePickerState.minute)
             }) {
-                Text("確定")
+                Text(stringResource(R.string.confirm))
             }
         },
         text = {

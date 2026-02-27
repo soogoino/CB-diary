@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import com.chastity.diary.R
 import kotlin.math.abs
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,12 +43,12 @@ fun RotatingQuestionSection(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "今日特別問題 🎲",
+                    text = stringResource(R.string.rq_header_title),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onTertiaryContainer
                 )
                 Text(
-                    text = "每天輪替一個不同的問題",
+                    text = stringResource(R.string.rq_header_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.7f)
                 )
@@ -63,7 +64,7 @@ fun RotatingQuestionSection(
             QuestionId.SOCIAL_ACTIVITIES -> SocialActivitiesQuestion(entry, onEntryUpdate)
             else -> {
                 // Should not happen
-                Text("無效的輪替問題")
+                    Text(stringResource(R.string.rq_invalid_question))
             }
         }
 
@@ -107,23 +108,23 @@ private fun ExerciseQuestion(
     entry: DailyEntry,
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
-    QuestionSection(
-        title = "今天有運動嗎？",
-        subtitle = "記錄運動類型與時長"
+        QuestionSection(
+        title = stringResource(R.string.rq_exercise_title),
+        subtitle = stringResource(R.string.rq_exercise_subtitle)
     ) {
         YesNoToggle(
             value = entry.exercised,
             onValueChange = { exercised ->
                 onEntryUpdate(entry.copy(exercised = exercised))
             },
-            label = "是否運動"
+            label = stringResource(R.string.rq_exercise_label)
         )
         
         if (entry.exercised) {
             Spacer(modifier = Modifier.height(12.dp))
             
             Text(
-                text = "運動類型",
+                text = stringResource(R.string.rq_exercise_type_label),
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -144,7 +145,7 @@ private fun ExerciseQuestion(
                     onEntryUpdate(entry.copy(exerciseDuration = duration))
                 },
                 quickOptions = listOf(15, 30, 45, 60, 90, 120),
-                label = "運動時長"
+                label = stringResource(R.string.rq_exercise_duration_label)
             )
         }
     }
@@ -155,23 +156,23 @@ private fun ExposedLockQuestion(
     entry: DailyEntry,
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
-    QuestionSection(
-        title = "鎖有在公共場合露出嗎？",
-        subtitle = "記錄露出的地點"
+        QuestionSection(
+        title = stringResource(R.string.rq_exposed_title),
+        subtitle = stringResource(R.string.rq_exposed_subtitle)
     ) {
         YesNoToggle(
             value = entry.exposedLock,
             onValueChange = { exposed ->
                 onEntryUpdate(entry.copy(exposedLock = exposed))
             },
-            label = "是否露出"
+            label = stringResource(R.string.rq_exposed_label)
         )
         
         if (entry.exposedLock) {
             Spacer(modifier = Modifier.height(12.dp))
             
             Text(
-                text = "露出地點",
+                text = stringResource(R.string.rq_exposed_location_label),
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -192,23 +193,23 @@ private fun KeyholderInteractionQuestion(
     entry: DailyEntry,
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
-    QuestionSection(
-        title = "今天與 Keyholder 有互動嗎？",
-        subtitle = "記錄互動類型"
+        QuestionSection(
+        title = stringResource(R.string.rq_keyholder_title),
+        subtitle = stringResource(R.string.rq_keyholder_subtitle)
     ) {
         YesNoToggle(
             value = entry.keyholderInteraction,
             onValueChange = { interaction ->
                 onEntryUpdate(entry.copy(keyholderInteraction = interaction))
             },
-            label = "是否互動"
+            label = stringResource(R.string.rq_keyholder_label)
         )
         
         if (entry.keyholderInteraction) {
             Spacer(modifier = Modifier.height(12.dp))
             
             Text(
-                text = "互動類型",
+                text = stringResource(R.string.rq_keyholder_types_label),
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -231,8 +232,8 @@ private fun CleaningQuestion(
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
     QuestionSection(
-        title = "今天如何清潔鎖？",
-        subtitle = "選擇清潔方式"
+        title = stringResource(R.string.rq_cleaning_title),
+        subtitle = stringResource(R.string.rq_cleaning_subtitle)
     ) {
         val displayLabels = stringArrayResource(R.array.cleaning_types_array)
         val keyList = Constants.CLEANING_TYPES
@@ -268,11 +269,11 @@ private fun SocialActivitiesQuestion(
     onEntryUpdate: (DailyEntry) -> Unit
 ) {
     QuestionSection(
-        title = "今天有參與社交活動嗎？",
-        subtitle = "記錄活動類型與焦慮程度"
+        title = stringResource(R.string.rq_social_title),
+        subtitle = stringResource(R.string.rq_social_subtitle)
     ) {
         Text(
-            text = "社交活動類型",
+            text = stringResource(R.string.rq_social_types_label),
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -295,7 +296,7 @@ private fun SocialActivitiesQuestion(
                 },
                 valueRange = 1f..10f,
                 steps = 8,
-                label = "焦慮程度 (1=無焦慮, 10=極度焦慮)"
+                label = stringResource(R.string.rq_social_anxiety_label)
             )
         }
     }

@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.chastity.diary.R
 import com.chastity.diary.domain.model.DailyEntry
@@ -37,12 +38,12 @@ fun CoreQuestionsSection(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "核心問題",
+                    text = stringResource(R.string.core_section_title),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Text(
-                    text = "10 題 • 約 3 分鐘",
+                    text = stringResource(R.string.core_section_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                 )
@@ -51,8 +52,8 @@ fun CoreQuestionsSection(
         
         // Q1: Mood
         QuestionSection(
-            title = "1. 今天的整體心情如何？",
-            subtitle = "選擇最貼近你今天感受的心情"
+            title = stringResource(R.string.core_q1_title),
+            subtitle = stringResource(R.string.core_q1_subtitle)
         ) {
             MoodSelector(
                 selectedMood = entry.mood,
@@ -66,8 +67,8 @@ fun CoreQuestionsSection(
         
         // Q2: Desire Level
         QuestionSection(
-            title = "2. 今天的性慾強度？",
-            subtitle = "0 = 完全沒有, 10 = 非常強烈"
+            title = stringResource(R.string.core_q2_title),
+            subtitle = stringResource(R.string.core_q2_subtitle)
         ) {
             SliderWithLabel(
                 value = entry.desireLevel?.toFloat() ?: 5f,
@@ -76,14 +77,14 @@ fun CoreQuestionsSection(
                 },
                 valueRange = 0f..10f,
                 steps = 9,
-                label = "性慾強度"
+                label = stringResource(R.string.core_label_desire)
             )
         }
         
         // Q3: Comfort Rating
         QuestionSection(
-            title = "3. 佩戴鎖的舒適度？",
-            subtitle = "0 = 非常不舒適, 10 = 非常舒適"
+            title = stringResource(R.string.core_q3_title),
+            subtitle = stringResource(R.string.core_q3_subtitle)
         ) {
             SliderWithLabel(
                 value = entry.comfortRating?.toFloat() ?: 5f,
@@ -92,14 +93,14 @@ fun CoreQuestionsSection(
                 },
                 valueRange = 0f..10f,
                 steps = 9,
-                label = "舒適度"
+                label = stringResource(R.string.core_label_comfort)
             )
         }
         
         // Q4: Sleep Quality
         QuestionSection(
-            title = "4. 昨晚的睡眠品質？",
-            subtitle = "鎖是否影響你的睡眠"
+            title = stringResource(R.string.core_q4_title),
+            subtitle = stringResource(R.string.core_q4_subtitle)
         ) {
             StarRating(
                 rating = entry.sleepQuality ?: 3,
@@ -107,7 +108,7 @@ fun CoreQuestionsSection(
                     onEntryUpdate(entry.copy(sleepQuality = rating))
                 },
                 maxStars = 5,
-                label = "昨晚有睡好嗎？"
+                label = stringResource(R.string.core_label_sleeped_well)
             )
             
             Spacer(modifier = Modifier.height(8.dp))
@@ -117,14 +118,14 @@ fun CoreQuestionsSection(
                 onValueChange = { woke ->
                     onEntryUpdate(entry.copy(wokeUpDueToDevice = woke))
                 },
-                label = "因為鎖而醒來"
+                label = stringResource(R.string.core_label_woke_due_to_lock)
             )
         }
         
         // Q5: Focus Level
         QuestionSection(
-            title = "5. 今天的專注度如何？",
-            subtitle = "1 = 完全無法專注, 10 = 非常專注"
+            title = stringResource(R.string.core_q5_title),
+            subtitle = stringResource(R.string.core_q5_subtitle)
         ) {
             SliderWithLabel(
                 value = entry.focusLevel?.toFloat() ?: 5f,
@@ -133,14 +134,14 @@ fun CoreQuestionsSection(
                 },
                 valueRange = 1f..10f,
                 steps = 8,
-                label = "專注度"
+                label = stringResource(R.string.core_label_focus)
             )
         }
         
         // Q6: Device Check
         QuestionSection(
-            title = "6. 貞操鎖鎖檢查",
-            subtitle = "檢查貞操鎖是否正常佩戴、無損壞"
+            title = stringResource(R.string.core_q6_title),
+            subtitle = stringResource(R.string.core_q6_subtitle)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -155,7 +156,7 @@ fun CoreQuestionsSection(
                         ButtonDefaults.outlinedButtonColors()
                     }
                 ) {
-                    Text("✓ 正常")
+                    Text(stringResource(R.string.core_status_ok))
                 }
                 Button(
                     onClick = { onEntryUpdate(entry.copy(deviceCheckPassed = false)) },
@@ -168,15 +169,15 @@ fun CoreQuestionsSection(
                         ButtonDefaults.outlinedButtonColors()
                     }
                 ) {
-                    Text("✗ 異常")
+                    Text(stringResource(R.string.core_status_bad))
                 }
             }
         }
         
         // Q7: Self Rating
         QuestionSection(
-            title = "7. 今天的自我評價？",
-            subtitle = "你認為自己今天表現如何"
+            title = stringResource(R.string.core_q7_title),
+            subtitle = stringResource(R.string.core_q7_subtitle)
         ) {
             StarRating(
                 rating = entry.selfRating ?: 3,
@@ -184,18 +185,18 @@ fun CoreQuestionsSection(
                     onEntryUpdate(entry.copy(selfRating = rating))
                 },
                 maxStars = 5,
-                label = "自我評價"
+                label = stringResource(R.string.core_label_self_rating)
             )
         }
         
         // Q8: Photo (Optional)
         QuestionSection(
-            title = "8. 照片打卡",
-            subtitle = "可選：記錄今天的視覺紀念"
+            title = stringResource(R.string.core_q8_title),
+            subtitle = stringResource(R.string.core_q8_subtitle)
         ) {
             if (entry.photoPath != null) {
                 Text(
-                    text = "已拍攝照片",
+                    text = stringResource(R.string.core_photo_taken),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -203,7 +204,7 @@ fun CoreQuestionsSection(
                     onClick = { onEntryUpdate(entry.copy(photoPath = null)) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("移除照片")
+                    Text(stringResource(R.string.core_remove_photo))
                 }
             } else {
                 OutlinedButton(
@@ -212,15 +213,15 @@ fun CoreQuestionsSection(
                 ) {
                     Icon(Icons.Default.Camera, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("拍攝照片")
+                    Text(stringResource(R.string.core_take_photo))
                 }
             }
         }
         
         // Q9: Emotions
         QuestionSection(
-            title = "9. 今天的細緻情緒？",
-            subtitle = "可多選：更精確地描述你的情緒狀態"
+            title = stringResource(R.string.core_q9_title),
+            subtitle = stringResource(R.string.core_q9_subtitle)
         ) {
             MultiSelectChipGroup(
                 options = stringArrayResource(R.array.emotions_array).toList(),
@@ -234,8 +235,8 @@ fun CoreQuestionsSection(
         
         // Q10: Notes (Optional)
         QuestionSection(
-            title = "10. 備註",
-            subtitle = "可選：記錄任何想補充的想法或事件"
+            title = stringResource(R.string.core_q10_title),
+            subtitle = stringResource(R.string.core_q10_subtitle)
         ) {
             OutlinedTextField(
                 value = entry.notes ?: "",
@@ -243,7 +244,7 @@ fun CoreQuestionsSection(
                     onEntryUpdate(entry.copy(notes = notes))
                 },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("輸入備註...") },
+                placeholder = { Text(stringResource(R.string.core_notes_placeholder)) },
                 minLines = 3,
                 maxLines = 5
             )

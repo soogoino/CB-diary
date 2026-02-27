@@ -77,18 +77,23 @@ fun DashboardScreen(
                     val last14 = remember(state.entries) { state.entries.takeLast(14) }
                     val metricSeries = remember(last14) {
                         listOf(
-                            Triple("性慾", Color(0xFF6650A4), last14.mapNotNull { e -> e.desireLevel?.let { e.date to it.toFloat() } }),
-                            Triple("舒適", Color(0xFF0288D1), last14.mapNotNull { e -> e.comfortRating?.let { e.date to it.toFloat() } }),
-                            Triple("專注", Color(0xFF2E7D32), last14.mapNotNull { e -> e.focusLevel?.let { e.date to it.toFloat() } }),
-                            Triple("睡眠", Color(0xFFF57C00), last14.mapNotNull { e -> e.sleepQuality?.let { e.date to it.toFloat() } }),
-                            Triple("能量", Color(0xFFE53935), last14.mapNotNull { e -> e.morningEnergy?.let { e.date to it.toFloat() } }),
+                            Triple(stringResource(R.string.metric_desire_label), Color(0xFF6650A4), last14.mapNotNull { e -> e.desireLevel?.let { e.date to it.toFloat() } }),
+                            Triple(stringResource(R.string.metric_comfort_label), Color(0xFF0288D1), last14.mapNotNull { e -> e.comfortRating?.let { e.date to it.toFloat() } }),
+                            Triple(stringResource(R.string.metric_focus_label), Color(0xFF2E7D32), last14.mapNotNull { e -> e.focusLevel?.let { e.date to it.toFloat() } }),
+                            Triple(stringResource(R.string.metric_sleep_label), Color(0xFFF57C00), last14.mapNotNull { e -> e.sleepQuality?.let { e.date to it.toFloat() } }),
+                            Triple(stringResource(R.string.metric_energy_label), Color(0xFFE53935), last14.mapNotNull { e -> e.morningEnergy?.let { e.date to it.toFloat() } }),
                         )
                     }
                     val moodPairs = remember(last14) {
                         last14.mapNotNull { e ->
                             val score = when (e.mood) {
-                                "開心" -> 5f; "平靜" -> 4f; "普通" -> 3f
-                                "沮喪" -> 2f; "焦慮" -> 1.5f; "挫折" -> 1f; else -> null
+                                stringResource(R.string.mood_happy) -> 5f
+                                stringResource(R.string.mood_calm) -> 4f
+                                stringResource(R.string.mood_neutral) -> 3f
+                                stringResource(R.string.mood_depressed) -> 2f
+                                stringResource(R.string.mood_anxious) -> 1.5f
+                                stringResource(R.string.mood_frustrated) -> 1f
+                                else -> null
                             }
                             score?.let { e.date to it }
                         }
@@ -212,11 +217,11 @@ fun DashboardScreen(
                                 Divider()
                                 StatRow(stringResource(R.string.summary_avg_desire), String.format("%.1f / 10", state.averageDesireLevel))
                                 StatRow(stringResource(R.string.summary_avg_comfort), String.format("%.1f / 10", state.averageComfortRating))
-                                StatRow("平均專注度", String.format("%.1f / 10", state.averageFocusLevel))
-                                StatRow("平均睡眠品質", String.format("%.1f / 10", state.averageSleepQuality))
-                                StatRow("平均晨間能量", String.format("%.1f / 5", state.averageMorningEnergy))
-                                StatRow(stringResource(R.string.summary_masturbation_count), "${state.masturbationCount} 次")
-                                StatRow(stringResource(R.string.summary_exercise_count), "${state.exerciseCount} 次")
+                                StatRow(stringResource(R.string.summary_avg_focus), String.format("%.1f / 10", state.averageFocusLevel))
+                                StatRow(stringResource(R.string.summary_avg_sleep), String.format("%.1f / 10", state.averageSleepQuality))
+                                StatRow(stringResource(R.string.summary_avg_energy), String.format("%.1f / 5", state.averageMorningEnergy))
+                                    StatRow(stringResource(R.string.summary_masturbation_count), stringResource(R.string.count_times, state.masturbationCount))
+                                    StatRow(stringResource(R.string.summary_exercise_count), stringResource(R.string.count_times, state.exerciseCount))
                             }
                         }
                     }

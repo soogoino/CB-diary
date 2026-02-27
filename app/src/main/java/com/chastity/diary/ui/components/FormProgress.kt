@@ -11,6 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.chastity.diary.R
+import androidx.compose.ui.res.stringResource
 import com.chastity.diary.domain.model.FormStep
 
 /**
@@ -43,7 +45,7 @@ fun FormProgressIndicator(
         ) {
             StepIndicator(
                 step = FormStep.CORE,
-                label = "核心",
+                label = stringResource(R.string.form_label_core),
                 isCurrent = currentStep == FormStep.CORE,
                 isCompleted = FormStep.CORE in completedSteps,
                 modifier = Modifier.weight(1f)
@@ -58,7 +60,7 @@ fun FormProgressIndicator(
             
             StepIndicator(
                 step = FormStep.CONDITIONAL,
-                label = "後續",
+                label = stringResource(R.string.form_label_conditional),
                 isCurrent = currentStep == FormStep.CONDITIONAL,
                 isCompleted = FormStep.CONDITIONAL in completedSteps,
                 modifier = Modifier.weight(1f)
@@ -73,7 +75,7 @@ fun FormProgressIndicator(
             
             StepIndicator(
                 step = FormStep.ROTATING,
-                label = "特別",
+                label = stringResource(R.string.form_label_rotating),
                 isCurrent = currentStep == FormStep.ROTATING,
                 isCompleted = FormStep.ROTATING in completedSteps,
                 modifier = Modifier.weight(1f)
@@ -88,7 +90,7 @@ fun FormProgressIndicator(
             
             StepIndicator(
                 step = FormStep.REVIEW,
-                label = "檢視",
+                label = stringResource(R.string.form_label_review),
                 isCurrent = currentStep == FormStep.REVIEW,
                 isCompleted = FormStep.REVIEW in completedSteps,
                 modifier = Modifier.weight(1f)
@@ -155,7 +157,7 @@ fun FormNavigationButtons(
     canGoNext: Boolean,
     onBack: () -> Unit,
     onNext: () -> Unit,
-    nextButtonText: String = "下一步",
+    nextButtonText: String = stringResource(R.string.form_next_button),
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -168,7 +170,7 @@ fun FormNavigationButtons(
             enabled = canGoBack,
             modifier = Modifier.weight(1f)
         ) {
-            Text("上一步")
+            Text(stringResource(R.string.form_prev_button))
         }
         
         // Next button

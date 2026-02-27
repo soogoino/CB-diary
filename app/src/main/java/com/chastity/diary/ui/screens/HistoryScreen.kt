@@ -30,6 +30,7 @@ import com.chastity.diary.viewmodel.DashboardViewModel
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,12 +96,22 @@ fun MoodCalendarSection(entries: List<DailyEntry>, onDateClick: ((LocalDate) -> 
     val daysInMonth = remember { yearMonth.lengthOfMonth() }
     val startOffset = remember { firstDay.dayOfWeek.value % 7 } // 0=Sun
     val entryMap    = remember(entries) { entries.associateBy { it.date } }
-    val weekDays    = remember { listOf("日", "一", "二", "三", "四", "五", "六") }
+    val weekDays    = remember { stringArrayResource(R.array.weekdays_short).toList() }
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            val monthPattern = if (Locale.getDefault().language.startsWith("zh"))
+                stringResource(R.string.history_month_pattern_zh)
+            else
+                stringResource(R.string.history_month_pattern_en)
+
+            val monthLabel = remember(monthPattern) {
+                today.format(
+                    DateTimeFormatter.ofPattern(monthPattern, Locale.getDefault())
+                )
+            }
             Text(
-                "${today.year}年${today.monthValue}月 心情日曆",
+                stringResource(R.string.history_calendar_title, monthLabel),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -223,7 +234,7 @@ private fun RecentEntriesSection(entries: List<DailyEntry>) {
             ) {
                 Text(stringResource(R.string.history_all_records), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(
-                    "共 ${sorted.size} 筆",
+                    stringResource(R.string.history_total_records, sorted.size),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -242,7 +253,7 @@ private fun RecentEntriesSection(entries: List<DailyEntry>) {
                 ) {
                     Icon(Icons.Default.ExpandMore, contentDescription = null)
                     Spacer(Modifier.width(4.dp))
-                    Text("載入更多（還有 $remaining 筆）")
+                    Text(stringResource(R.string.history_load_more, remaining))
                 }
             }
         }
@@ -302,10 +313,10 @@ private fun EntryRow(entry: DailyEntry) {
                          entry.sleepQuality != null || entry.selfRating != null
         if (hasMetrics) {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                entry.desireLevel?.let  { MetricChip("慾望 $it/10") }
-                entry.comfortRating?.let { MetricChip("舒適 $it/10") }
-                entry.sleepQuality?.let  { MetricChip("睡眠 $it/10") }
-                entry.selfRating?.let    { MetricChip("自評 $it/10") }
+                entry.desireLevel?.let  { MetricChip(stringResource(R.string.metric_desire_format, it)) }
+                entry.comfortRating?.let { MetricChip(stringResource(R.string.metric_comfort_format, it)) }
+                entry.sleepQuality?.let  { MetricChip(stringResource(R.string.metric_sleep_format, it)) }
+                entry.selfRating?.let    { MetricChip(stringResource(R.string.metric_self_rating_format, it)) }
             }
         }
         // ── Notes excerpt ─────────────────────────────────────────────────────

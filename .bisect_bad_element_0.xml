@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources><string-array name="cleaning_types_array">
+        <item>未清潔</item>
+        <item>簡單沖洗</item>
+        <item>深度清潔</item>
+        <item>完全取下清潔</item>
+    </string-array>
+    </resources>

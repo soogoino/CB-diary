@@ -8,11 +8,13 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.chastity.diary.util.Constants
+import com.chastity.diary.R
 
 /**
  * Dialog for setting or changing PIN code
@@ -37,7 +39,7 @@ fun PinSetupDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(text = if (isChangingPin) "修改 PIN 碼" else "設定 PIN 碼")
+            Text(text = if (isChangingPin) stringResource(R.string.pin_title_change) else stringResource(R.string.pin_title_set))
         },
         text = {
             Column(
@@ -45,7 +47,7 @@ fun PinSetupDialog(
             ) {
                 if (isChangingPin) {
                     Text(
-                        text = "請輸入當前的 PIN 碼",
+                        text = stringResource(R.string.pin_current_prompt),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -58,7 +60,7 @@ fun PinSetupDialog(
                                 currentPinError = null
                             }
                         },
-                        label = { Text("當前 PIN 碼") },
+                        label = { Text(stringResource(R.string.pin_current_label)) },
                         visualTransformation = if (showCurrentPin) 
                             VisualTransformation.None 
                         else 
@@ -71,12 +73,12 @@ fun PinSetupDialog(
                                         Icons.Default.Visibility 
                                     else 
                                         Icons.Default.VisibilityOff,
-                                    contentDescription = if (showCurrentPin) "隱藏" else "顯示"
+                                    contentDescription = if (showCurrentPin) stringResource(R.string.pin_hide) else stringResource(R.string.pin_show)
                                 )
                             }
                         },
                         isError = currentPinError != null,
-                        supportingText = currentPinError?.let { { Text(it) } },
+                        supportingText = { currentPinError?.let { Text(it) } },
                         modifier = Modifier.fillMaxWidth()
                     )
                     
@@ -84,7 +86,7 @@ fun PinSetupDialog(
                 }
                 
                 Text(
-                    text = if (isChangingPin) "請輸入新的 PIN 碼 (4-6 位數字)" else "請輸入 PIN 碼 (4-6 位數字)",
+                    text = if (isChangingPin) stringResource(R.string.pin_new_prompt_change) else stringResource(R.string.pin_new_prompt),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -96,12 +98,12 @@ fun PinSetupDialog(
                             newPin = it
                             newPinError = when {
                                 it.isEmpty() -> null
-                                it.length < Constants.PIN_MIN_LENGTH -> "PIN 碼至少需要 ${Constants.PIN_MIN_LENGTH} 位數字"
+                                it.length < Constants.PIN_MIN_LENGTH -> stringResource(R.string.pin_min_length_error, Constants.PIN_MIN_LENGTH)
                                 else -> null
                             }
                         }
                     },
-                    label = { Text(if (isChangingPin) "新 PIN 碼" else "PIN 碼") },
+                    label = { Text(if (isChangingPin) stringResource(R.string.pin_new_label) else stringResource(R.string.pin_label)) },
                     visualTransformation = if (showNewPin) 
                         VisualTransformation.None 
                     else 
@@ -114,7 +116,7 @@ fun PinSetupDialog(
                                     Icons.Default.Visibility 
                                 else 
                                     Icons.Default.VisibilityOff,
-                                contentDescription = if (showNewPin) "隱藏" else "顯示"
+                                contentDescription = if (showNewPin) stringResource(R.string.pin_hide) else stringResource(R.string.pin_show)
                             )
                         }
                     },
@@ -130,12 +132,12 @@ fun PinSetupDialog(
                             confirmPin = it
                             confirmPinError = when {
                                 it.isEmpty() -> null
-                                it != newPin -> "PIN 碼不一致"
+                                it != newPin -> stringResource(R.string.pin_confirm_mismatch)
                                 else -> null
                             }
                         }
                     },
-                    label = { Text("確認 PIN 碼") },
+                    label = { Text(stringResource(R.string.pin_confirm_label)) },
                     visualTransformation = if (showConfirmPin) 
                         VisualTransformation.None 
                     else 
@@ -148,12 +150,12 @@ fun PinSetupDialog(
                                     Icons.Default.Visibility 
                                 else 
                                     Icons.Default.VisibilityOff,
-                                contentDescription = if (showConfirmPin) "隱藏" else "顯示"
+                                contentDescription = if (showConfirmPin) stringResource(R.string.pin_hide) else stringResource(R.string.pin_show)
                             )
                         }
                     },
                     isError = confirmPinError != null,
-                    supportingText = confirmPinError?.let { { Text(it) } },
+                    supportingText = { confirmPinError?.let { Text(it) } },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -165,17 +167,17 @@ fun PinSetupDialog(
                     var hasError = false
                     
                     if (isChangingPin && currentPin.isEmpty()) {
-                        currentPinError = "請輸入當前 PIN 碼"
+                        currentPinError = stringResource(R.string.pin_current_prompt)
                         hasError = true
                     }
                     
                     if (newPin.length < Constants.PIN_MIN_LENGTH) {
-                        newPinError = "PIN 碼至少需要 ${Constants.PIN_MIN_LENGTH} 位數字"
+                        newPinError = stringResource(R.string.pin_min_length_error, Constants.PIN_MIN_LENGTH)
                         hasError = true
                     }
                     
                     if (newPin != confirmPin) {
-                        confirmPinError = "PIN 碼不一致"
+                        confirmPinError = stringResource(R.string.pin_confirm_mismatch)
                         hasError = true
                     }
                     
@@ -190,13 +192,13 @@ fun PinSetupDialog(
                 } else {
                     newPin.length >= Constants.PIN_MIN_LENGTH && newPin == confirmPin
                 }
-            ) {
-                Text("確定")
+                ) {
+                Text(stringResource(R.string.confirm))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("取消")
+                Text(stringResource(R.string.cancel))
             }
         }
     )
