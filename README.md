@@ -7,48 +7,64 @@
 
 ## 功能特色
 
-- ✅ **每日記錄表單** - 20+ 個問題涵蓋生理、心理、社交等各方面
-- 📊 **統計儀表板** - 多樣化圖表展示統計數據
-- 🔒 **自動鎖定** - 生物辨識 + PIN 雙重保護隱私 🔥 **連續打卡** - 追蹤連續記錄天數,達成里程碑獎勵
-- 🔔 **每日提醒** - 定時通知提醒記錄
-- 📸 **照片打卡** - 可選圖片記錄
-- ☁️ **雲端同步** - 可選 Firebase 雲端備份
+- ✅ **每日記錄表單** - 23 個問題（Q1–Q23）涵蓋生理、心理、社交等各方面
+- 📊 **統計儀表板** - Vico 圖表展示統計數據
+- 📅 **歷史記錄** - 含心情日曆熱力圖，逐日回顧記錄
+- 🚀 **Onboarding 引導** - 多步驟初始設定流程（12 個步驟）
+- 🔒 **自動鎖定** - 生物辨識 + PIN 雙重保護隱私
+- 🔥 **連續打卡** - 追蹤連續記錄天數，達成里程碑獎勵
+- 🔔 **雙重提醒** - 每日固定提醒 + 早晨喚醒通知（WorkManager）
+- 📸 **照片打卡** - 可選圖片記錄（CameraX，選用）
+- 📤 **CSV 匯出** - 一鍵匯出所有記錄資料
 - 🌙 **深色模式** - 支援淺色/深色/跟隨系統
 
 ## 技術棧
 
 - **語言**: Kotlin 1.9.22
 - **UI 框架**: Jetpack Compose + Material Design 3
-- **架構**: MVVM (ViewModel + StateFlow)
-- **資料庫**: Room Database
-- **偏好設定**: DataStore Preferences
-- **圖表**: Vico (Compose 原生圖表庫)
-- **相機**: CameraX API
-- **通知**: WorkManager + NotificationManager
-- **安全**: BiometricPrompt + EncryptedSharedPreferences
-- **雲端 (可選)**: Firebase Authentication + Firestore
+- **架構**: MVVM (ViewModel + StateFlow) + Clean Architecture（Repository 介面層）
+- **資料庫**: Room 2.6.1（含 EAV 屬性表 + Migrations）
+- **偏好設定**: DataStore Preferences 1.0.0
+- **圖表**: Vico 1.13.1（Compose 原生圖表庫）
+- **相機**: CameraX 1.3.1（選用）
+- **通知**: WorkManager 2.9.0 + NotificationManager
+- **安全**: BiometricPrompt 1.1.0 + EncryptedSharedPreferences
+- **啟動畫面**: Splash Screen API 1.0.1
+- **資料序列化**: Gson 2.10.1
+- **編譯 SDK**: 34（minSdk 24 / Android 7.0+）
 
 ## 專案結構
 
 ```
 app/src/main/java/com/chastity/diary/
+├── DiaryApplication.kt
+├── MainActivity.kt
 ├── ui/
-│   ├── screens/          # 畫面 (DailyEntry, Dashboard, Settings)
-│   ├── components/       # 可重用 UI 元件
-│   ├── theme/            # Material 3 主題
-│   └── navigation/       # 導航配置
+│   ├── screens/
+│   │   ├── DailyEntryScreen.kt   # 4 步驟漸進式記錄表單
+│   │   ├── DashboardScreen.kt    # Vico 圖表統計儀表板
+│   │   ├── HistoryScreen.kt      # 歷史記錄 + 心情日曆熱力圖
+│   │   ├── OnboardingScreen.kt   # 多步驟初始引導（12 個 Composable）
+│   │   ├── LockScreen.kt         # 生物辨識 / PIN 鎖定畫面
+│   │   └── SettingsScreen.kt     # 設定頁面
+│   ├── components/               # 可重用 UI 元件（12 個）
+│   ├── theme/                    # Material 3 色彩、字型主題
+│   └── navigation/               # NavGraph + BottomNavigationBar
 ├── data/
 │   ├── local/
-│   │   ├── entity/       # Room Entity
-│   │   ├── dao/          # Room DAO
-│   │   └── database/     # Database 實例
-│   ├── repository/       # Repository 實作
-│   └── datastore/        # DataStore Preferences
+│   │   ├── entity/               # Room Entity（含 EAV 屬性表）
+│   │   ├── dao/                  # Room DAO
+│   │   └── database/             # AppDatabase + Migrations
+│   ├── repository/               # Repository 實作
+│   └── datastore/                # PreferencesManager
 ├── domain/
-│   └── model/            # Domain Models
-├── viewmodel/            # ViewModels
-├── util/                 # 工具函式與常數
-└── worker/               # WorkManager Workers
+│   ├── model/                    # DailyEntry（23 欄位）、FormFlow、HeatmapModel
+│   └── repository/               # 乾淨架構介面（IEntryRepository 等）
+├── viewmodel/                    # 4 個 ViewModel
+├── util/                         # BiometricHelper、CsvHelper、NotificationHelper 等
+└── worker/
+    ├── DailyReminderWorker.kt    # 有條件每日提醒
+    └── MorningReminderWorker.kt  # 早晨固定喚醒通知
 ```
 
 ## 開始使用
@@ -67,43 +83,13 @@ git clone <repository-url>
 cd CB-diary-A
 ```
 
-### 3. Firebase 配置 (可選)
-
-如果需要雲端同步功能:
-
-1. 前往 [Firebase Console](https://console.firebase.google.com/)
-2. 建立新專案
-3. 新增 Android 應用程式,Package name 為 `com.chastity.diary`
-4. 下載 `google-services.json` 並替換 `app/google-services.json`
-5. 啟用 Authentication (Anonymous) 和 Firestore
-
-如不需要雲端功能,可在 `app/build.gradle.kts` 中註解掉 Firebase 相關依賴:
-
-```kotlin
-// implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
-// implementation("com.google.firebase:firebase-auth-ktx")
-// implementation("com.google.firebase:firebase-firestore-ktx")
-```
-
-並在專案根目錄 `build.gradle.kts` 註解:
-
-```kotlin
-// id("com.google.gms.google-services") version "4.4.0" apply false
-```
-
-並在 `app/build.gradle.kts` 中註解:
-
-```kotlin
-// id("com.google.gms.google-services")
-```
-
-### 4. 建置專案
+### 3. 建置專案
 
 ```bash
 ./gradlew build
 ```
 
-### 5. 執行應用程式
+### 4. 執行應用程式
 
 - 使用 Android Studio 的 Run 按鈕
 - 或使用命令列:
@@ -116,47 +102,39 @@ cd CB-diary-A
 
 ### 已完成 ✅
 
-- [x] 專案架構建立
-- [x] Room Database 配置
+- [x] 專案架構（Clean Architecture + MVVM）
+- [x] Room Database 配置（含 EAV 屬性表 + Migrations）
 - [x] DataStore Preferences
-- [x] ViewModel 與 StateFlow
-- [x] Material 3 主題
-- [x] 底部導航
-- [x] 三個主要畫面骨架 (每日記錄、儀表板、設定)
-- [x] 基本統計功能
+- [x] ViewModel 與 StateFlow（4 個 ViewModel）
+- [x] Material 3 主題（淺色/深色/跟隨系統）
+- [x] 底部導航（NavGraph Keep-alive 優化）
+- [x] Onboarding 初始引導流程（12 步驟）
+- [x] 完整每日記錄表單 UI（Q1–Q23，4 步驟漸進式）
+- [x] 統計儀表板（Vico 圖表整合）
+- [x] 歷史記錄頁（含心情日曆熱力圖）
+- [x] 生物辨識 + PIN 鎖定畫面
+- [x] 連續打卡追蹤與里程碑徽章
+- [x] 雙重 WorkManager 通知（每日提醒 + 早晨喚醒）
+- [x] CSV 資料匯出後端（`CsvHelper.kt`）
+- [x] Repository 介面層（乾淨架構依賴倒置）
 
 ### 進行中 🚧
 
-- [ ] 完整的每日記錄表單 UI (20+ 問題)
-- [ ] 圖表視覺化 (使用 Vico)
-- [ ] 生物辨識鎖定功能
-- [ ] WorkManager 每日通知
-- [ ] CameraX 照片功能
-- [ ] 資料匯出 CSV
-- [ ] Firebase 同步
+- [ ] CameraX 照片功能（依賴與 FileProvider 已設定，UI 整合待完成）
+- [ ] CSV 匯出 UI 入口（後端已完成，Settings 頁觸發待接通）
+- [ ] Splash Screen 整合（依賴已加，初始化待完成）
+- [ ] 主題切換 UI（DataStore 已支援，SettingsScreen 待串接）
 
 ### 待實作 📋
 
 - [ ] 單元測試
 - [ ] UI 測試
-- [ ] App 圖示與啟動畫面
+- [ ] App 圖示（自訂 Launcher Icon）
 - [ ] ProGuard 規則優化
-- [ ] 性能優化
 
 ## 資料模型
 
 ### DailyEntry (每日記錄)
-
-包含 23 個維度的問題:
-
-1. 心情 (mood)
-2. 色情內容 (viewedPorn, pornDuration)
-3. 勃起 (hadErection) - 男性限定
-4. 運動 (exercised, exerciseTypes, exerciseDuration)
-5. 解鎖/自慰 (unlocked, masturbated, masturbationDuration)
-6. 露出 (exposedLock, exposedLocations)
-7. 照片 (photoPath)
-8-23. 擴充問題 (性慾強度、舒適度、不適、清潔、洩漏、邊緣訓練、Keyholder 互動、睡眠、取下、夜間勃起、專注度、任務、情緒、裝置檢查、社交、自我評價)
 
 詳見 [`DailyEntry.kt`](app/src/main/java/com/chastity/diary/domain/model/DailyEntry.kt)
 
@@ -166,8 +144,6 @@ cd CB-diary-A
 - 支援生物辨識 (指紋/Face ID) 鎖定
 - PIN 碼備用方案,使用 EncryptedSharedPreferences 加密儲存
 - App 切換到背景會自動鎖定
-- FLAG_SECURE 防止截圖
-- 雲端同步為**可選功能**,需手動啟用
 
 ## 貢獻
 
@@ -183,5 +159,5 @@ cd CB-diary-A
 
 ---
 
-**開發狀態**: 初始版本 (v1.0.0-alpha)  
-**最後更新**: 2026-02-20
+**開發狀態**: Alpha (v1.0.0-alpha)  
+**最後更新**: 2026-02-27
