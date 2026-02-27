@@ -12,7 +12,6 @@ import com.chastity.diary.data.datastore.PreferencesManager
 import com.chastity.diary.data.local.database.AppDatabase
 import com.chastity.diary.data.repository.EntryRepository
 import com.chastity.diary.data.repository.SettingsRepository
-import com.chastity.diary.domain.model.AppLanguage
 import com.chastity.diary.domain.model.DarkMode
 import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.domain.model.UserSettings
@@ -204,13 +203,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             repository.updateDarkMode(mode)
         }
     }
-
-    fun updateLanguage(language: AppLanguage) {
-        viewModelScope.launch {
-            repository.updateLanguage(language)
-        }
-    }
-
+    
     fun updateCloudSyncEnabled(enabled: Boolean) {
         viewModelScope.launch {
             repository.updateCloudSyncEnabled(enabled)

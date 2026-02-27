@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
-import com.chastity.diary.domain.model.AppLanguage
 import com.chastity.diary.domain.model.DarkMode
 import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.domain.model.HeatmapTimeRange
@@ -59,9 +58,6 @@ class PreferencesManager(private val context: Context) {
         // Photo
         val PHOTO_BLUR_ENABLED = booleanPreferencesKey("photo_blur_enabled")
 
-        // Language
-        val LANGUAGE = stringPreferencesKey("language")
-
         // Action Heatmap
         val HEATMAP_TIME_RANGE = stringPreferencesKey("heatmap_time_range")
         val HEATMAP_VISIBLE_QUESTIONS = stringSetPreferencesKey("heatmap_visible_questions")
@@ -113,12 +109,7 @@ class PreferencesManager(private val context: Context) {
                     ?: Constants.DEFAULT_MORNING_REMINDER_MINUTE,
 
                 // Photo
-                photoBlurEnabled = preferences[PreferencesKeys.PHOTO_BLUR_ENABLED] ?: true,
-
-                // Language
-                language = AppLanguage.valueOf(
-                    preferences[PreferencesKeys.LANGUAGE] ?: AppLanguage.ENGLISH.name
-                )
+                photoBlurEnabled = preferences[PreferencesKeys.PHOTO_BLUR_ENABLED] ?: true
             )
         }
     
@@ -271,12 +262,6 @@ class PreferencesManager(private val context: Context) {
     suspend fun updatePhotoBlurEnabled(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.PHOTO_BLUR_ENABLED] = enabled
-        }
-    }
-
-    suspend fun updateLanguage(language: AppLanguage) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.LANGUAGE] = language.name
         }
     }
 

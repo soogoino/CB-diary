@@ -14,9 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
-import androidx.activity.result.PickVisualMediaRequest
-import kotlinx.coroutines.launch
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -201,32 +198,6 @@ fun DailyEntryScreen(
         { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) }
     }
 
-    // Gallery / Photo Picker launcher — copies chosen image into app's Pictures dir so that
-    // the path remains valid after the content:// URI permission expires on restart.
-    val scope = rememberCoroutineScope()
-    val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
-            scope.launch(Dispatchers.IO) {
-                runCatching {
-                    val ts = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-                    val dir = File(context.getExternalFilesDir("Pictures"), "").also { it.mkdirs() }
-                    val file = File(dir, "PHOTO_$ts.jpg")
-                    context.contentResolver.openInputStream(uri)?.use { input ->
-                        file.outputStream().use { output -> input.copyTo(output) }
-                    }
-                    if (file.exists() && file.length() > 0) {
-                        withContext(Dispatchers.Main) {
-                            viewModel.updateEntry { e -> e.copy(photoPath = file.absolutePath) }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    val onPickPhotoStable: () -> Unit = remember(galleryLauncher) {
-        { galleryLauncher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) }
-    }
-
     LaunchedEffect(saveSuccess) {
         if (saveSuccess) {
             // B3: Snapshot entry immediately before any async DB update can change entryState
@@ -397,7 +368,6 @@ fun DailyEntryScreen(
                             selectedDate = selectedDate,
                             isExisting = isExisting,
                             onTakePhoto = onTakePhotoStable,
-                            onPickPhoto = onPickPhotoStable,
                             photoBlurEnabled = userSettings.photoBlurEnabled
                         )
                     }
@@ -596,7 +566,6 @@ private fun CoreQuestionsCard(
     entry: DailyEntry,
     onUpdate: (DailyEntry) -> Unit,
     onTakePhoto: () -> Unit,
-    onPickPhoto: () -> Unit = {},
     photoBlurEnabled: Boolean = true
 ) {
     // B4: Use remember (not rememberSaveable) — photo reveal state must not persist across dates
@@ -664,10 +633,10 @@ private fun CoreQuestionsCard(
             }
 
             // C5: Focus
-            QuestionSection(title = stringResource(R.string.q_focus_title), subtitle = stringResource(R.string.q_focus_subtitle)) {
+            QuestionSection(title = "今日專注度", subtitle = "1 = 完全分心   10 = 高度專注") {
                 SliderWithLabel(entry.focusLevel?.toFloat() ?: 5f,
                     { onUpdate(entry.copy(focusLevel = it.toInt())) },
-                    valueRange = 1f..10f, steps = 8, label = stringResource(R.string.q_focus_label))
+                    valueRange = 1f..10f, steps = 8, label = "專注度")
             }
 
             // (C6 merged into C1 above)
@@ -675,36 +644,26 @@ private fun CoreQuestionsCard(
             // Photo check-in
             Divider()
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Column {
-                    Text(stringResource(R.string.q_photo_title), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
-                    Text(
-                        if (entry.photoPath.isNullOrBlank()) stringResource(R.string.q_photo_subtitle_optional) else stringResource(R.string.q_photo_taken),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = if (entry.photoPath.isNullOrBlank())
-                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                        else MaterialTheme.colorScheme.primary
-                    )
-                }
-                if (entry.photoPath.isNullOrBlank()) {
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        OutlinedButton(
-                            onClick = onTakePhoto,
-                            modifier = Modifier.weight(1f)
-                        ) {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(stringResource(R.string.q_photo_title), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                        Text(
+                            if (entry.photoPath.isNullOrBlank()) stringResource(R.string.q_photo_subtitle_optional) else stringResource(R.string.q_photo_taken),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (entry.photoPath.isNullOrBlank())
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                            else MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    if (entry.photoPath.isNullOrBlank()) {
+                        OutlinedButton(onClick = onTakePhoto) {
                             Icon(Icons.Default.Camera, null, Modifier.size(16.dp))
                             Spacer(Modifier.width(4.dp))
                             Text(stringResource(R.string.action_take_photo))
-                        }
-                        OutlinedButton(
-                            onClick = onPickPhoto,
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Icon(Icons.Default.Photo, null, Modifier.size(16.dp))
-                            Spacer(Modifier.width(4.dp))
-                            Text(stringResource(R.string.action_pick_photo))
                         }
                     }
                 }
@@ -1041,7 +1000,6 @@ private fun DailyEntryTabContent(
     selectedDate: LocalDate = LocalDate.now(),
     isExisting: Boolean = false,
     onTakePhoto: () -> Unit = {},
-    onPickPhoto: () -> Unit = {},
     photoBlurEnabled: Boolean = true,
 ) {
     var showBedtimePicker by remember { mutableStateOf(false) }
@@ -1255,7 +1213,7 @@ private fun DailyEntryTabContent(
         } else {
             // ── 🌙 Evening cards ───────────────────────────────────────────────
             DayStatusCard(entry, selectedDate)
-            CoreQuestionsCard(entry = entry, onUpdate = onUpdate, onTakePhoto = onTakePhoto, onPickPhoto = onPickPhoto, photoBlurEnabled = photoBlurEnabled)
+            CoreQuestionsCard(entry = entry, onUpdate = onUpdate, onTakePhoto = onTakePhoto, photoBlurEnabled = photoBlurEnabled)
             RotatingQuestionsCard(
                 questions = remember(selectedDate, isMale) { getRotatingQuestionsForDate(selectedDate, isMale) },
                 entry = entry,

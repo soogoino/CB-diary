@@ -1,7 +1,6 @@
 package com.chastity.diary.data.repository
 
 import com.chastity.diary.data.datastore.PreferencesManager
-import com.chastity.diary.domain.model.AppLanguage
 import com.chastity.diary.domain.model.DarkMode
 import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.domain.model.UserSettings
@@ -86,9 +85,5 @@ class SettingsRepository(private val preferencesManager: PreferencesManager) : I
 
     override suspend fun updatePhotoBlurEnabled(enabled: Boolean) {
         preferencesManager.updatePhotoBlurEnabled(enabled)
-    }
-
-    override suspend fun updateLanguage(language: AppLanguage) {
-        preferencesManager.updateLanguage(language)
     }
 }

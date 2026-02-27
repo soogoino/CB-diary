@@ -161,9 +161,6 @@
     <string name="settings_theme_light">淺色</string>
     <string name="settings_theme_dark">深色</string>
     <string name="settings_theme_system">跟隨系統</string>
-    <string name="settings_language">語言</string>
-    <string name="settings_language_english">English</string>
-    <string name="settings_language_traditional_chinese">繁體中文</string>
     <string name="settings_data_management">資料管理</string>
     <string name="settings_cloud_coming_soon">雲端同步：開發中，敬請期待 ☁️</string>
     <string name="settings_export_csv">匯出資料 (CSV)</string>
@@ -278,7 +275,6 @@
     <string name="q_photo_subtitle_optional">可選 · 視覺紀念</string>
     <string name="q_photo_taken">✓ 已拍攝</string>
     <string name="action_take_photo">拍照</string>
-    <string name="action_pick_photo">從相簿選取</string>
     <string name="q_photo_tap_to_view">點擊查看照片</string>
     <string name="action_retake_photo">重新拍攝</string>
     <string name="action_delete_photo">刪除照片</string>
@@ -551,59 +547,4 @@
         <item>偶爾</item>
         <item>頻繁</item>
     </string-array>
-
-    <!-- Heatmap Section -->
-    <string name="heatmap_section_title">行動熱力圖</string>
-    <string name="heatmap_period_7d">7天</string>
-    <string name="heatmap_period_14d">14天</string>
-    <string name="heatmap_period_30d">30天</string>
-    <string name="heatmap_label_locked">配戴鎖</string>
-    <string name="heatmap_label_dream">春夢</string>
-    <string name="heatmap_label_morning">晨勃</string>
-    <string name="heatmap_label_exercise">運動</string>
-    <string name="heatmap_label_clean">清潔</string>
-    <string name="heatmap_label_photo">打卡照片</string>
-
-    <!-- History Screen additions -->
-    <string name="history_calendar_title">%1$d年%2$d月 心情日曆</string>
-    <string name="history_total_count">共 %1$d 筆</string>
-    <string name="history_load_more">載入更多（還有 %1$d 筆）</string>
-    <string name="history_metric_desire">慾望 %1$d/10</string>
-    <string name="history_metric_comfort">舒適 %1$d/10</string>
-    <string name="history_metric_sleep">睡眠 %1$d/10</string>
-    <string name="history_metric_self">自評 %1$d/10</string>
-
-    <!-- Dashboard Chart series labels -->
-    <string name="chart_series_desire">性慾</string>
-    <string name="chart_series_comfort">舒適</string>
-    <string name="chart_series_focus">專注</string>
-    <string name="chart_series_sleep">睡眠</string>
-    <string name="chart_series_energy">能量</string>
-
-    <!-- Dashboard stat values -->
-    <string name="dashboard_streak_value">%1$d 天 🔥</string>
-    <string name="dashboard_longest_value">%1$d 天</string>
-    <string name="dashboard_avg_focus">平均專注度</string>
-    <string name="dashboard_avg_sleep">平均睡眠品質</string>
-    <string name="dashboard_avg_energy">平均晨間能量</string>
-    <string name="dashboard_count_times">%1$d 次</string>
-
-    <!-- Streak Badges -->
-    <string name="streak_section_title">成就徽章</string>
-    <string name="streak_longest_prefix">最長 %1$d 天</string>
-    <string name="streak_next_milestone">距離「%1$s %2$s」</string>
-    <string name="streak_days_remaining">還差 %1$d 天</string>
-    <string name="streak_days_count">%1$d天</string>
-    <string name="milestone_beginner">初學者</string>
-    <string name="milestone_progress">進展中</string>
-    <string name="milestone_one_month">一個月</string>
-    <string name="milestone_two_months">兩個月</string>
-    <string name="milestone_hundred_days">百日勇士</string>
-    <string name="milestone_one_year">一年達人</string>
-    <string name="milestone_all_achieved">🎉 所有里程碑已解鎖！</string>
-
-    <!-- ViewModel error messages (additional) -->
-    <string name="error_save_failed">儲存失敗: %1$s</string>
-    <string name="error_morning_save_failed">早晨記錄失敗: %1$s</string>
-    <string name="error_delete_failed">刪除失敗: %1$s</string>
 </resources>

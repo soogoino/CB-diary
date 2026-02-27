@@ -121,6 +121,7 @@
     <string name="date_short_pattern">MM月dd日</string>
 
     <!-- Settings Screen -->
+<<<<<<< HEAD
     <string name="settings_title">設定</string>
     <string name="settings_version_format">貞操日記 v%s</string>
     <string name="settings_profile">個人資料</string>
@@ -175,6 +176,59 @@
     <string name="biometric_unavailable_message">您的裝置不支援生物辨識功能，或未設定指紋/臉部識別。請先在系統設定中設定生物辨識。</string>
     <string name="save_button_update">更新記錄</string>
     <string name="save_button_save_today">儲存今日記錄</string>
+=======
+    <string name="settings_title">Settings</string>
+    <string name="settings_version_format">Chastity Diary v%s</string>
+    <string name="settings_profile">Profile</string>
+    <string name="settings_no_profile">No profile set up yet</string>
+    <string name="settings_edit">Edit</string>
+    <string name="settings_nickname_prefix">Nickname: %s</string>
+    <string name="settings_start_date_prefix">Start date: %s</string>
+    <string name="settings_start_date_not_set">Not set</string>
+    <string name="settings_gender">Gender</string>
+    <string name="settings_gender_male">Male ♂</string>
+    <string name="settings_gender_female">Female ♀</string>
+    <string name="settings_gender_other">Other</string>
+    <string name="settings_height_format">Height: %s cm</string>
+    <string name="settings_weight_format">Weight: %s kg</string>
+    <string name="settings_device_format">Device: %s</string>
+    <string name="settings_morning_reminder">☀️ Morning Reminder</string>
+    <string name="settings_reminder_icon_desc">Morning reminder</string>
+    <string name="settings_reminder_enabled">Enabled</string>
+    <string name="settings_reminder_disabled">Disabled</string>
+    <string name="settings_reminder_time_prefix">Reminder time: %s</string>
+    <string name="settings_goodnight_reminder_icon_desc">Goodnight reminder</string>
+    <string name="settings_goodnight_reminder">🌙 Goodnight Reminder</string>
+    <string name="settings_security">Security</string>
+    <string name="settings_time_icon_desc">Set time</string>
+    <string name="settings_biometric_unlock">Biometric Unlock</string>
+    <string name="settings_biometric_desc">Use fingerprint or face recognition</string>
+    <string name="settings_biometric_cd">Biometric</string>
+    <string name="settings_biometric_unsupported">Biometrics not supported on this device</string>
+    <string name="settings_pin_lock">PIN Lock</string>
+    <string name="settings_pin_cd">PIN</string>
+    <string name="settings_pin_change">Change PIN</string>
+    <string name="settings_pin_set">Set</string>
+    <string name="settings_pin_not_set">Not set</string>
+    <string name="settings_lock_desc">App is protected — authentication required on each launch</string>
+    <string name="settings_photo_blur">Default Photo Blur</string>
+    <string name="settings_photo_blur_desc">Auto-blur check-in photos when browsing history</string>
+    <string name="settings_photo_blur_cd">Photo blur</string>
+    <string name="settings_ui">Display</string>
+    <string name="settings_theme">Display Theme</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_data_management">Data Management</string>
+    <string name="settings_cloud_coming_soon">Cloud Sync: coming soon ☁️</string>
+    <string name="settings_export_csv">Export Data (CSV)</string>
+    <string name="settings_import_csv">Import Data (CSV)</string>
+    <string name="settings_about">About</string>
+    <string name="biometric_unavailable_title">Biometrics Unavailable</string>
+    <string name="biometric_unavailable_message">Your device does not support biometrics, or no fingerprint / face has been enrolled. Please set up biometrics in your system settings first.</string>
+    <string name="save_button_update">Update record</string>
+    <string name="save_button_save_today">Save today\'s entry</string>
+>>>>>>> parent of e705b87 (feature: upload from gallery, layout)
 
     <!-- Onboarding -->
     <string name="onboarding_new_upgrade">全新升級 ✨</string>
@@ -261,6 +315,7 @@
     <string name="ok_thumbs_up">好的 👍</string>
 
     <!-- Core Questions Card -->
+<<<<<<< HEAD
     <string name="section_core_daily_required">每日必填</string>
     <string name="q_device_worn">今天有佩戴鎖嗎？</string>
     <string name="chip_worn_yes">✓ 有佩戴</string>
@@ -289,6 +344,35 @@
     <string name="q_exercise_title">是否運動？</string>
     <string name="q_exercise_label">有運動</string>
     <string name="q_cleaning_title">今天是否清潔了貞操鎖？</string>
+=======
+    <string name="section_core_daily_required">Required daily</string>
+    <string name="q_device_worn">Wearing the device today?</string>
+    <string name="chip_worn_yes">✓ Wearing</string>
+    <string name="chip_worn_no">✗ Not today</string>
+    <string name="q_mood_title">Today\'s mood</string>
+    <string name="q_mood_subtitle">Pick the feeling closest to you</string>
+    <string name="q_desire_title">Today\'s desire level</string>
+    <string name="q_desire_subtitle">1 = Very low   10 = Very strong</string>
+    <string name="q_desire_label">Desire</string>
+    <string name="q_comfort_title">Wearing comfort</string>
+    <string name="q_comfort_subtitle">1 = Very uncomfortable   10 = Very comfortable</string>
+    <string name="q_comfort_label">Comfort</string>
+    <string name="q_focus_title">Today\'s focus</string>
+    <string name="q_focus_subtitle">1 = Highly distracted   10 = Highly focused</string>
+    <string name="q_focus_label">Focus</string>
+    <string name="q_photo_title">Check-in photo</string>
+    <string name="q_photo_subtitle_optional">Optional · visual milestone</string>
+    <string name="q_photo_taken">✓ Taken</string>
+    <string name="action_take_photo">Take photo</string>
+    <string name="q_photo_tap_to_view">Tap to view</string>
+    <string name="action_retake_photo">Retake</string>
+    <string name="action_delete_photo">Delete photo</string>
+    <string name="error_photo_missing">⚠️ Photo file is missing</string>
+    <string name="action_clear_record">Clear record</string>
+    <string name="q_exercise_title">Exercise today?</string>
+    <string name="q_exercise_label">Exercised</string>
+    <string name="q_cleaning_title">Did you clean the device today?</string>
+>>>>>>> parent of e705b87 (feature: upload from gallery, layout)
 
     <!-- Rotating question feedbacks (from localized source) -->
     <string-array name="daily_rotating_feedback_generic">
@@ -489,6 +573,7 @@
         <item>偶爾</item>
         <item>頻繁</item>
     </string-array>
+<<<<<<< HEAD
 
     <!-- Narrative and misc strings used across the app -->
     <string name="narrative_masturbated">今天有自慰 %d 次 💧</string>
@@ -823,4 +908,6 @@
     <string name="streak_next_milestone">下一里程碑</string>
     <string name="streak_section_title">連續記錄</string>
 
+=======
+>>>>>>> parent of e705b87 (feature: upload from gallery, layout)
 </resources>

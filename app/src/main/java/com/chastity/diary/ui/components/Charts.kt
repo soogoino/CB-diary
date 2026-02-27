@@ -36,8 +36,6 @@ import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.entryOf
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import androidx.compose.ui.res.stringResource
-import com.chastity.diary.R
 
 /**
  * Line chart for trends (mood, desire, etc.)
@@ -265,7 +263,7 @@ fun ActionHeatmapSection(
         ) {
             // ── 標題列 ──
             Text(
-                text = stringResource(R.string.heatmap_section_title),
+                text = "行動熱力圖",
                 style = MaterialTheme.typography.titleMedium
             )
 
@@ -275,7 +273,7 @@ fun ActionHeatmapSection(
                     FilterChip(
                         selected = selectedTimeRange == range,
                         onClick = { onTimeRangeChange(range) },
-                        label = { Text(stringResource(range.labelResId), fontSize = 12.sp) },
+                        label = { Text(range.label, fontSize = 12.sp) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = MaterialTheme.colorScheme.primary,
                             selectedLabelColor = MaterialTheme.colorScheme.onPrimary
@@ -303,7 +301,7 @@ fun ActionHeatmapSection(
                             contentAlignment = Alignment.CenterEnd
                         ) {
                             Text(
-                                text = stringResource(question.labelResId),
+                                text = question.label,
                                 style = MaterialTheme.typography.labelSmall,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,

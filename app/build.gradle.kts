@@ -139,6 +139,12 @@ dependencies {
     // ExifInterface (for reading photo orientation)
     implementation("androidx.exifinterface:exifinterface:1.3.7")
 
+    // CameraX
+    val cameraxVersion = "1.3.1"
+    implementation("androidx.camera:camera-camera2:$cameraxVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
+    implementation("androidx.camera:camera-view:$cameraxVersion")
+    
     // Charts - Vico (Compose native)
     implementation("com.patrykandpatrick.vico:compose:1.13.1")
     implementation("com.patrykandpatrick.vico:compose-m3:1.13.1")
