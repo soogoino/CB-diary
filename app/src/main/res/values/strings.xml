@@ -161,6 +161,9 @@
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_system">System</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_traditional_chinese">Traditional Chinese</string>
     <string name="settings_data_management">Data Management</string>
     <string name="settings_cloud_coming_soon">Cloud Sync: coming soon ☁️</string>
     <string name="settings_export_csv">Export Data (CSV)</string>
@@ -275,6 +278,7 @@
     <string name="q_photo_subtitle_optional">Optional · visual milestone</string>
     <string name="q_photo_taken">✓ Taken</string>
     <string name="action_take_photo">Take photo</string>
+    <string name="action_pick_photo">Choose from gallery</string>
     <string name="q_photo_tap_to_view">Tap to view</string>
     <string name="action_retake_photo">Retake</string>
     <string name="action_delete_photo">Delete photo</string>
@@ -547,4 +551,59 @@
         <item>Occasional</item>
         <item>Frequent</item>
     </string-array>
+
+    <!-- Heatmap Section -->
+    <string name="heatmap_section_title">Action Heatmap</string>
+    <string name="heatmap_period_7d">7 days</string>
+    <string name="heatmap_period_14d">14 days</string>
+    <string name="heatmap_period_30d">30 days</string>
+    <string name="heatmap_label_locked">Locked</string>
+    <string name="heatmap_label_dream">Wet dream</string>
+    <string name="heatmap_label_morning">Morning</string>
+    <string name="heatmap_label_exercise">Exercise</string>
+    <string name="heatmap_label_clean">Cleaning</string>
+    <string name="heatmap_label_photo">Photo</string>
+
+    <!-- History Screen additions -->
+    <string name="history_calendar_title">%1$d/%2$d Mood Calendar</string>
+    <string name="history_total_count">Total %1$d</string>
+    <string name="history_load_more">Load more (%1$d remaining)</string>
+    <string name="history_metric_desire">Desire %1$d/10</string>
+    <string name="history_metric_comfort">Comfort %1$d/10</string>
+    <string name="history_metric_sleep">Sleep %1$d/10</string>
+    <string name="history_metric_self">Self %1$d/10</string>
+
+    <!-- Dashboard Chart series labels -->
+    <string name="chart_series_desire">Desire</string>
+    <string name="chart_series_comfort">Comfort</string>
+    <string name="chart_series_focus">Focus</string>
+    <string name="chart_series_sleep">Sleep</string>
+    <string name="chart_series_energy">Energy</string>
+
+    <!-- Dashboard stat values -->
+    <string name="dashboard_streak_value">%1$d days 🔥</string>
+    <string name="dashboard_longest_value">%1$d days</string>
+    <string name="dashboard_avg_focus">Avg. focus</string>
+    <string name="dashboard_avg_sleep">Avg. sleep quality</string>
+    <string name="dashboard_avg_energy">Avg. morning energy</string>
+    <string name="dashboard_count_times">%1$d times</string>
+
+    <!-- Streak Badges -->
+    <string name="streak_section_title">Achievements</string>
+    <string name="streak_longest_prefix">Longest: %1$d days</string>
+    <string name="streak_next_milestone">Toward: %1$s %2$s</string>
+    <string name="streak_days_remaining">%1$d days to go</string>
+    <string name="streak_days_count">%1$d days</string>
+    <string name="milestone_beginner">Beginner</string>
+    <string name="milestone_progress">In Progress</string>
+    <string name="milestone_one_month">One Month</string>
+    <string name="milestone_two_months">Two Months</string>
+    <string name="milestone_hundred_days">100 Days</string>
+    <string name="milestone_one_year">One Year</string>
+    <string name="milestone_all_achieved">🎉 All milestones achieved!</string>
+
+    <!-- ViewModel error messages (additional) -->
+    <string name="error_save_failed">Save failed: %1$s</string>
+    <string name="error_morning_save_failed">Morning save failed: %1$s</string>
+    <string name="error_delete_failed">Delete failed: %1$s</string>
 </resources>

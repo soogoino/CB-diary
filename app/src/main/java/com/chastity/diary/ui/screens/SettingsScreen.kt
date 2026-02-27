@@ -1,10 +1,12 @@
 package com.chastity.diary.ui.screens
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,6 +16,7 @@ import androidx.compose.material.icons.filled.Brightness6
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
@@ -27,10 +30,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chastity.diary.R
 import androidx.compose.ui.res.stringResource
 import com.chastity.diary.BuildConfig
+import com.chastity.diary.domain.model.AppLanguage
 import com.chastity.diary.domain.model.DarkMode
 import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.ui.components.PinSetupDialog
@@ -590,7 +595,61 @@ fun SettingsScreen(
                     }
                 }
             }
-            
+
+            // Language settings
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.settings_language),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    val languageOptions = listOf(
+                        Triple(AppLanguage.ENGLISH,              "en",    stringResource(R.string.settings_language_english)),
+                        Triple(AppLanguage.TRADITIONAL_CHINESE,  "zh-TW", stringResource(R.string.settings_language_traditional_chinese))
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        languageOptions.forEach { (lang, tag, label) ->
+                            FilterChip(
+                                selected = userSettings.language == lang,
+                                onClick = {
+                                    viewModel.updateLanguage(lang)
+                                    AppCompatDelegate.setApplicationLocales(
+                                        LocaleListCompat.forLanguageTags(tag)
+                                    )
+                                },
+                                label = { Text(label) },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.Language,
+                                        contentDescription = label,
+                                        modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                    )
+                                },
+                                modifier = Modifier.weight(1f),
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                    selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary
+                                ),
+                                border = FilterChipDefaults.filterChipBorder(
+                                    borderColor = MaterialTheme.colorScheme.outline,
+                                    selectedBorderColor = MaterialTheme.colorScheme.primary
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
             // Data management
             Card(
                 modifier = Modifier.fillMaxWidth()

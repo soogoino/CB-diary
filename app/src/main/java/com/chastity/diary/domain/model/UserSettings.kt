@@ -31,7 +31,10 @@ data class UserSettings(
     val morningReminderMinute: Int = 30,
 
     // Photo
-    val photoBlurEnabled: Boolean = true
+    val photoBlurEnabled: Boolean = true,
+
+    // Language
+    val language: AppLanguage = AppLanguage.ENGLISH
 )
 
 enum class Gender {
@@ -40,4 +43,8 @@ enum class Gender {
 
 enum class DarkMode {
     LIGHT, DARK, SYSTEM
+}
+
+enum class AppLanguage {
+    ENGLISH, TRADITIONAL_CHINESE
 }

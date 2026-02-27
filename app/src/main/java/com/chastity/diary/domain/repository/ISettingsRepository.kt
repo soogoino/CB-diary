@@ -1,5 +1,6 @@
 package com.chastity.diary.domain.repository
 
+import com.chastity.diary.domain.model.AppLanguage
 import com.chastity.diary.domain.model.DarkMode
 import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.domain.model.UserSettings
@@ -49,4 +50,6 @@ interface ISettingsRepository {
     suspend fun updateMorningReminderSettings(enabled: Boolean, hour: Int, minute: Int)
 
     suspend fun updatePhotoBlurEnabled(enabled: Boolean)
+
+    suspend fun updateLanguage(language: AppLanguage)
 }
