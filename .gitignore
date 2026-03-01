@@ -40,3 +40,4 @@ app/google-services.json
 
 # Backup files
 *.bak
+.github/
