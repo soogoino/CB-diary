@@ -47,3 +47,8 @@ app/google-services.json
 .bisect_bad_element_*.xml
 
 promotion.md
+pyproject.toml
+main.py
+.venv
+.python-version
+uv.lock
