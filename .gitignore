@@ -41,3 +41,7 @@ app/google-services.json
 # Backup files
 *.bak
 .github/
+
+# bisect tool artifacts
+.bisect*/
+.bisect_bad_element_*.xml
