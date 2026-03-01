@@ -159,7 +159,7 @@
     <string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"收合"</string>
     <string name="action_clear_record">清除記錄</string>
     <string name="action_delete_photo">刪除照片</string>
-    <string name="action_pick_photo">從相簿選取</string>
+    <string name="action_pick_photo">相簿</string>
     <string name="action_retake_photo">重新拍攝</string>
     <string name="action_set">設定</string>
     <string name="action_take_photo">拍照</string>
