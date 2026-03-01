@@ -35,7 +35,12 @@ fun PinSetupDialog(
     var currentPinError by remember { mutableStateOf<String?>(null) }
     var newPinError by remember { mutableStateOf<String?>(null) }
     var confirmPinError by remember { mutableStateOf<String?>(null) }
-    
+
+    // Pre-hoist: stringResource cannot be called inside non-@Composable lambdas (onValueChange, onClick)
+    val errCurrentRequired = stringResource(R.string.pin_current_prompt)
+    val errMinLength = stringResource(R.string.pin_min_length_error, Constants.PIN_MIN_LENGTH)
+    val errMismatch = stringResource(R.string.pin_confirm_mismatch)
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
@@ -98,7 +103,7 @@ fun PinSetupDialog(
                             newPin = it
                             newPinError = when {
                                 it.isEmpty() -> null
-                                it.length < Constants.PIN_MIN_LENGTH -> stringResource(R.string.pin_min_length_error, Constants.PIN_MIN_LENGTH)
+                                it.length < Constants.PIN_MIN_LENGTH -> errMinLength
                                 else -> null
                             }
                         }
@@ -121,7 +126,7 @@ fun PinSetupDialog(
                         }
                     },
                     isError = newPinError != null,
-                    supportingText = newPinError?.let { { Text(it) } },
+                    supportingText = { newPinError?.let { Text(it) } },
                     modifier = Modifier.fillMaxWidth()
                 )
                 
@@ -132,7 +137,7 @@ fun PinSetupDialog(
                             confirmPin = it
                             confirmPinError = when {
                                 it.isEmpty() -> null
-                                it != newPin -> stringResource(R.string.pin_confirm_mismatch)
+                                it != newPin -> errMismatch
                                 else -> null
                             }
                         }
@@ -167,17 +172,17 @@ fun PinSetupDialog(
                     var hasError = false
                     
                     if (isChangingPin && currentPin.isEmpty()) {
-                        currentPinError = stringResource(R.string.pin_current_prompt)
+                        currentPinError = errCurrentRequired
                         hasError = true
                     }
                     
                     if (newPin.length < Constants.PIN_MIN_LENGTH) {
-                        newPinError = stringResource(R.string.pin_min_length_error, Constants.PIN_MIN_LENGTH)
+                        newPinError = errMinLength
                         hasError = true
                     }
                     
                     if (newPin != confirmPin) {
-                        confirmPinError = stringResource(R.string.pin_confirm_mismatch)
+                        confirmPinError = errMismatch
                         hasError = true
                     }
                     

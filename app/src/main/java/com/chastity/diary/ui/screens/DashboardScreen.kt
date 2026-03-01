@@ -75,25 +75,37 @@ fun DashboardScreen(
                     // P2: Cache derived pairs (date, value) for charts
                     val dateFmt = remember { java.time.format.DateTimeFormatter.ofPattern("M/d") }
                     val last14 = remember(state.entries) { state.entries.takeLast(14) }
+                    // Hoist stringResource calls — composable calls are not allowed inside remember's crossinline lambda
+                    val labelDesire    = stringResource(R.string.metric_desire_label)
+                    val labelComfort   = stringResource(R.string.metric_comfort_label)
+                    val labelFocus     = stringResource(R.string.metric_focus_label)
+                    val labelSleep     = stringResource(R.string.metric_sleep_label)
+                    val labelEnergy    = stringResource(R.string.metric_energy_label)
+                    val moodHappy      = stringResource(R.string.mood_happy)
+                    val moodCalm       = stringResource(R.string.mood_calm)
+                    val moodNeutral    = stringResource(R.string.mood_neutral)
+                    val moodDepressed  = stringResource(R.string.mood_depressed)
+                    val moodAnxious    = stringResource(R.string.mood_anxious)
+                    val moodFrustrated = stringResource(R.string.mood_frustrated)
                     val metricSeries = remember(last14) {
                         listOf(
-                            Triple(stringResource(R.string.metric_desire_label), Color(0xFF6650A4), last14.mapNotNull { e -> e.desireLevel?.let { e.date to it.toFloat() } }),
-                            Triple(stringResource(R.string.metric_comfort_label), Color(0xFF0288D1), last14.mapNotNull { e -> e.comfortRating?.let { e.date to it.toFloat() } }),
-                            Triple(stringResource(R.string.metric_focus_label), Color(0xFF2E7D32), last14.mapNotNull { e -> e.focusLevel?.let { e.date to it.toFloat() } }),
-                            Triple(stringResource(R.string.metric_sleep_label), Color(0xFFF57C00), last14.mapNotNull { e -> e.sleepQuality?.let { e.date to it.toFloat() } }),
-                            Triple(stringResource(R.string.metric_energy_label), Color(0xFFE53935), last14.mapNotNull { e -> e.morningEnergy?.let { e.date to it.toFloat() } }),
+                            Triple(labelDesire,   Color(0xFF6650A4), last14.mapNotNull { e -> e.desireLevel?.let { e.date to it.toFloat() } }),
+                            Triple(labelComfort,  Color(0xFF0288D1), last14.mapNotNull { e -> e.comfortRating?.let { e.date to it.toFloat() } }),
+                            Triple(labelFocus,    Color(0xFF2E7D32), last14.mapNotNull { e -> e.focusLevel?.let { e.date to it.toFloat() } }),
+                            Triple(labelSleep,    Color(0xFFF57C00), last14.mapNotNull { e -> e.sleepQuality?.let { e.date to it.toFloat() } }),
+                            Triple(labelEnergy,   Color(0xFFE53935), last14.mapNotNull { e -> e.morningEnergy?.let { e.date to it.toFloat() } }),
                         )
                     }
-                    val moodPairs = remember(last14) {
+                    val moodPairs = remember(last14, moodHappy, moodCalm, moodNeutral, moodDepressed, moodAnxious, moodFrustrated) {
                         last14.mapNotNull { e ->
                             val score = when (e.mood) {
-                                stringResource(R.string.mood_happy) -> 5f
-                                stringResource(R.string.mood_calm) -> 4f
-                                stringResource(R.string.mood_neutral) -> 3f
-                                stringResource(R.string.mood_depressed) -> 2f
-                                stringResource(R.string.mood_anxious) -> 1.5f
-                                stringResource(R.string.mood_frustrated) -> 1f
-                                else -> null
+                                moodHappy      -> 5f
+                                moodCalm       -> 4f
+                                moodNeutral    -> 3f
+                                moodDepressed  -> 2f
+                                moodAnxious    -> 1.5f
+                                moodFrustrated -> 1f
+                                else           -> null
                             }
                             score?.let { e.date to it }
                         }
@@ -164,12 +176,12 @@ fun DashboardScreen(
                         ) {
                             StatCard(
                                 title = stringResource(R.string.stat_streak),
-                                value = "$currentStreak 天 🔥",
+                                value = stringResource(R.string.dashboard_streak_format, currentStreak),
                                 modifier = Modifier.weight(1f)
                             )
                             StatCard(
                                 title = stringResource(R.string.stat_longest_streak),
-                                value = "$longestStreak 天",
+                                value = stringResource(R.string.dashboard_longest_format, longestStreak),
                                 modifier = Modifier.weight(1f)
                             )
                         }

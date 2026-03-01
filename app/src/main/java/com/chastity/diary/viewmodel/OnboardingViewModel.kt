@@ -7,6 +7,7 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.chastity.diary.data.datastore.PreferencesManager
 import com.chastity.diary.data.repository.SettingsRepository
+import com.chastity.diary.domain.model.AppLanguage
 import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.util.Constants
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,6 +53,8 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
     val height = MutableStateFlow<Int?>(null)
     val weight = MutableStateFlow<Float?>(null)
 
+    val language = MutableStateFlow(AppLanguage.SYSTEM)
+
     val biometricEnabled = MutableStateFlow(false)
     val pinEnabled = MutableStateFlow(false)
     val pinCode = MutableStateFlow("")   // set via PinSetupDialog in SecurityPage
@@ -61,6 +64,22 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
     val reminderMinute = MutableStateFlow(Constants.DEFAULT_REMINDER_MINUTE)
 
     // ── Actions ────────────────────────────────────────────────────────────────
+
+    /**
+     * Persist the chosen language and immediately apply it via AppCompatDelegate.
+     */
+    fun updateLanguage(lang: AppLanguage) {
+        language.value = lang
+        viewModelScope.launch {
+            repository.updateLanguage(lang)
+            val tag = lang.tag
+            val locales = if (tag.isEmpty())
+                androidx.core.os.LocaleListCompat.getEmptyLocaleList()
+            else
+                androidx.core.os.LocaleListCompat.forLanguageTags(tag)
+            androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(locales)
+        }
+    }
 
     /** Write all collected data to DataStore and mark onboarding complete. */
     fun completeOnboarding() {
@@ -75,6 +94,7 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
             apply()
         }
         viewModelScope.launch {
+            repository.updateLanguage(language.value)
             if (nickname.value.isNotBlank()) repository.updateNickname(nickname.value)
             repository.updateGender(gender.value)
             startDate.value?.let { repository.updateStartDate(it) }

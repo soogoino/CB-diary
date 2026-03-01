@@ -34,6 +34,7 @@ import com.chastity.diary.R
 import com.chastity.diary.ui.components.DatePickerDialog
 import com.chastity.diary.ui.components.PinSetupDialog
 import com.chastity.diary.ui.components.TimePickerDialog
+import com.chastity.diary.domain.model.AppLanguage
 import com.chastity.diary.viewmodel.OnboardingViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -167,7 +168,7 @@ private fun NewUserOnboarding(
                 userScrollEnabled = false    // Prevent swipe; use buttons only
             ) { page ->
                 when (page) {
-                    0 -> WelcomePage()
+                    0 -> WelcomePage(viewModel)
                     1 -> ProfilePage(viewModel)
                     2 -> DevicePage(viewModel)
                     3 -> SecurityPage(viewModel)
@@ -213,10 +214,12 @@ private fun NewUserOnboarding(
 
 // ─── Page 0: Welcome ───────────────────────────────────────────────────────────
 @Composable
-private fun WelcomePage() {
+private fun WelcomePage(viewModel: OnboardingViewModel) {
+    val language by viewModel.language.collectAsState()
     Column(
         Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -253,6 +256,52 @@ private fun WelcomePage() {
             FeatureItem(Icons.Default.BarChart, stringResource(R.string.welcome_feat_daily))
             FeatureItem(Icons.Default.EmojiEvents, stringResource(R.string.welcome_feat_streak))
             FeatureItem(Icons.Default.Shield, stringResource(R.string.welcome_feat_private))
+        }
+
+        Spacer(Modifier.height(40.dp))
+        Divider()
+        Spacer(Modifier.height(16.dp))
+
+        // ── Language selection ──────────────────────────────────────────────
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                Icons.Default.Language, null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(Modifier.width(6.dp))
+            Text(
+                stringResource(R.string.settings_language),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Medium
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        val langOptions = listOf(
+            AppLanguage.SYSTEM              to stringResource(R.string.settings_language_system),
+            AppLanguage.ENGLISH             to stringResource(R.string.settings_language_english),
+            AppLanguage.TRADITIONAL_CHINESE to stringResource(R.string.settings_language_traditional_chinese)
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            langOptions.forEach { (lang, label) ->
+                FilterChip(
+                    selected = language == lang,
+                    onClick = { viewModel.updateLanguage(lang) },
+                    label = { Text(label, maxLines = 1) },
+                    modifier = Modifier.weight(1f),
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primary,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        borderColor = MaterialTheme.colorScheme.outline,
+                        selectedBorderColor = MaterialTheme.colorScheme.primary,
+                    )
+                )
+            }
         }
     }
 }

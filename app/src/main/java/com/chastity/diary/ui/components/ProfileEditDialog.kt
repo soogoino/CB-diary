@@ -9,8 +9,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.KeyboardOptions
 import com.chastity.diary.R
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
@@ -47,6 +47,7 @@ fun ProfileEditDialog(
     val errInvalidNumber = stringResource(R.string.error_invalid_number)
     val errHeightRange = stringResource(R.string.error_height_range)
     val errWeightRange = stringResource(R.string.error_weight_range)
+    val errDateFormat = stringResource(R.string.profile_date_format_hint)
 
     fun validateHeight(input: String): String? {
         if (input.isBlank()) return null
@@ -70,7 +71,7 @@ fun ProfileEditDialog(
 
     fun validateStartDate(input: String): String? {
         if (input.isBlank()) return null
-        return try { LocalDate.parse(input); null } catch (e: Exception) { "格式: yyyy-MM-dd，例如 2024-01-15" }
+        return try { LocalDate.parse(input); null } catch (e: Exception) { errDateFormat }
     }
 
     val isValid = heightError == null && weightError == null

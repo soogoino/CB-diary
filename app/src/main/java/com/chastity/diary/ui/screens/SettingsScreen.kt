@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chastity.diary.R
 import androidx.compose.ui.res.stringResource
 import com.chastity.diary.BuildConfig
+import com.chastity.diary.domain.model.AppLanguage
 import com.chastity.diary.domain.model.DarkMode
 import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.ui.components.PinSetupDialog
@@ -588,6 +589,40 @@ fun SettingsScreen(
                             )
                         }
                     }
+
+                    Divider()
+
+                    // Language selector
+                    Text(
+                        text = stringResource(R.string.settings_language),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    val langOptions = listOf(
+                        AppLanguage.SYSTEM              to stringResource(R.string.settings_language_system),
+                        AppLanguage.ENGLISH             to stringResource(R.string.settings_language_english),
+                        AppLanguage.TRADITIONAL_CHINESE to stringResource(R.string.settings_language_traditional_chinese)
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        langOptions.forEach { (lang, label) ->
+                            FilterChip(
+                                selected = userSettings.language == lang,
+                                onClick = { viewModel.updateLanguage(lang) },
+                                label = { Text(label, maxLines = 1) },
+                                modifier = Modifier.weight(1f),
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                ),
+                                border = FilterChipDefaults.filterChipBorder(
+                                    borderColor = MaterialTheme.colorScheme.outline,
+                                    selectedBorderColor = MaterialTheme.colorScheme.primary,
+                                )
+                            )
+                        }
+                    }
                 }
             }
             
@@ -604,33 +639,6 @@ fun SettingsScreen(
                         style = MaterialTheme.typography.titleMedium
                     )
                     
-                    // T2: Cloud sync is planned for a future release.
-                    // Firebase integration requires a real google-services.json and
-                    // privacy policy review. Showing an informational row until ready.
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            Modifier.padding(12.dp),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Default.WbSunny, null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Text(
-                                stringResource(R.string.settings_cloud_coming_soon),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-
                     Button(
                         onClick = {
                             val ts = java.time.LocalDate.now().toString().replace("-", "")

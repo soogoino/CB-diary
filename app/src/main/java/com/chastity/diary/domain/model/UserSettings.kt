@@ -6,6 +6,7 @@ import java.time.LocalDate
  * User settings and preferences
  */
 data class UserSettings(
+    val language: AppLanguage = AppLanguage.SYSTEM,
     val gender: Gender = Gender.MALE,
     val startDate: LocalDate? = null,
     val reminderEnabled: Boolean = true,

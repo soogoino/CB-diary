@@ -12,6 +12,7 @@ import com.chastity.diary.data.datastore.PreferencesManager
 import com.chastity.diary.data.local.database.AppDatabase
 import com.chastity.diary.data.repository.EntryRepository
 import com.chastity.diary.data.repository.SettingsRepository
+import com.chastity.diary.domain.model.AppLanguage
 import com.chastity.diary.domain.model.DarkMode
 import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.domain.model.UserSettings
@@ -32,7 +33,6 @@ import java.io.OutputStreamWriter
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit
-import java.util.Locale
 
 /**
  * ViewModel for settings screen
@@ -64,16 +64,14 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         NotificationHelper.createNotificationChannel(application)
     }
     
-    // Q4: Eagerly so the first frame always reads persisted settings (avoids isMale flicker)
-    // Use system locale as the initial UserSettings language to avoid incorrect
-    // initial selection before DataStore emits the persisted value.
-    val defaultLang = if (Locale.getDefault().toLanguageTag().startsWith("zh"))
-        AppLanguage.TRADITIONAL_CHINESE else AppLanguage.ENGLISH
+    // Eagerly so the first frame always has the persisted settings.
+    // Use SYSTEM as the safe default — AppCompat will have already applied the
+    // correct locale before any Composable runs, so no visual flicker occurs.
     val userSettings: StateFlow<UserSettings> = repository.userSettings
         .stateIn(
             viewModelScope,
             SharingStarted.Eagerly,
-            UserSettings(language = defaultLang)
+            UserSettings(language = AppLanguage.SYSTEM)
         )
     
     private val _testDataMessage = MutableStateFlow<String?>(null)
@@ -283,6 +281,22 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun updatePhotoBlurEnabled(enabled: Boolean) {
         viewModelScope.launch {
             repository.updatePhotoBlurEnabled(enabled)
+        }
+    }
+
+    /**
+     * Persist the chosen language and immediately apply it via AppCompatDelegate
+     * so the UI language switches without restarting the process.
+     */
+    fun updateLanguage(language: AppLanguage) {
+        viewModelScope.launch {
+            repository.updateLanguage(language)
+            val tag = language.tag
+            val locales = if (tag.isEmpty())
+                androidx.core.os.LocaleListCompat.getEmptyLocaleList()
+            else
+                androidx.core.os.LocaleListCompat.forLanguageTags(tag)
+            androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(locales)
         }
     }
 

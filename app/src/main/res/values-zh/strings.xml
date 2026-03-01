@@ -211,4 +211,520 @@
         <string name="count_times">%1$d 次</string>
         <string name="history_month_pattern_zh">yyyy年M月</string>
 
+
+    <!-- Auto-ported from values-b+zh+TW -->
+    <string name="app_name">貞操日記</string>
+    <string name="nav_daily_entry">每日記錄</string>
+    <string name="nav_dashboard">儀表板</string>
+    <string name="nav_history">歷史紀錄</string>
+    <string name="nav_settings">設定</string>
+    <string name="save">儲存</string>
+    <string name="cancel">取消</string>
+    <string name="delete">刪除</string>
+    <string name="confirm">確認</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="confirm_ok">確定</string>
+    <string name="not_set">未設定</string>
+    <string name="q1_mood">今天的心情如何？</string>
+    <string name="q2_porn">今天是否主動接觸色情內容？</string>
+    <string name="q2_duration">看了多久？</string>
+    <string name="q3_erection">今天是否勃起？</string>
+    <string name="q4_exercise">是否運動了？</string>
+    <string name="q4_type">做了什麼運動？</string>
+    <string name="q5_unlocked">是否解鎖？</string>
+    <string name="q5_masturbated">是否自慰了？</string>
+    <string name="q6_exposed">是否露出鎖？</string>
+    <string name="q6_locations">在哪裡？</string>
+    <string name="q7_photo">打卡照片</string>
+    <string name="q8_desire">今天的性慾強度如何？</string>
+    <string name="q9_comfort">佩戴舒適度評估</string>
+    <string name="q10_discomfort">是否有不適或疼痛？</string>
+    <string name="q11_cleaned">是否清潔了貞操鎖？</string>
+    <string name="q12_leakage">是否有洩漏情況？</string>
+    <string name="q13_edging">是否進行邊緣訓練/挑逗？</string>
+    <string name="q14_keyholder">與Keyholder/伴侶的互動</string>
+    <string name="q15_sleep">昨晚睡眠品質如何？</string>
+    <string name="q16_removed">今天是否短暫取下過？</string>
+    <string name="q17_night_erection">夜間勃起情況</string>
+    <string name="q18_focus">專注度影響</string>
+    <string name="q19_tasks">今天完成的挑戰/任務</string>
+    <string name="q20_emotions">今天的主要情緒</string>
+    <string name="biometric_title">解鎖應用程式</string>
+    <string name="biometric_subtitle">使用生物辨識驗證身份</string>
+    <string name="biometric_description">請驗證以存取您的日記</string>
+    <string name="biometric_negative_button">使用 PIN</string>
+    <string name="notification_channel_name">每日提醒</string>
+    <string name="notification_channel_description">提醒您記錄今天的日記</string>
+    <string name="notification_title">今天還沒記錄喔！</string>
+    <string name="notification_text">別忘了打卡 📝</string>
+    <string name="morning_notification_channel_name">早晨 Check-in</string>
+    <string name="morning_notification_channel_description">提醒您完成早晨睡眠與狀態記錄</string>
+    <string name="morning_notification_title">☀️ 早晨 Check-in</string>
+    <string name="morning_notification_text">記錄昨晚睡眠與今晨狀態，只需幾秒鐘！</string>
+    <string name="error_biometric_failed">辨識失敗，請重試</string>
+    <string name="error_pin_incorrect">PIN 碼錯誤</string>
+    <string name="error_prefix">錯誤: %s</string>
+    <string name="lock_screen_title">貞操日記已鎖定</string>
+    <string name="lock_icon_desc">鎖定</string>
+    <string name="lock_biometric_button">使用生物辨識解鎖</string>
+    <string name="lock_or_pin">或使用 PIN 碼</string>
+    <string name="lock_pin_label">PIN 碼</string>
+    <string name="lock_unlock_button">解鎖</string>
+    <string name="dashboard_title">儀表板</string>
+    <string name="time_range_week">本週</string>
+    <string name="time_range_month">本月</string>
+    <string name="time_range_3months">3個月</string>
+    <string name="time_range_all">全部</string>
+    <string name="stat_total_days">總配戴天數</string>
+    <string name="stat_completion_rate">記錄完成率</string>
+    <string name="stat_streak">連續打卡</string>
+    <string name="stat_longest_streak">最長連續</string>
+    <string name="chart_mood_trend">心情趨勢 (1=挫折 → 5=開心)</string>
+    <string name="chart_metric_trend">身心指標趨勢 (1–10)</string>
+    <string name="section_summary">統計摘要</string>
+    <string name="summary_avg_desire">平均性慾強度</string>
+    <string name="summary_avg_comfort">平均舒適度</string>
+    <string name="summary_masturbation_count">自慰次數（總計）</string>
+    <string name="summary_exercise_count">運動次數</string>
+    <string name="history_title">歷史紀錄</string>
+    <string name="history_all_records">所有紀錄</string>
+    <string name="history_has_record">有記錄</string>
+    <string name="history_no_record">未記錄</string>
+    <string name="save_success">儲存成功！</string>
+    <string name="morning_save_success">☀️ 早晨記錄已儲存！</string>
+    <string name="delete_success">刪除成功！</string>
+    <string name="edit_mode">編輯模式</string>
+    <string name="tab_morning">☀️ 早晨</string>
+    <string name="tab_evening">🌙 晚間</string>
+    <string name="delete_dialog_title">確認刪除</string>
+    <string name="delete_dialog_message">確定要刪除 %s 的記錄嗎？\n\n此操作無法復原。</string>
+    <string name="morning_done_title">早晨記錄已完成 ☀️</string>
+    <string name="morning_done_subtitle">可隨時更新早晨記錄</string>
+    <string name="save_button_update_morning">更新早晨記錄</string>
+    <string name="save_button_complete_morning">完成早晨記錄</string>
+    <string name="entry_created_prefix">建立：%s</string>
+    <string name="entry_updated_prefix">更新：%s</string>
+    <string name="entry_today_title">今日記錄</string>
+    <string name="date_pattern">yyyy年MM月dd日</string>
+    <string name="date_short_pattern">MM月dd日</string>
+    <string name="settings_title">設定</string>
+    <string name="settings_version_format">貞操日記 v%s</string>
+    <string name="settings_profile">個人資料</string>
+    <string name="settings_no_profile">尚未設定個人資料</string>
+    <string name="settings_edit">編輯</string>
+    <string name="settings_nickname_prefix">暱稱: %s</string>
+    <string name="settings_start_date_prefix">開始日期: %s</string>
+    <string name="settings_start_date_not_set">未設定</string>
+    <string name="settings_gender">生理性別</string>
+    <string name="settings_gender_male">男性 ♂</string>
+    <string name="settings_gender_female">女性 ♀</string>
+    <string name="settings_gender_other">其他</string>
+    <string name="settings_height_format">身高: %s cm</string>
+    <string name="settings_weight_format">體重: %s kg</string>
+    <string name="settings_device_format">貞操鎖: %s</string>
+    <string name="settings_morning_reminder">☀️ 早安提醒</string>
+    <string name="settings_reminder_icon_desc">早安提醒</string>
+    <string name="settings_reminder_enabled">已啟用</string>
+    <string name="settings_reminder_disabled">已停用</string>
+    <string name="settings_reminder_time_prefix">提醒時間: %s</string>
+    <string name="settings_goodnight_reminder_icon_desc">晚安提醒</string>
+    <string name="settings_goodnight_reminder">🌙 晚安提醒</string>
+    <string name="settings_security">安全設定</string>
+    <string name="settings_time_icon_desc">設定時間</string>
+    <string name="settings_biometric_unlock">生物辨識解鎖</string>
+    <string name="settings_biometric_desc">使用指紋或臉部識別</string>
+    <string name="settings_biometric_cd">生物辨識</string>
+    <string name="settings_biometric_unsupported">裝置不支援生物辨識</string>
+    <string name="settings_pin_lock">PIN 碼鎖定</string>
+    <string name="settings_pin_cd">PIN 碼</string>
+    <string name="settings_pin_change">修改 PIN 碼</string>
+    <string name="settings_pin_set">已設定</string>
+    <string name="settings_pin_not_set">未設定</string>
+    <string name="settings_lock_desc">應用程式已啟用鎖定保護，每次進入時需要驗證</string>
+    <string name="settings_photo_blur">照片預設模糊</string>
+    <string name="settings_photo_blur_desc">瀏覽記錄時打卡照片自動模糊</string>
+    <string name="settings_photo_blur_cd">照片模糊</string>
+    <string name="settings_ui">界面設定</string>
+    <string name="settings_theme">顯示主題</string>
+    <string name="settings_theme_light">淺色</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_theme_system">跟隨系統</string>
+    <string name="settings_language">語言</string>
+    <string name="settings_language_system">跟隨系統</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_traditional_chinese">繁體中文</string>
+    <string name="settings_data_management">資料管理</string>
+    <string name="settings_export_csv">匯出資料 (CSV)</string>
+    <string name="settings_import_csv">匯入資料 (CSV)</string>
+    <string name="settings_about">關於</string>
+    <string name="biometric_unavailable_title">生物辨識不可用</string>
+    <string name="biometric_unavailable_message">您的裝置不支援生物辨識功能，或未設定指紋/臉部識別。請先在系統設定中設定生物辨識。</string>
+    <string name="save_button_update">更新記錄</string>
+    <string name="save_button_save_today">儲存今日記錄</string>
+    <string name="onboarding_new_upgrade">全新升級 ✨</string>
+    <string name="onboarding_upgrade_features">• 每日記錄 — 漸進式卡片設計\n• 每日輪換題目（33 題池）\n• 即時反饋與情緒追蹤\n• CSV 匯出 / 匯入\n• 個人資料與暱稱</string>
+    <string name="onboarding_get_started">進入應用程式</string>
+    <string name="onboarding_skip">跳過</string>
+    <string name="onboarding_back">上一步</string>
+    <string name="onboarding_next">下一步</string>
+    <string name="onboarding_finish">完成設定！</string>
+    <string name="welcome_title">歡迎使用\nChastity Diary</string>
+    <string name="welcome_subtitle">記錄你的貞操佩戴旅程\n追蹤每日感受與成長</string>
+    <string name="welcome_feat_daily">每日追蹤</string>
+    <string name="welcome_feat_streak">連續記錄</string>
+    <string name="welcome_feat_private">安全私密</string>
+    <string name="profile_page_title">個人身份</string>
+    <string name="profile_page_subtitle">讓我們認識你一點（可跳過此頁）</string>
+    <string name="profile_nickname">暱稱</string>
+    <string name="profile_nickname_hint">例如：小鎖</string>
+    <string name="profile_gender">性別</string>
+    <string name="profile_body_section">體型資料（選填）</string>
+    <string name="profile_height">身高</string>
+    <string name="profile_weight">體重</string>
+    <string name="device_page_title">貞操鎖</string>
+    <string name="device_page_subtitle">記錄你的鎖資訊（可跳過此頁）</string>
+    <string name="device_lock_name">鎖名稱</string>
+    <string name="device_lock_name_hint">例如：CB-6000、Bon4 ...</string>
+    <string name="device_start_date">鎖定開始日期</string>
+    <string name="device_tap_to_set_date">點選選擇日期</string>
+    <string name="device_wearing_days">已佩戴 %d 天 🎉</string>
+    <string name="device_starting_soon">即將開始！</string>
+    <string name="security_page_title">安全與隱私</string>
+    <string name="security_page_subtitle">保護你的記錄（可跳過此頁）</string>
+    <string name="security_biometric">生物辨識鎖定</string>
+    <string name="security_biometric_desc">使用指紋或面部辨識解鎖</string>
+    <string name="security_pin">PIN 碼鎖定</string>
+    <string name="security_pin_desc">使用數字密碼解鎖（可在設定中設置）</string>
+    <string name="security_note">詳細的安全設定可在設定頁面調整</string>
+    <string name="reminder_page_title">每日提醒</string>
+    <string name="reminder_page_subtitle">設定每日記錄提醒時間</string>
+    <string name="reminder_enable">啟用每日提醒</string>
+    <string name="reminder_enable_desc">每天在選定時間提醒你記錄</string>
+    <string name="reminder_time">提醒時間</string>
+    <string name="status_generating_test_data">正在生成測試數據…</string>
+    <string name="status_generated_test_data">成功生成 %d 筆測試數據！</string>
+    <string name="status_generate_failed">生成失敗: %s</string>
+    <string name="status_exporting">正在匯出…</string>
+    <string name="status_export_success">匯出成功！共 %d 筆記錄</string>
+    <string name="status_export_failed">匯出失敗: %s</string>
+    <string name="status_importing">正在匯入…</string>
+    <string name="error_file_open">無法開啟檔案</string>
+    <string name="error_import_invalid">匯入失敗: 沒有有效資料或格式不符</string>
+    <string name="status_import_success">匯入成功！共匯入 %d 筆記錄</string>
+    <string name="status_import_failed">匯入失敗: %s</string>
+    <string name="error_load_failed">載入失敗</string>
+    <string name="error_load_failed_detail">載入失敗: %s</string>
+    <string name="section_core_questions">核心問題</string>
+    <string name="section_rotating_questions">今日輪換題</string>
+    <string name="section_rotating_daily_label">每日更替</string>
+    <string name="chip_yes">有</string>
+    <string name="chip_no">沒有</string>
+    <string name="entry_no_record_prompt">尚未開始記錄（可填 %d 題）</string>
+    <string name="entry_completion_status">核心題目完成 %1$d / %2$d</string>
+    <string name="entry_narrative_title">📝 今日摘要</string>
+    <string name="entry_record_info_title">紀錄訊息</string>
+    <string name="entry_close">關閉</string>
+    <string name="unsaved_changes_title">有未儲存的變更</string>
+    <string name="unsaved_changes_message">切換日期將放棄目前尚未儲存的內容，確定要繼續？</string>
+    <string name="unsaved_changes_confirm">直接切換</string>
+    <string name="section_notes">備註</string>
+    <string name="section_notes_subtitle">任何想補充的想法</string>
+    <string name="notes_placeholder">輸入備註...</string>
+    <string name="notes_expand">我想記錄更多 →</string>
+    <string name="notes_collapse">收起備註</string>
+    <string name="notes_optional">選填</string>
+    <string name="section_sleep_record">睡眠記錄</string>
+    <string name="section_body_status">身體狀況</string>
+    <string name="section_morning_wakeup">起床狀態</string>
+    <string name="topbar_delete_cd">刪除</string>
+    <string name="topbar_calendar_cd">選擇日期</string>
+    <string name="ok_thumbs_up">好的 👍</string>
+    <string name="section_core_daily_required">每日必填</string>
+    <string name="q_device_worn">今天有佩戴鎖嗎？</string>
+    <string name="chip_worn_yes">✓ 有佩戴</string>
+    <string name="chip_worn_no">✗ 沒有</string>
+    <string name="q_mood_title">今天的心情狀態</string>
+    <string name="q_mood_subtitle">選一個最接近的情緒</string>
+    <string name="q_desire_title">今日性慾強度</string>
+    <string name="q_desire_subtitle">1 = 很低   10 = 很強烈</string>
+    <string name="q_desire_label">性慾強度</string>
+    <string name="q_comfort_title">佩戴舒適度</string>
+    <string name="q_comfort_subtitle">1 = 非常不舒適  10 = 非常舒適</string>
+    <string name="q_comfort_label">舒適度</string>
+    <string name="q_focus_title">今日專注度</string>
+    <string name="q_focus_subtitle">1 = 完全分心   10 = 高度專注</string>
+    <string name="q_focus_label">專注度</string>
+    <string name="q_photo_title">打卡照片</string>
+    <string name="q_photo_subtitle_optional">可選 · 視覺紀念</string>
+    <string name="q_photo_taken">✓ 已拍攝</string>
+    <string name="action_take_photo">拍照</string>
+    <string name="q_photo_tap_to_view">點擊查看照片</string>
+    <string name="action_retake_photo">重新拍攝</string>
+    <string name="action_delete_photo">刪除照片</string>
+    <string name="error_photo_missing">⚠️ 照片檔案已遺失</string>
+    <string name="action_clear_record">清除記錄</string>
+    <string name="q_exercise_title">是否運動？</string>
+    <string name="q_exercise_label">有運動</string>
+    <string name="q_cleaning_title">今天是否清潔了貞操鎖？</string>
+    <string name="q_bedtime_title">就寢時間</string>
+    <string name="q_wake_time_title">起床時間</string>
+    <string name="action_set">設定</string>
+    <string name="sleep_duration_hours">睡眠：%d 小時</string>
+    <string name="sleep_duration_hours_minutes">睡眠：%1$d 小時 %2$d 分</string>
+    <string name="q_sleep_quality_title">睡眠品質</string>
+    <string name="q_sleep_quality_subtitle">1 = 很差   10 = 極佳</string>
+    <string name="q_sleep_quality_label">睡眠品質</string>
+    <string name="q_woke_from_device_title">因佩戴鎖而醒來？</string>
+    <string name="q_woke_from_device_label">因佩戴鎖而醒來</string>
+    <string name="q_erotic_dream_title">昨晚有春夢？</string>
+    <string name="q_erotic_dream_label">昨晚有春夢</string>
+    <string name="q_morning_erection_title">晨勃</string>
+    <string name="q_morning_erection_label">有晨勃</string>
+    <string name="q_night_erection_title">昨晚夜間勃起</string>
+    <string name="q_night_erection_subtitle">大概的感受即可</string>
+    <string name="q_woke_from_night_erection_title">因夜間勃起而醒來？</string>
+    <string name="q_woke_from_night_erection_label">因夜間勃起而醒來</string>
+    <string name="q_morning_mood_title">起床後心情</string>
+    <string name="q_morning_energy_title">起床能量指數</string>
+    <string name="q_morning_energy_subtitle">1 = 極度疲憊   10 = 精力充沛</string>
+    <string name="q_morning_energy_label">起床能量</string>
+    <string name="section_masturbation">💧 自慰小記</string>
+    <string name="q_masturbated_title">今天是否有自慰？</string>
+    <string name="q_masturbated_label">有自慰</string>
+    <string name="q_masturbation_count">次數：</string>
+    <string name="cd_decrease">減少</string>
+    <string name="cd_increase">增加</string>
+    <string name="yes_chip">是</string>
+    <string name="no_chip">否</string>
+    <string name="unit_min">分</string>
+    <string name="unit_hr">小時</string>
+    <string name="narrative_mood">今天心情是 %s</string>
+    <string name="narrative_desire_high">性慾強度 %1$d/10，今天是高峰日——但你撐過來了 💪</string>
+    <string name="narrative_desire_low">性慾強度 %1$d/10，今天異常平靜 😌</string>
+    <string name="narrative_desire_normal">性慾強度 %1$d/10，處於正常範圍</string>
+    <string name="narrative_comfort_high">佩戴舒適度 %1$d/10，狀況很好！</string>
+    <string name="narrative_comfort_low">佩戴舒適度 %1$d/10，記得調整佩戴方式。</string>
+    <string name="narrative_comfort_normal">佩戴舒適度 %1$d/10。</string>
+    <string name="narrative_not_worn">今天沒有佩戴貞操鎖。</string>
+    <string name="narrative_exercised">有運動，自律 +1 🏃</string>
+    <string name="narrative_exercised_with_duration">有運動（%d 分鐘），自律 +1 🏃</string>
+    <string name="narrative_cleaning">清潔類型：%s 🧹</string>
+    <string name="narrative_keyholder">今天與 Keyholder 保持了連結 💬</string>
+    <string name="narrative_photo">📷 今天有留下打卡照片</string>
+    <string name="narrative_unlocked">今天解鎖了——誠實記錄是好事 🔓</string>
+    <string name="narrative_masturbated">今天有自慰 %d 次 💧</string>
+    <string name="narrative_edging">邊緣訓練完成，耐力值 UP 😈</string>
+    <string name="narrative_default">今日記錄已儲存，繼續保持！</string>
+    <string name="narrative_cleaning_none">未清潔</string>
+    <string name="rq_r1_title">今日是否有分泌物洩漏？</string>
+    <string name="rq_r1_feedback">不論有沒有分泌物，記得別害羞地忽略清潔，身體會感謝你的。</string>
+    <string name="rq_r2_title">今日是否有主動頂鎖/摩擦，尋求快感？</string>
+    <string name="rq_r2_feedback">不管有沒有試探那份衝動，誠實面對自己就已經很勇敢了。</string>
+    <string name="rq_r3_title">今日是否進行邊緣訓練？</string>
+    <string name="rq_r3_feedback">無論你是逗留邊緣還是退縮，能覺察這種誘惑本身就值得一點羞澀的笑。</string>
+    <string name="rq_r4_title">今日是否與Keyholder互動？</string>
+    <string name="rq_r4_feedback">不論有沒有說出來，關係的細節常常比結果更值得回味。</string>
+    <string name="rq_r6_title">今日是否帶著鎖進入公眾場合？</string>
+    <string name="rq_r6_feedback">在人前帶著這個小秘密，不管敢不敢暴露，這種心跳都是你的獎勵。</string>
+    <string name="rq_r7_title">今日是否曾短暫解除鎖？</string>
+    <string name="rq_r7_feedback">不管有沒有偷偷鬆開一秒，記得對自己誠實，並負起責任照顧好自己。</string>
+    <string name="rq_r8_title">今日是否有意展示或洩露鎖蹤跡？</string>
+    <string name="rq_r8_feedback">故意或不小心露出一點點，都會讓你心裡暗自發笑——接受這份小調皮吧。</string>
+    <string name="rq_r9_title">今日是否接觸成人內容？</string>
+    <string name="rq_r9_feedback">有沒有看，那種慾望的拉扯本身就值得你輕輕自嘲一下。</string>
+    <string name="rq_r10_title">今日是否解鎖或進行自慰？</string>
+    <string name="rq_r10_feedback">不論今天怎麼做，承認自己的感受比隱瞞更誠實，也更有療癒力。</string>
+    <string name="rq_r11_title">今日是否進行乳頭開發/玩弄？</string>
+    <string name="rq_r11_feedback">無論有沒有逗弄，發現新的敏感點總讓人又尷尬又好奇。</string>
+    <string name="rq_r12_title">今日是否進行後庭開發/探索？</string>
+    <string name="rq_r12_feedback">不管有沒有探索，這類私密體驗的存在本身就會讓人面紅心跳。</string>
+    <string name="rq_r13_title">今天你有沒有感受到鎖帶來的不適或調整需求？</string>
+    <string name="rq_r13_feedback">有沒有不舒服都要記下來，照顧好身體比硬撐更值得一點羞澀。</string>
+    <string name="rq_r14_title">今天佩戴鎖是否讓你感覺到內心的平靜或成就？</string>
+    <string name="rq_r14_feedback">不論感覺如何，察覺到微妙的安心或不適都是成長的一部分。</string>
+    <string name="rq_r15_title">今天有沒有想起Keyholder，並感受到連結的溫暖？</string>
+    <string name="rq_r15_feedback">想或不想，這些小念頭讓你忍不住臉紅，證明了情感的存在。</string>
+    <string name="rq_r16_title">今天鎖是否已融入你的日常routine中，感覺自然？</string>
+    <string name="rq_r16_feedback">無論像不像日常，發現自己適應或反彈都是值得悄悄慶祝的事。</string>
+    <string name="rq_r17_title">今天有沒有將慾望轉向其他活動，如運動或創作？</string>
+    <string name="rq_r17_feedback">試圖轉移注意力成功與否，都是在跟自己較勁的一種小勝利。</string>
+    <string name="rq_r18_title">今天在人群中，你有沒有特別注意到自己的隱密狀態？</string>
+    <string name="rq_r18_feedback">在人群裡的那點心跳感，不管你有沒有留意，都是你的秘密奢侈品。</string>
+    <string name="rq_r19_title">今天有沒有進行放鬆活動來緩解可能的壓力？</string>
+    <string name="rq_r19_feedback">不論有沒有刻意放鬆，對自己好一點的念頭本身就值得鼓勵。</string>
+    <string name="rq_r20_title">今天醒來後，有沒有回想起與鎖相關的夢境？</string>
+    <string name="rq_r20_feedback">做或沒做夢都無妨，夢裡的那些畫面只是偷偷告訴你內心的小秘密。</string>
+    <string name="rq_r21_title">今天其他感官（如觸覺或聽覺）是否變得更敏銳？</string>
+    <string name="rq_r21_feedback">感覺變細膩或平常無感，都是身體在跟你說話，別害羞聽它說完。</string>
+    <string name="rq_r22_title">今天有沒有與Keyholder分享你的感受或想法？</string>
+    <string name="rq_r22_feedback">說或不說都會讓人臉紅，能意識到想分享就是進步。</string>
+    <string name="rq_r23_title">今天在不同環境中，鎖帶來的感受如何？</string>
+    <string name="rq_r23_feedback">站著、坐著、走路時的那些小提醒，不管有沒有注意到，都是真實的回響。</string>
+    <string name="rq_r24_title">今天有沒有遇到讓你猶豫或掙扎的時刻？</string>
+    <string name="rq_r24_feedback">猶豫過或沒有，能回想起那瞬間就證明你還有人性（還有點可愛的弱點）。</string>
+    <string name="rq_r25_title">今天佩戴是否帶來任何意外的正面體驗？</string>
+    <string name="rq_r25_feedback">發現一點小樂子或完全沒有，承認它們會讓你覺得又羞又甜。</string>
+    <string name="rq_r26_title">今天有沒有特別注意清潔或保濕等保養？</string>
+    <string name="rq_r26_feedback">不管做了沒，對細節的在意其實是在偷偷寵自己，別不好意思接受。</string>
+    <string name="rq_r27_title">今天有沒有透過寫作或藝術表達你的體驗？</string>
+    <string name="rq_r27_feedback">寫或畫出來會讓自己臉紅，但這種表達很療癒，值得一點羞澀的驕傲。</string>
+    <string name="rq_r28_title">今天時間感覺過得快還是慢，受鎖影響？</string>
+    <string name="rq_r28_feedback">時間感的拉扯不管你注意沒注意，都在提醒你這段經驗有趣又奇怪。</string>
+    <string name="rq_r29_title">今天有沒有在匿名社群分享或閱讀相關經驗？</string>
+    <string name="rq_r29_feedback">偷看或分享都會讓人心裡有點小偷笑，這種連結感其實挺暖的。</string>
+    <string name="rq_r30_title">今天有沒有在想萬一鎖取不下來該怎麼辦？</string>
+    <string name="rq_r30_feedback">想過或沒想，準備備案本身就是成熟且有責任感的一步，給自己一個點讚。</string>
+    <string name="rq_r31_title">今天情緒是否有起伏，與鎖相關？</string>
+    <string name="rq_r31_feedback">情緒忽上忽下不需要羞愧，能覺察就是在進步，帶點自嘲也沒關係。</string>
+    <string name="rq_r32_title">今天有沒有想像未來繼續佩戴的畫面？</string>
+    <string name="rq_r32_feedback">想像或不想像都好，能看到未來的自己代表你在慢慢接受這件事。</string>
+    <string name="rq_r33_title">今日是否有剔除陰毛？</string>
+    <string name="rq_r33_feedback">不論有沒有修整，這種私密的小事值得溫柔對待和好好衛生照護。</string>
+    <string name="heatmap_section_title">行動熱力圖</string>
+    <string name="heatmap_period_7d">7 天</string>
+    <string name="heatmap_period_14d">14 天</string>
+    <string name="heatmap_period_30d">30 天</string>
+    <string name="heatmap_label_locked">已上鎖</string>
+    <string name="heatmap_label_dream">春夢</string>
+    <string name="heatmap_label_morning">晨勃</string>
+    <string name="heatmap_label_exercise">運動</string>
+    <string name="heatmap_label_clean">清潔</string>
+    <string name="heatmap_label_photo">打卡照片</string>
+    <string-array name="daily_rotating_feedback_generic">
+        <item>哎呀，看起來你又偷偷掉隊了，別讓它太放肆了。</item>
+        <item>嗯…這個小狀況，值得小小自責一下，記得善後哦。</item>
+        <item>有點尷尬欸，但老實說，能注意到就是進步了。</item>
+        <item>唉唷，這種小把戲誰沒犯過？下次加把勁啊～</item>
+    </string-array>
+    <string-array name="moods_array">
+        <item>😊 開心</item>
+        <item>😌 平靜</item>
+        <item>😐 普通</item>
+        <item>😔 沮喪</item>
+        <item>😰 焦慮</item>
+        <item>😤 挫折</item>
+        <item>🥵 興奮</item>
+        <item>😴 無聊</item>
+        <item>😳 羞恥</item>
+        <item>😎 自豪</item>
+        <item>🤩 期待</item>
+        <item>😬 緊張</item>
+        <item>🧘 放鬆</item>
+        <item>😕 困惑</item>
+        <item>💪 充實</item>
+        <item>😶 空虛</item>
+    </string-array>
+    <string-array name="exercise_types_array">
+        <item>跑步</item>
+        <item>健身</item>
+        <item>游泳</item>
+        <item>瑜伽</item>
+        <item>騎車</item>
+        <item>球類運動</item>
+        <item>散步</item>
+        <item>重訓</item>
+        <item>有氧運動</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="exposed_locations_array">
+        <item>家中</item>
+        <item>健身房</item>
+        <item>游泳池</item>
+        <item>公共浴室</item>
+        <item>戶外</item>
+        <item>更衣室</item>
+        <item>醫院</item>
+        <item>朋友家</item>
+        <item>工作場所</item>
+        <item>其他公共場所</item>
+    </string-array>
+    <string-array name="discomfort_areas_array">
+        <item>陰莖</item>
+        <item>睪丸</item>
+        <item>會陰</item>
+        <item>大腿根部</item>
+        <item>恥骨</item>
+        <item>尿道</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="leakage_amounts_array">
+        <item>少量</item>
+        <item>中等</item>
+        <item>大量</item>
+    </string-array>
+    <string-array name="edging_methods_array">
+        <item>視覺刺激</item>
+        <item>觸摸</item>
+        <item>聲音</item>
+        <item>想像</item>
+        <item>閱讀</item>
+        <item>影片</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="interaction_types_array">
+        <item>訊息聊天</item>
+        <item>語音通話</item>
+        <item>視訊</item>
+        <item>實體見面</item>
+        <item>任務指派</item>
+        <item>獎勵</item>
+        <item>懲罰</item>
+        <item>檢查</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="cleaning_types_array">
+        <item>未清潔</item>
+        <item>簡單沖洗</item>
+        <item>深度清潔</item>
+        <item>完全取下清潔</item>
+    </string-array>
+    <string-array name="removal_reasons_array">
+        <item>清潔</item>
+        <item>醫療</item>
+        <item>工作需求</item>
+        <item>緊急狀況</item>
+        <item>Keyholder允許</item>
+        <item>不適</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="social_activities_array">
+        <item>外出用餐</item>
+        <item>健身房</item>
+        <item>游泳</item>
+        <item>親友聚會</item>
+        <item>工作會議</item>
+        <item>約會</item>
+        <item>購物</item>
+        <item>旅行</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="emotions_array">
+        <item>興奮</item>
+        <item>焦慮</item>
+        <item>沮喪</item>
+        <item>平靜</item>
+        <item>挫折</item>
+        <item>滿足</item>
+        <item>羞恥</item>
+        <item>自豪</item>
+        <item>無聊</item>
+        <item>期待</item>
+        <item>緊張</item>
+        <item>放鬆</item>
+        <item>困惑</item>
+        <item>充實</item>
+        <item>空虛</item>
+    </string-array>
+    <string-array name="night_erection_options_array">
+        <item>無</item>
+        <item>偶爾</item>
+        <item>頻繁</item>
+    </string-array>
+
+    <!-- 儀表板連續天統計格式 -->
+    <string name="dashboard_streak_format">%1$d 天 🔥</string>
+    <string name="dashboard_longest_format">%1$d 天</string>
+    <!-- 個人資料日期提示 -->
+    <string name="profile_date_format_hint">格式: yyyy-MM-dd，例如 2024-01-15</string>
 </resources>

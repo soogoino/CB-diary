@@ -36,12 +36,12 @@ data class StreakMilestone(
  * All achievement milestones in order
  */
 val STREAK_MILESTONES = listOf(
-    StreakMilestone(7,   "🌱", "初學者",   StreakColorBeginner),
-    StreakMilestone(14,  "⚡", "進展中",   StreakColorProgress),
-    StreakMilestone(30,  "🔥", "一個月",   StreakColorOneMonth),
-    StreakMilestone(60,  "💪", "兩個月",   StreakColorTwoMonths),
-    StreakMilestone(100, "🏆", "百日勇士", StreakColorHundred),
-    StreakMilestone(365, "👑", "一年達人", StreakColorOneYear)
+    StreakMilestone(7,   "🌱", R.string.streak_label_beginner,    StreakColorBeginner),
+    StreakMilestone(14,  "⚡", R.string.streak_label_progressing, StreakColorProgress),
+    StreakMilestone(30,  "🔥", R.string.streak_label_one_month,   StreakColorOneMonth),
+    StreakMilestone(60,  "💪", R.string.streak_label_two_months,  StreakColorTwoMonths),
+    StreakMilestone(100, "🏆", R.string.streak_label_hundred_days, StreakColorHundred),
+    StreakMilestone(365, "👑", R.string.streak_label_one_year,    StreakColorOneYear)
 )
 
 /**

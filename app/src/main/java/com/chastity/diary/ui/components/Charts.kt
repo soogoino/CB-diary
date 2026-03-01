@@ -19,6 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
+import com.chastity.diary.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.chastity.diary.domain.model.HeatmapQuestion
 import com.chastity.diary.domain.model.HeatmapTimeRange
@@ -263,7 +265,7 @@ fun ActionHeatmapSection(
         ) {
             // ── 標題列 ──
             Text(
-                text = "行動熱力圖",
+                text = stringResource(R.string.heatmap_section_title),
                 style = MaterialTheme.typography.titleMedium
             )
 
@@ -273,7 +275,14 @@ fun ActionHeatmapSection(
                     FilterChip(
                         selected = selectedTimeRange == range,
                         onClick = { onTimeRangeChange(range) },
-                        label = { Text(range.label, fontSize = 12.sp) },
+                        label = {
+                            val rangeLabel = when (range) {
+                                HeatmapTimeRange.WEEK_1  -> stringResource(R.string.heatmap_period_7d)
+                                HeatmapTimeRange.WEEK_2  -> stringResource(R.string.heatmap_period_14d)
+                                HeatmapTimeRange.MONTH_1 -> stringResource(R.string.heatmap_period_30d)
+                            }
+                            Text(rangeLabel, fontSize = 12.sp)
+                        },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = MaterialTheme.colorScheme.primary,
                             selectedLabelColor = MaterialTheme.colorScheme.onPrimary
@@ -301,7 +310,14 @@ fun ActionHeatmapSection(
                             contentAlignment = Alignment.CenterEnd
                         ) {
                             Text(
-                                text = question.label,
+                                text = when (question) {
+                                    HeatmapQuestion.DEVICE_CHECK     -> stringResource(R.string.heatmap_label_locked)
+                                    HeatmapQuestion.HAD_EROTIC_DREAM -> stringResource(R.string.heatmap_label_dream)
+                                    HeatmapQuestion.MORNING_ERECTION -> stringResource(R.string.heatmap_label_morning)
+                                    HeatmapQuestion.EXERCISED        -> stringResource(R.string.heatmap_label_exercise)
+                                    HeatmapQuestion.CLEANING         -> stringResource(R.string.heatmap_label_clean)
+                                    HeatmapQuestion.HAS_PHOTO        -> stringResource(R.string.heatmap_label_photo)
+                                },
                                 style = MaterialTheme.typography.labelSmall,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,

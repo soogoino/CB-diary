@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import com.chastity.diary.domain.model.AppLanguage
 import com.chastity.diary.domain.model.DarkMode
 import com.chastity.diary.domain.model.Gender
 import com.chastity.diary.domain.model.HeatmapTimeRange
@@ -61,6 +62,9 @@ class PreferencesManager(private val context: Context) {
         // Action Heatmap
         val HEATMAP_TIME_RANGE = stringPreferencesKey("heatmap_time_range")
         val HEATMAP_VISIBLE_QUESTIONS = stringSetPreferencesKey("heatmap_visible_questions")
+
+        // Language
+        val LANGUAGE = stringPreferencesKey("language")
     }
     
     val userSettingsFlow: Flow<UserSettings> = context.dataStore.data
@@ -73,6 +77,9 @@ class PreferencesManager(private val context: Context) {
         }
         .map { preferences ->
             UserSettings(
+                language = AppLanguage.values().find {
+                    it.name == (preferences[PreferencesKeys.LANGUAGE] ?: AppLanguage.SYSTEM.name)
+                } ?: AppLanguage.SYSTEM,
                 gender = Gender.valueOf(
                     preferences[PreferencesKeys.GENDER] ?: Gender.MALE.name
                 ),
@@ -262,6 +269,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun updatePhotoBlurEnabled(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.PHOTO_BLUR_ENABLED] = enabled
+        }
+    }
+
+    suspend fun updateLanguage(language: AppLanguage) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LANGUAGE] = language.name
         }
     }
 

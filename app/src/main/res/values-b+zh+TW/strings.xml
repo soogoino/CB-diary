@@ -161,8 +161,11 @@
     <string name="settings_theme_light">淺色</string>
     <string name="settings_theme_dark">深色</string>
     <string name="settings_theme_system">跟隨系統</string>
+    <string name="settings_language">語言</string>
+    <string name="settings_language_system">跟隨系統</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_traditional_chinese">繁體中文</string>
     <string name="settings_data_management">資料管理</string>
-    <string name="settings_cloud_coming_soon">雲端同步：開發中，敬請期待 ☁️</string>
     <string name="settings_export_csv">匯出資料 (CSV)</string>
     <string name="settings_import_csv">匯入資料 (CSV)</string>
     <string name="settings_about">關於</string>
@@ -547,4 +550,228 @@
         <item>偶爾</item>
         <item>頻繁</item>
     </string-array>
+
+    <!-- Heatmap / chart labels -->
+    <string name="heatmap_section_title">行動熱力圖</string>
+    <string name="heatmap_period_7d">7 天</string>
+    <string name="heatmap_period_14d">14 天</string>
+    <string name="heatmap_period_30d">30 天</string>
+    <string name="heatmap_label_locked">已上鎖</string>
+    <string name="heatmap_label_dream">春夢</string>
+    <string name="heatmap_label_morning">晨勃</string>
+    <string name="heatmap_label_exercise">運動</string>
+    <string name="heatmap_label_clean">清潔</string>
+    <string name="heatmap_label_photo">打卡照片</string>
+    <string name="heatmap_past7_title">過去 7 天記錄完成情況</string>
+    <string name="heatmap_label_few">少</string>
+    <string name="heatmap_label_many">多</string>
+    <string name="heatmap_label_not_done">未做</string>
+    <string name="heatmap_label_done">完成</string>
+
+    <!-- 條件問題 -->
+    <string name="cq_followup_title">後續問題</string>
+    <string name="cq_followup_desc">根據你的情況回答，某些問題可能不適用</string>
+    <string name="cq_q1_title">1. 今天是否觀看色情內容？</string>
+    <string name="cq_q1_subtitle">如果有,記錄觀看時長</string>
+    <string name="cq_q1_label">觀看色情內容</string>
+    <string name="cq_q1_duration_label">觀看時長</string>
+    <string name="cq_q2_title">2. 今天是否勃起？</string>
+    <string name="cq_q2_subtitle">如果有,記錄勃起次數</string>
+    <string name="cq_q2_label">有勃起</string>
+    <string name="cq_q2_count_label">勃起次數</string>
+    <string name="cq_q2_count_placeholder">輸入次數...</string>
+    <string name="cq_q3_title">3. 今天是否解鎖？</string>
+    <string name="cq_q3_subtitle">如果解鎖後自慰,記錄詳情</string>
+    <string name="cq_q3_label">有解鎖</string>
+    <string name="cq_q3_after_unlock_question">解鎖後有自慰？</string>
+    <string name="cq_q3_after_unlock_label">解鎖後自慰</string>
+    <string name="cq_q3_masturbation_duration_label">自慰時長</string>
+    <string name="cq_q4_title">4. 今天是否感到不適或疼痛？</string>
+    <string name="cq_q4_subtitle">如果有,記錄部位與程度</string>
+    <string name="cq_q4_label">有不適或疼痛</string>
+    <string name="cq_q4_discomfort_area_label">不適部位</string>
+    <string name="cq_q4_pain_level_label">疼痛程度 (1=輕微, 10=劇烈)</string>
+    <string name="cq_q5_title">5. 今天是否有洩漏情況？</string>
+    <string name="cq_q5_subtitle">如果有,評估洩漏程度</string>
+    <string name="cq_q5_label">有洩漏</string>
+    <string name="cq_q6_title">6. 今天是否進行邊緣訓練？</string>
+    <string name="cq_q6_subtitle">如果有,記錄訓練詳情</string>
+    <string name="cq_q6_label">有邊緣訓練</string>
+    <string name="cq_q6_duration_label">訓練時長</string>
+    <string name="cq_q6_methods_label">訓練方式</string>
+    <string name="cq_q7_title">7. 今天是否臨時取下鎖？</string>
+    <string name="cq_q7_subtitle">如果有,記錄取下詳情</string>
+    <string name="cq_q7_label">有臨時取下</string>
+    <string name="cq_q7_duration_label">取下時長</string>
+    <string name="cq_q7_reason_label">取下原因</string>
+    <string name="cq_q8_title">8. 昨晚是否有夜間勃起？</string>
+    <string name="cq_q8_subtitle">如果有,記錄詳情</string>
+    <string name="cq_q8_count_label">夜間勃起次數</string>
+    <string name="cq_q8_count_placeholder">輸入次數 (0 表示沒有)...</string>
+    <string name="cq_q8_woke_label">是否因勃起醒來</string>
+
+    <!-- 輪替問題 -->
+    <string name="rq_header_title">今日特別問題 🎲</string>
+    <string name="rq_header_subtitle">每天輪替一個不同的問題</string>
+    <string name="rq_invalid_question">無效的輪替問題</string>
+    <string name="rq_exercise_title">今天有運動嗎？</string>
+    <string name="rq_exercise_subtitle">記錄運動類型與時長</string>
+    <string name="rq_exercise_label">是否運動</string>
+    <string name="rq_exercise_type_label">運動類型</string>
+    <string name="rq_exercise_duration_label">運動時長</string>
+    <string name="rq_exposed_title">鎖有在公共場合露出嗎？</string>
+    <string name="rq_exposed_subtitle">記錄露出的地點</string>
+    <string name="rq_exposed_label">是否露出</string>
+    <string name="rq_exposed_location_label">露出地點</string>
+    <string name="rq_keyholder_title">今天與 Keyholder 有互動嗎？</string>
+    <string name="rq_keyholder_subtitle">記錄互動類型</string>
+    <string name="rq_keyholder_label">是否互動</string>
+    <string name="rq_keyholder_types_label">互動類型</string>
+    <string name="rq_cleaning_title">今天如何清潔鎖？</string>
+    <string name="rq_cleaning_subtitle">選擇清潔方式</string>
+    <string name="rq_social_title">今天有參與社交活動嗎？</string>
+    <string name="rq_social_subtitle">記錄活動類型與焦慮程度</string>
+    <string name="rq_social_types_label">社交活動類型</string>
+    <string name="rq_social_anxiety_label">焦慮程度 (1=無焦慮, 10=極度焦慮)</string>
+
+    <!-- 核心問題 -->
+    <string name="core_section_title">核心問題</string>
+    <string name="core_section_subtitle">10 題 · 約 3 分鐘</string>
+    <string name="core_q1_title">1. 今天的整體心情如何？</string>
+    <string name="core_q1_subtitle">選擇最貼近你今天感受的心情</string>
+    <string name="core_q2_title">2. 今天的性慾強度？</string>
+    <string name="core_q2_subtitle">0 = 完全沒有, 10 = 非常強烈</string>
+    <string name="core_label_desire">性慾強度</string>
+    <string name="core_q3_title">3. 佩戴鎖的舒適度？</string>
+    <string name="core_q3_subtitle">0 = 非常不舒適, 10 = 非常舒適</string>
+    <string name="core_label_comfort">舒適度</string>
+    <string name="core_q4_title">4. 昨晚的睡眠品質？</string>
+    <string name="core_q4_subtitle">鎖是否影響你的睡眠</string>
+    <string name="core_label_sleeped_well">昨晚有睡好嗎？</string>
+    <string name="core_label_woke_due_to_lock">因為鎖而醒來</string>
+    <string name="core_q5_title">5. 今天的專注度如何？</string>
+    <string name="core_q5_subtitle">1 = 完全無法專注, 10 = 非常專注</string>
+    <string name="core_label_focus">專注度</string>
+    <string name="core_q6_title">6. 裝置檢查</string>
+    <string name="core_q6_subtitle">檢查裝置佩戴與是否損壞</string>
+    <string name="core_status_ok">✓ 正常</string>
+    <string name="core_status_bad">✗ 異常</string>
+    <string name="core_q7_title">7. 今天的自我評價？</string>
+    <string name="core_q7_subtitle">你認為自己今天表現如何</string>
+    <string name="core_label_self_rating">自我評價</string>
+    <string name="core_q8_title">8. 照片打卡</string>
+    <string name="core_q8_subtitle">可選：記錄今天的視覺紀念</string>
+    <string name="core_photo_taken">已拍攝照片</string>
+    <string name="core_remove_photo">移除照片</string>
+    <string name="core_take_photo">拍攝照片</string>
+    <string name="core_q9_title">9. 今天的細緻情緒？</string>
+    <string name="core_q9_subtitle">可多選：更精確地描述你的情緒狀態</string>
+    <string name="core_q10_title">10. 備註</string>
+    <string name="core_q10_subtitle">可選：記錄任何想補充的想法或事件</string>
+    <string name="core_notes_placeholder">輸入備註...</string>
+
+    <!-- PIN 對話框 -->
+    <string name="pin_title_change">修改 PIN 碼</string>
+    <string name="pin_title_set">設定 PIN 碼</string>
+    <string name="pin_current_prompt">請輸入當前的 PIN 碼</string>
+    <string name="pin_current_label">當前 PIN 碼</string>
+    <string name="pin_new_prompt">請輸入 PIN 碼 (4-6 位數字)</string>
+    <string name="pin_new_prompt_change">請輸入新的 PIN 碼 (4-6 位數字)</string>
+    <string name="pin_label">PIN 碼</string>
+    <string name="pin_new_label">新 PIN 碼</string>
+    <string name="pin_confirm_label">確認 PIN 碼</string>
+    <string name="pin_min_length_error">PIN 碼至少需要 %1$d 位數字</string>
+    <string name="pin_confirm_mismatch">PIN 碼不一致</string>
+    <string name="pin_show">顯示</string>
+    <string name="pin_hide">隱藏</string>
+
+    <!-- 個人資料編輯對話框 -->
+    <string name="profile_edit_title">編輯個人資料</string>
+    <string name="error_invalid_number">請輸入有效數字</string>
+    <string name="error_height_range">身高範圍: 100-250 cm</string>
+    <string name="error_weight_range">體重範圍: 30-200 kg</string>
+    <string name="optional_height_hint">選填，範圍 100-250 cm</string>
+    <string name="optional_weight_hint">選填，範圍 30-200 kg</string>
+    <string name="profile_device_size_label">貞操鎖尺寸</string>
+    <string name="profile_device_size_placeholder">例如: S / M / 38mm</string>
+    <string name="profile_example_height">例如: 175</string>
+    <string name="profile_example_weight">例如: 70.5</string>
+    <string name="profile_optional">選填</string>
+    <string name="profile_optional_free_input">選填，自由輸入</string>
+
+    <!-- 星期縮寫 -->
+    <string-array name="weekdays_short">
+        <item>日</item>
+        <item>一</item>
+        <item>二</item>
+        <item>三</item>
+        <item>四</item>
+        <item>五</item>
+        <item>六</item>
+    </string-array>
+
+    <!-- 歷史頁面 -->
+    <string name="history_calendar_title">%s 心情日曆</string>
+    <string name="history_total_records">共 %d 筆</string>
+    <string name="history_load_more">載入更多（還有 %d 筆）</string>
+    <string name="history_month_pattern_zh">yyyy年M月</string>
+
+    <!-- 指標格式 -->
+    <string name="metric_desire_format">慾望 %1$d/10</string>
+    <string name="metric_comfort_format">舒適 %1$d/10</string>
+    <string name="metric_sleep_format">睡眠 %1$d/10</string>
+    <string name="metric_self_rating_format">自評 %1$d/10</string>
+    <string name="metric_desire_label">慾望</string>
+    <string name="metric_comfort_label">舒適</string>
+    <string name="metric_focus_label">專注</string>
+    <string name="metric_sleep_label">睡眠</string>
+    <string name="metric_energy_label">能量</string>
+    <string name="summary_avg_focus">平均專注度</string>
+    <string name="summary_avg_sleep">平均睡眠品質</string>
+    <string name="summary_avg_energy">平均晨間能量</string>
+    <string name="chart_no_data">暫無資料</string>
+
+    <!-- 表單標籤 -->
+    <string name="form_label_core">核心</string>
+    <string name="form_label_conditional">後續</string>
+    <string name="form_label_rotating">特別</string>
+    <string name="form_label_review">檢視</string>
+    <string name="form_prev_button">上一步</string>
+    <string name="form_next_button">下一步</string>
+
+    <!-- 錯誤訊息 -->
+    <string name="error_save_failed_detail">儲存失敗: %1$s</string>
+    <string name="error_morning_save_failed_detail">早晨記錄失敗: %1$s</string>
+    <string name="error_delete_failed_detail">刪除失敗: %1$s</string>
+
+    <!-- 連續天數 / 里程碑 -->
+    <string name="streak_title">成就徽章</string>
+    <string name="streak_longest_days">最長 %1$d 天</string>
+    <string name="streak_distance_to">距離「%1$s %2$s」</string>
+    <string name="streak_days_remaining">還差 %1$d 天</string>
+    <string name="streak_all_unlocked">🎉 所有里程碑已解鎖！</string>
+    <string name="streak_days_count">%1$d天</string>
+    <string name="streak_label_beginner">初學者</string>
+    <string name="streak_label_progressing">進展中</string>
+    <string name="streak_label_one_month">一個月</string>
+    <string name="streak_label_two_months">兩個月</string>
+    <string name="streak_label_hundred_days">百日勇士</string>
+    <string name="streak_label_one_year">一年達人</string>
+
+    <!-- 情緒標籤 -->
+    <string name="mood_happy">開心</string>
+    <string name="mood_calm">平靜</string>
+    <string name="mood_neutral">普通</string>
+    <string name="mood_depressed">沮喪</string>
+    <string name="mood_anxious">焦慮</string>
+    <string name="mood_frustrated">挫折</string>
+
+    <!-- 通用計數格式 -->
+    <string name="count_times">%1$d 次</string>
+
+    <!-- 儀表板連續天統計格式 -->
+    <string name="dashboard_streak_format">%1$d 天 🔥</string>
+    <string name="dashboard_longest_format">%1$d 天</string>
+    <!-- 個人資料日期提示 -->
+    <string name="profile_date_format_hint">格式: yyyy-MM-dd，例如 2024-01-15</string>
 </resources>

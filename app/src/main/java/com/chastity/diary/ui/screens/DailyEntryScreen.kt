@@ -633,10 +633,10 @@ private fun CoreQuestionsCard(
             }
 
             // C5: Focus
-            QuestionSection(title = "今日專注度", subtitle = "1 = 完全分心   10 = 高度專注") {
+            QuestionSection(title = stringResource(R.string.q_focus_title), subtitle = stringResource(R.string.q_focus_subtitle)) {
                 SliderWithLabel(entry.focusLevel?.toFloat() ?: 5f,
                     { onUpdate(entry.copy(focusLevel = it.toInt())) },
-                    valueRange = 1f..10f, steps = 8, label = "專注度")
+                    valueRange = 1f..10f, steps = 8, label = stringResource(R.string.q_focus_label))
             }
 
             // (C6 merged into C1 above)
@@ -1271,16 +1271,22 @@ private fun DailyEntryTabContent(
 // ─── Evening Masturbation Card ──────────────────────────────────────────────────────
 @Composable
 private fun EveningMasturbationCard(entry: DailyEntry, onUpdate: (DailyEntry) -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(
-                stringResource(R.string.section_masturbation),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    Icons.Default.Favorite, null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(Modifier.width(6.dp))
+                Text(
+                    stringResource(R.string.section_masturbation),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Divider()
             com.chastity.diary.ui.components.QuestionSection(
                 title = stringResource(R.string.q_masturbated_title)
             ) {

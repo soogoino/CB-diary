@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chastity.diary.R
@@ -96,7 +97,8 @@ fun MoodCalendarSection(entries: List<DailyEntry>, onDateClick: ((LocalDate) -> 
     val daysInMonth = remember { yearMonth.lengthOfMonth() }
     val startOffset = remember { firstDay.dayOfWeek.value % 7 } // 0=Sun
     val entryMap    = remember(entries) { entries.associateBy { it.date } }
-    val weekDays    = remember { stringArrayResource(R.array.weekdays_short).toList() }
+    // Hoist out of remember — stringArrayResource is @Composable and cannot be called inside crossinline lambda
+    val weekDays    = stringArrayResource(R.array.weekdays_short).toList()
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
