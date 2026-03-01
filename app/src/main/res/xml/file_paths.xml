@@ -3,4 +3,10 @@
     <external-files-path
         name="photos"
         path="Pictures/" />
+    <cache-path
+        name="cards"
+        path="cards/" />
+    <files-path
+        name="templates"
+        path="templates/" />
 </paths>

@@ -91,4 +91,12 @@ class SettingsRepository(private val preferencesManager: PreferencesManager) : I
     override suspend fun updateLanguage(language: AppLanguage) {
         preferencesManager.updateLanguage(language)
     }
+
+    override suspend fun updateCardThemeId(themeId: String) {
+        preferencesManager.updateCardThemeId(themeId)
+    }
+
+    override suspend fun setSponsorUnlocked(unlocked: Boolean) {
+        preferencesManager.setSponsorUnlocked(unlocked)
+    }
 }

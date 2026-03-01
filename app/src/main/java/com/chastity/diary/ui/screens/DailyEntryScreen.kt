@@ -1005,6 +1005,7 @@ private fun DailyEntryTabContent(
     var showBedtimePicker by remember { mutableStateOf(false) }
     var showWakeTimePicker by remember { mutableStateOf(false) }
     val timeFmt = DateTimeFormatter.ofPattern("HH:mm")
+    var showCardSheet by remember { mutableStateOf(false) }
 
     // ── Shared scrollable wrapper ──────────────────────────────────────────────
     Column(
@@ -1241,6 +1242,26 @@ private fun DailyEntryTabContent(
             )
         }
         Spacer(Modifier.height(8.dp))
+        // ── Generate card button (evening only) ────────────────────────────────
+        if (!isMorning) {
+            OutlinedButton(
+                onClick = { showCardSheet = true },
+                modifier = Modifier.fillMaxWidth().height(52.dp)
+            ) {
+                Icon(Icons.Default.Share, null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    stringResource(R.string.card_generate_button),
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+            Spacer(Modifier.height(8.dp))
+        }
+    }
+
+    // ── Card bottom sheet ──────────────────────────────────────────────────────
+    if (showCardSheet) {
+        CardBottomSheet(onDismiss = { showCardSheet = false })
     }
 
     // ── Time pickers (morning only) ────────────────────────────────────────────

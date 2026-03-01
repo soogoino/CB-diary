@@ -65,6 +65,10 @@ class PreferencesManager(private val context: Context) {
 
         // Language
         val LANGUAGE = stringPreferencesKey("language")
+
+        // Summary card
+        val CARD_THEME_ID = stringPreferencesKey("card_theme_id")
+        val SPONSOR_UNLOCKED = booleanPreferencesKey("sponsor_unlocked")
     }
     
     val userSettingsFlow: Flow<UserSettings> = context.dataStore.data
@@ -116,7 +120,11 @@ class PreferencesManager(private val context: Context) {
                     ?: Constants.DEFAULT_MORNING_REMINDER_MINUTE,
 
                 // Photo
-                photoBlurEnabled = preferences[PreferencesKeys.PHOTO_BLUR_ENABLED] ?: true
+                photoBlurEnabled = preferences[PreferencesKeys.PHOTO_BLUR_ENABLED] ?: true,
+
+                // Summary card
+                selectedCardThemeId = preferences[PreferencesKeys.CARD_THEME_ID] ?: "midnight",
+                sponsorUnlocked = preferences[PreferencesKeys.SPONSOR_UNLOCKED] ?: false
             )
         }
     
@@ -275,6 +283,18 @@ class PreferencesManager(private val context: Context) {
     suspend fun updateLanguage(language: AppLanguage) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.LANGUAGE] = language.name
+        }
+    }
+
+    suspend fun updateCardThemeId(themeId: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.CARD_THEME_ID] = themeId
+        }
+    }
+
+    suspend fun setSponsorUnlocked(unlocked: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SPONSOR_UNLOCKED] = unlocked
         }
     }
 

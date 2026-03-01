@@ -32,7 +32,11 @@ data class UserSettings(
     val morningReminderMinute: Int = 30,
 
     // Photo
-    val photoBlurEnabled: Boolean = true
+    val photoBlurEnabled: Boolean = true,
+
+    // Summary card
+    val selectedCardThemeId: String = "midnight",
+    val sponsorUnlocked: Boolean = false
 )
 
 enum class Gender {

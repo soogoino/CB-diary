@@ -831,4 +831,62 @@
     <!-- Profile date hint -->
     <string name="profile_date_format_hint">Format: yyyy-MM-dd (e.g. 2024-01-15)</string>
 
+    <!-- ═══════════════ Summary Card ═══════════════ -->
+    <!-- Card themes -->
+    <string name="card_theme_midnight">Midnight</string>
+    <string name="card_theme_dawn">Dawn</string>
+    <string name="card_theme_forest">Forest</string>
+    <string name="card_theme_crimson">Crimson</string>
+    <string name="card_theme_ocean">Ocean</string>
+    <string name="card_theme_minimal">Minimal</string>
+    <string name="card_theme_user_imported">Custom</string>
+    <!-- Card UI strings -->
+    <string name="card_generate_button">Generate Summary Card</string>
+    <string name="card_sheet_title">Daily Summary Card</string>
+    <string name="card_choose_theme">Card Theme</string>
+    <string name="card_import_template">Import</string>
+    <string name="card_show_sensitive">Show Device Info</string>
+    <string name="card_show_sensitive_hint">Show device exposure status on card</string>
+    <string name="card_save">Save</string>
+    <string name="card_share">Share</string>
+    <string name="card_no_entry_today">No record for today yet.\nFill in your daily entry first.</string>
+    <!-- Card content labels -->
+    <string name="card_days_streak">days streak</string>
+    <string name="card_longest">Best</string>
+    <string name="card_days">days</string>
+    <string name="card_today">TODAY</string>
+    <string name="card_mood">Mood</string>
+    <string name="card_morning_energy">Energy</string>
+    <string name="card_self_rating">Self Rating</string>
+    <string name="card_7d_average">7-DAY AVERAGE</string>
+    <string name="card_avg_desire">Desire</string>
+    <string name="card_avg_comfort">Comfort</string>
+    <string name="card_avg_focus">Focus</string>
+    <string name="card_avg_sleep">Sleep</string>
+    <string name="card_exercised">Exercised</string>
+    <string name="card_device_exposed">Exposed</string>
+    <!-- Card actions -->
+    <string name="card_render_error">Failed to generate card. Please try again.</string>
+    <string name="card_saved_to_gallery">Card saved to gallery.</string>
+    <!-- Template import -->
+    <string name="card_import_success">Template imported successfully.</string>
+    <string name="card_import_error_cannot_read">Cannot read the selected file.</string>
+    <string name="card_import_error_missing_png">Missing template.png in the zip file.</string>
+    <string name="card_import_error_missing_spec">Missing card_template_spec.json in the zip file.</string>
+    <string name="card_import_error_wrong_size">Image must be exactly 1080×1350 pixels.</string>
+    <string name="card_import_error_invalid_spec">Invalid JSON in card_template_spec.json.</string>
+    <string name="card_import_error_unsupported_version">Unsupported template format version.</string>
+    <string name="card_import_error_unknown">An unknown error occurred during import.</string>
+    <!-- Sponsor -->
+    <string name="sponsor_dialog_title">Unlock Premium Themes</string>
+    <string name="sponsor_dialog_body">Enter your sponsor redemption code to unlock all premium card themes.</string>
+    <string name="sponsor_code_hint">Redemption code</string>
+    <string name="sponsor_code_invalid">Invalid code. Please check and try again.</string>
+    <string name="sponsor_dialog_confirm">Unlock</string>
+    <!-- Settings sponsor section -->
+    <string name="settings_sponsor_title">Support the Developer</string>
+    <string name="settings_sponsor_description">Sponsor the project to unlock premium card themes. All code remains open-source.</string>
+    <string name="settings_sponsor_enter_code">Enter Redemption Code</string>
+    <string name="settings_sponsor_unlocked">✓ Premium themes unlocked. Thank you for your support!</string>
+
 </resources>

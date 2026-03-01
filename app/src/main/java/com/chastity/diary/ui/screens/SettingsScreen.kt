@@ -38,6 +38,7 @@ import com.chastity.diary.ui.components.PinSetupDialog
 import com.chastity.diary.ui.components.ProfileEditDialog
 import com.chastity.diary.ui.components.TimePickerDialog
 import com.chastity.diary.util.BiometricHelper
+import com.chastity.diary.viewmodel.CardViewModel
 import com.chastity.diary.viewmodel.SettingsViewModel
 
 /**
@@ -47,6 +48,7 @@ import com.chastity.diary.viewmodel.SettingsViewModel
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel = viewModel(),
+    cardViewModel: CardViewModel = viewModel(),
     outerPadding: PaddingValues = PaddingValues()
 ) {
     val context = LocalContext.current
@@ -56,6 +58,8 @@ fun SettingsScreen(
     var showProfileDialog by remember { mutableStateOf(false) }
     var showPinSetupDialog by remember { mutableStateOf(false) }
     var showBiometricWarning by remember { mutableStateOf(false) }
+    var showSponsorDialog by remember { mutableStateOf(false) }
+    val sponsorUnlocked by cardViewModel.sponsorUnlocked.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val biometricHelper = remember { BiometricHelper(context) }
 
@@ -664,6 +668,44 @@ fun SettingsScreen(
                 }
             }
             
+            // Sponsor unlock
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            stringResource(R.string.settings_sponsor_title),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                    Text(
+                        if (sponsorUnlocked)
+                            stringResource(R.string.settings_sponsor_unlocked)
+                        else
+                            stringResource(R.string.settings_sponsor_description),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    if (!sponsorUnlocked) {
+                        Button(
+                            onClick = { showSponsorDialog = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(stringResource(R.string.settings_sponsor_enter_code))
+                        }
+                    }
+                }
+            }
+
             // About
             Card(
                 modifier = Modifier.fillMaxWidth()
@@ -736,6 +778,18 @@ fun SettingsScreen(
                     TextButton(onClick = { showBiometricWarning = false }) {
                         Text(stringResource(R.string.confirm_ok))
                     }
+                }
+            )
+        }
+
+        // Sponsor code dialog
+        if (showSponsorDialog) {
+            SponsorCodeDialog(
+                onDismiss = { showSponsorDialog = false },
+                onSubmit = { code ->
+                    val ok = cardViewModel.submitSponsorCode(code)
+                    if (ok) showSponsorDialog = false
+                    ok
                 }
             )
         }

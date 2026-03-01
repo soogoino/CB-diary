@@ -774,4 +774,62 @@
     <string name="dashboard_longest_format">%1$d 天</string>
     <!-- 個人資料日期提示 -->
     <string name="profile_date_format_hint">格式: yyyy-MM-dd，例如 2024-01-15</string>
+
+    <!-- ══════════════ 摘要卡片 ══════════════ -->
+    <!-- 卡片主題 -->
+    <string name="card_theme_midnight">星夜</string>
+    <string name="card_theme_dawn">晨曦</string>
+    <string name="card_theme_forest">森林</string>
+    <string name="card_theme_crimson">深紅</string>
+    <string name="card_theme_ocean">深海</string>
+    <string name="card_theme_minimal">極簡</string>
+    <string name="card_theme_user_imported">自訂</string>
+    <!-- 卡片 UI 文字 -->
+    <string name="card_generate_button">生成今日卡片</string>
+    <string name="card_sheet_title">每日摘要卡片</string>
+    <string name="card_choose_theme">卡片主題</string>
+    <string name="card_import_template">匯入</string>
+    <string name="card_show_sensitive">顯示裝置資訊</string>
+    <string name="card_show_sensitive_hint">在卡片上顯示裝置暴露狀態</string>
+    <string name="card_save">儲存至相簿</string>
+    <string name="card_share">分享</string>
+    <string name="card_no_entry_today">今天尚無記錄\n請先填寫每日日記。</string>
+    <!-- 卡片內容標籤 -->
+    <string name="card_days_streak">天連續</string>
+    <string name="card_longest">最長</string>
+    <string name="card_days">天</string>
+    <string name="card_today">今日</string>
+    <string name="card_mood">心情</string>
+    <string name="card_morning_energy">晨間能量</string>
+    <string name="card_self_rating">自我評分</string>
+    <string name="card_7d_average">7日平均</string>
+    <string name="card_avg_desire">慾望</string>
+    <string name="card_avg_comfort">舒適</string>
+    <string name="card_avg_focus">專注</string>
+    <string name="card_avg_sleep">睡眠</string>
+    <string name="card_exercised">有運動</string>
+    <string name="card_device_exposed">已暴露</string>
+    <!-- 卡片操作 -->
+    <string name="card_render_error">生成卡片失敗，請重試。</string>
+    <string name="card_saved_to_gallery">卡片已儲存至相簿。</string>
+    <!-- 模板匯入 -->
+    <string name="card_import_success">模板匯入成功。</string>
+    <string name="card_import_error_cannot_read">無法讀取所選檔案。</string>
+    <string name="card_import_error_missing_png">Zip 中缺少 template.png。</string>
+    <string name="card_import_error_missing_spec">Zip 中缺少 card_template_spec.json。</string>
+    <string name="card_import_error_wrong_size">圖片尺寸必須為 1080×1350 像素。</string>
+    <string name="card_import_error_invalid_spec">card_template_spec.json 格式無效。</string>
+    <string name="card_import_error_unsupported_version">不支援的模板格式版本。</string>
+    <string name="card_import_error_unknown">匯入時發生未知錯誤。</string>
+    <!-- 贊助 -->
+    <string name="sponsor_dialog_title">解鎖進階主題</string>
+    <string name="sponsor_dialog_body">輸入贊助兌換碼以解鎖所有進階卡片主題。</string>
+    <string name="sponsor_code_hint">兌換碼</string>
+    <string name="sponsor_code_invalid">無效的兌換碼，請確認後重試。</string>
+    <string name="sponsor_dialog_confirm">解鎖</string>
+    <!-- 設定頁贊助區段 -->
+    <string name="settings_sponsor_title">支持開發者</string>
+    <string name="settings_sponsor_description">贊助本專案即可解鎖進階卡片主題，所有程式碼仍會保持開源。</string>
+    <string name="settings_sponsor_enter_code">輸入兌換碼</string>
+    <string name="settings_sponsor_unlocked">✓ 進階主題已解鎖，感謝您的支持！</string>
 </resources>

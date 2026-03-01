@@ -52,4 +52,8 @@ interface ISettingsRepository {
     suspend fun updatePhotoBlurEnabled(enabled: Boolean)
 
     suspend fun updateLanguage(language: AppLanguage)
+
+    suspend fun updateCardThemeId(themeId: String)
+
+    suspend fun setSponsorUnlocked(unlocked: Boolean)
 }
