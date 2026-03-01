@@ -284,20 +284,25 @@
     <string name="q_photo_tap_to_view">Tap to view</string>
     <string name="action_retake_photo">Retake</string>
     <string name="action_delete_photo">Delete photo</string>
+    <string name="action_pick_from_gallery">Gallery</string>
     <string name="error_photo_missing">⚠️ Photo file is missing</string>
     <string name="action_clear_record">Clear record</string>
     <string name="q_exercise_title">Exercise today?</string>
     <string name="q_exercise_label">Exercised</string>
     <string name="q_cleaning_title">Did you clean the device today?</string>
-    <string name="action_pick_photo">Pick from gallery</string>
+    <string name="action_pick_photo">Gallery</string>
 
 
     <!-- Rotating question feedbacks (from localized source) -->
     <string-array name="daily_rotating_feedback_generic">
-        <item>哎呀，看起來你又偷偷掉隊了，別讓它太放肆了。</item>
-        <item>嗯…這個小狀況，值得小小自責一下，記得善後哦。</item>
-        <item>有點尷尬欸，但老實說，能注意到就是進步了。</item>
-        <item>唉唷，這種小把戲誰沒犯過？下次加把勁啊～</item>
+        <item>The answer you gave has already become the question.</item>
+        <item>Between what was recorded and what was felt, something remains unnamed.</item>
+        <item>Every response is a door that leads to another door.</item>
+        <item>You have marked this moment. The moment has also marked you.</item>
+        <item>What is measured does not always become known.</item>
+        <item>The pattern is there. Whether it means anything is a separate matter.</item>
+        <item>This, too, is data.</item>
+        <item>Acknowledged. The river continues.</item>
     </string-array>
 
     <!-- Rotating questions -->
@@ -615,7 +620,7 @@
     <string name="section_masturbation">Masturbation Log</string>
     <string name="q_masturbated_title">Masturbated today?</string>
     <string name="q_masturbated_label">Masturbated</string>
-    <string name="q_masturbation_count">%1$d times</string>
+    <string name="q_masturbation_count">Times:</string>
     <string name="cd_decrease">Decrease</string>
     <string name="cd_increase">Increase</string>
 
@@ -845,8 +850,8 @@
     <string name="card_sheet_title">Daily Summary Card</string>
     <string name="card_choose_theme">Card Theme</string>
     <string name="card_import_template">Import</string>
-    <string name="card_show_sensitive">Show Device Info</string>
-    <string name="card_show_sensitive_hint">Show device exposure status on card</string>
+    <string name="card_show_photo">Show Today\'s Photo</string>
+    <string name="card_show_photo_hint">Include today\'s photo on the card</string>
     <string name="card_save">Save</string>
     <string name="card_share">Share</string>
     <string name="card_no_entry_today">No record for today yet.\nFill in your daily entry first.</string>
@@ -864,7 +869,7 @@
     <string name="card_avg_focus">Focus</string>
     <string name="card_avg_sleep">Sleep</string>
     <string name="card_exercised">Exercised</string>
-    <string name="card_device_exposed">Exposed</string>
+    <string name="card_photo_section">TODAY\'S PHOTO</string>
     <!-- Card actions -->
     <string name="card_render_error">Failed to generate card. Please try again.</string>
     <string name="card_saved_to_gallery">Card saved to gallery.</string>
@@ -873,7 +878,7 @@
     <string name="card_import_error_cannot_read">Cannot read the selected file.</string>
     <string name="card_import_error_missing_png">Missing template.png in the zip file.</string>
     <string name="card_import_error_missing_spec">Missing card_template_spec.json in the zip file.</string>
-    <string name="card_import_error_wrong_size">Image must be exactly 1080×1350 pixels.</string>
+    <string name="card_import_error_wrong_size">Image must be exactly 1080×1920 pixels.</string>
     <string name="card_import_error_invalid_spec">Invalid JSON in card_template_spec.json.</string>
     <string name="card_import_error_unsupported_version">Unsupported template format version.</string>
     <string name="card_import_error_unknown">An unknown error occurred during import.</string>

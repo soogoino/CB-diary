@@ -198,6 +198,24 @@ fun DailyEntryScreen(
         { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) }
     }
 
+    // Gallery picker — copies the selected image into app-private dir so we always have an
+    // absolute path (content:// URIs are not guaranteed to remain accessible long-term).
+    val galleryLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri ?: return@rememberLauncherForActivityResult
+        val ts = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val dir = File(context.getExternalFilesDir("Pictures"), "").also { it.mkdirs() }
+        val destFile = File(dir, "GALLERY_$ts.jpg")
+        context.contentResolver.openInputStream(uri)?.use { input ->
+            destFile.outputStream().use { output -> input.copyTo(output) }
+        }
+        if (destFile.exists()) viewModel.updateEntry { e -> e.copy(photoPath = destFile.absolutePath) }
+    }
+    val onPickFromGalleryStable: () -> Unit = remember(galleryLauncher) {
+        { galleryLauncher.launch("image/*") }
+    }
+
     LaunchedEffect(saveSuccess) {
         if (saveSuccess) {
             // B3: Snapshot entry immediately before any async DB update can change entryState
@@ -368,6 +386,7 @@ fun DailyEntryScreen(
                             selectedDate = selectedDate,
                             isExisting = isExisting,
                             onTakePhoto = onTakePhotoStable,
+                            onPickFromGallery = onPickFromGalleryStable,
                             photoBlurEnabled = userSettings.photoBlurEnabled
                         )
                     }
@@ -566,6 +585,7 @@ private fun CoreQuestionsCard(
     entry: DailyEntry,
     onUpdate: (DailyEntry) -> Unit,
     onTakePhoto: () -> Unit,
+    onPickFromGallery: () -> Unit = {},
     photoBlurEnabled: Boolean = true
 ) {
     // B4: Use remember (not rememberSaveable) — photo reveal state must not persist across dates
@@ -659,11 +679,21 @@ private fun CoreQuestionsCard(
                             else MaterialTheme.colorScheme.primary
                         )
                     }
-                    if (entry.photoPath.isNullOrBlank()) {
-                        OutlinedButton(onClick = onTakePhoto) {
+                }
+                if (entry.photoPath.isNullOrBlank()) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(onClick = onTakePhoto, modifier = Modifier.weight(1f)) {
                             Icon(Icons.Default.Camera, null, Modifier.size(16.dp))
                             Spacer(Modifier.width(4.dp))
                             Text(stringResource(R.string.action_take_photo))
+                        }
+                        OutlinedButton(onClick = onPickFromGallery, modifier = Modifier.weight(1f)) {
+                            Icon(Icons.Default.PhotoLibrary, null, Modifier.size(16.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text(stringResource(R.string.action_pick_from_gallery))
                         }
                     }
                 }
@@ -763,21 +793,29 @@ private fun CoreQuestionsCard(
                                     Text(stringResource(R.string.action_retake_photo))
                                 }
                                 OutlinedButton(
-                                    onClick = { onUpdate(entry.copy(photoPath = null)) },
-                                    modifier = Modifier.weight(1f),
-                                    colors = ButtonDefaults.outlinedButtonColors(
-                                        contentColor = MaterialTheme.colorScheme.error
-                                    ),
-                                    border = ButtonDefaults.outlinedButtonBorder.copy(
-                                        brush = androidx.compose.ui.graphics.SolidColor(
-                                            MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
-                                        )
-                                    )
+                                    onClick = onPickFromGallery,
+                                    modifier = Modifier.weight(1f)
                                 ) {
-                                    Icon(Icons.Default.Delete, null, Modifier.size(16.dp))
+                                    Icon(Icons.Default.PhotoLibrary, null, Modifier.size(16.dp))
                                     Spacer(Modifier.width(4.dp))
-                                    Text(stringResource(R.string.action_delete_photo))
+                                    Text(stringResource(R.string.action_pick_from_gallery))
                                 }
+                            }
+                            OutlinedButton(
+                                onClick = { onUpdate(entry.copy(photoPath = null)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.error
+                                ),
+                                border = ButtonDefaults.outlinedButtonBorder.copy(
+                                    brush = androidx.compose.ui.graphics.SolidColor(
+                                        MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
+                                    )
+                                )
+                            ) {
+                                Icon(Icons.Default.Delete, null, Modifier.size(16.dp))
+                                Spacer(Modifier.width(4.dp))
+                                Text(stringResource(R.string.action_delete_photo))
                             }
                         }
                     } else {
@@ -1000,6 +1038,7 @@ private fun DailyEntryTabContent(
     selectedDate: LocalDate = LocalDate.now(),
     isExisting: Boolean = false,
     onTakePhoto: () -> Unit = {},
+    onPickFromGallery: () -> Unit = {},
     photoBlurEnabled: Boolean = true,
 ) {
     var showBedtimePicker by remember { mutableStateOf(false) }
@@ -1214,7 +1253,7 @@ private fun DailyEntryTabContent(
         } else {
             // ── 🌙 Evening cards ───────────────────────────────────────────────
             DayStatusCard(entry, selectedDate)
-            CoreQuestionsCard(entry = entry, onUpdate = onUpdate, onTakePhoto = onTakePhoto, photoBlurEnabled = photoBlurEnabled)
+            CoreQuestionsCard(entry = entry, onUpdate = onUpdate, onTakePhoto = onTakePhoto, onPickFromGallery = onPickFromGallery, photoBlurEnabled = photoBlurEnabled)
             RotatingQuestionsCard(
                 questions = remember(selectedDate, isMale) { getRotatingQuestionsForDate(selectedDate, isMale) },
                 entry = entry,

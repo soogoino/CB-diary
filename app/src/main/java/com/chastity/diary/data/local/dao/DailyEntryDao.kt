@@ -32,6 +32,11 @@ interface DailyEntryDao {
     @Query("SELECT * FROM daily_entries WHERE date = :date")
     suspend fun getByDateWithAttributes(date: LocalDate): DailyEntryWithAttributes?
 
+    /** Reactive version — re-emits whenever the entry or its attributes change. */
+    @Transaction
+    @Query("SELECT * FROM daily_entries WHERE date = :date")
+    fun getByDateWithAttributesFlow(date: LocalDate): Flow<DailyEntryWithAttributes?>
+
     @Query("SELECT * FROM daily_entries WHERE date = :date")
     fun getByDateFlow(date: LocalDate): Flow<DailyEntryEntity?>
     

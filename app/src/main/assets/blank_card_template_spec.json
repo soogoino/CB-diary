@@ -1,9 +1,9 @@
 {
   "format_version": 1,
-  "_comment": "CB Diary card template specification. Design your background image at exactly 1080x1350 px, then keep the safe zones listed below clear of important visual elements so the app can overlay statistics text without obstruction.",
+  "_comment": "CB Diary card template specification. Design your background image at exactly 1080x1920 px, then keep the safe zones listed below clear of important visual elements so the app can overlay statistics text without obstruction.",
   "canvas": {
     "width": 1080,
-    "height": 1350
+    "height": 1920
   },
   "text_color_scheme": "light",
   "overlay_opacity": 0.0,
@@ -15,7 +15,7 @@
   },
   "usage": {
     "steps": [
-      "1. Create a 1080x1350 PNG background image (e.g. in Figma or Canva).",
+      "1. Create a 1080x1920 PNG background image (e.g. in Figma or Canva).",
       "2. Leave the rectangles described in safe_zones visually clear (semi-transparent or solid overlay is fine if overlay_opacity > 0 in the spec).",
       "3. Adjust text_color_scheme to 'light' (white text) or 'dark' (black text) to match your background.",
       "4. Set overlay_opacity 0.0-0.5 if you want the app to add a black/white scrim for extra contrast.",

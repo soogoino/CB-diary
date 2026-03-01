@@ -462,6 +462,7 @@
     <string name="q_photo_tap_to_view">點擊查看照片</string>
     <string name="action_retake_photo">重新拍攝</string>
     <string name="action_delete_photo">刪除照片</string>
+    <string name="action_pick_from_gallery">从相册选取</string>
     <string name="error_photo_missing">⚠️ 照片檔案已遺失</string>
     <string name="action_clear_record">清除記錄</string>
     <string name="q_exercise_title">是否運動？</string>
@@ -592,10 +593,14 @@
     <string name="heatmap_label_clean">清潔</string>
     <string name="heatmap_label_photo">打卡照片</string>
     <string-array name="daily_rotating_feedback_generic">
-        <item>哎呀，看起來你又偷偷掉隊了，別讓它太放肆了。</item>
-        <item>嗯…這個小狀況，值得小小自責一下，記得善後哦。</item>
-        <item>有點尷尬欸，但老實說，能注意到就是進步了。</item>
-        <item>唉唷，這種小把戲誰沒犯過？下次加把勁啊～</item>
+        <item>你给出的答案，已悄然成为了下一个问题。</item>
+        <item>记录下来的，与真正感受到的之间，有什么尚未被命名。</item>
+        <item>每一个回应都是一扇门，而门后还有另一扇门。</item>
+        <item>你标记了这个时刻。这个时刻也标记了你。</item>
+        <item>被测量的，不一定就此被理解。</item>
+        <item>规律就在那里。它是否有意义，是另一回事。</item>
+        <item>这，也是数据的一部分。</item>
+        <item>已知悉。河流继续流淌。</item>
     </string-array>
     <string-array name="moods_array">
         <item>😊 開心</item>
@@ -742,8 +747,8 @@
     <string name="card_sheet_title">每日摘要卡片</string>
     <string name="card_choose_theme">卡片主題</string>
     <string name="card_import_template">匯入</string>
-    <string name="card_show_sensitive">顯示裝置資訊</string>
-    <string name="card_show_sensitive_hint">在卡片上顯示裝置暴露狀態</string>
+    <string name="card_show_photo">顯示今日照片</string>
+    <string name="card_show_photo_hint">將今日照片加入卡片</string>
     <string name="card_save">儲存至相簿</string>
     <string name="card_share">分享</string>
     <string name="card_no_entry_today">今天尚無記錄\n請先填寫每日日記。</string>
@@ -761,7 +766,7 @@
     <string name="card_avg_focus">專注</string>
     <string name="card_avg_sleep">睡眠</string>
     <string name="card_exercised">有運動</string>
-    <string name="card_device_exposed">已暴露</string>
+    <string name="card_photo_section">今日照片</string>
     <!-- 卡片操作 -->
     <string name="card_render_error">生成卡片失敗，請重試。</string>
     <string name="card_saved_to_gallery">卡片已儲存至相簿。</string>
@@ -770,7 +775,7 @@
     <string name="card_import_error_cannot_read">無法讀取所選檔案。</string>
     <string name="card_import_error_missing_png">Zip 中缺少 template.png。</string>
     <string name="card_import_error_missing_spec">Zip 中缺少 card_template_spec.json。</string>
-    <string name="card_import_error_wrong_size">圖片尺寸必須為 1080×1350 像素。</string>
+    <string name="card_import_error_wrong_size">圖片尺寸必須為 1080×1920 像素。</string>
     <string name="card_import_error_invalid_spec">card_template_spec.json 格式無效。</string>
     <string name="card_import_error_unsupported_version">不支援的模板格式版本。</string>
     <string name="card_import_error_unknown">匯入時發生未知錯誤。</string>

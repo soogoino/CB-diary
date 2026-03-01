@@ -4,12 +4,14 @@ import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.DisplayMetrics
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
@@ -28,13 +30,13 @@ import java.io.FileOutputStream
 import java.time.format.DateTimeFormatter
 
 /**
- * Renders a [SummaryCardContent] Composable off-screen into a 1080×1350 PNG bitmap
+ * Renders a [SummaryCardContent] Composable off-screen into a 1080×1920 PNG bitmap
  * and provides helpers to share or save it to the media library.
  */
 object CardRenderer {
 
     const val CARD_W = 1080
-    const val CARD_H = 1350
+    const val CARD_H = 1920
 
     private val FILE_DATE_FMT = DateTimeFormatter.ofPattern("yyyyMMdd")
 
@@ -54,7 +56,14 @@ object CardRenderer {
         activity: Activity,
         content: @Composable () -> Unit
     ): Bitmap = withContext(Dispatchers.Main) {
-        val composeView = ComposeView(activity).apply {
+        // Use density=1 context so that 1dp = 1px inside the card composable.
+        // This ensures size(1080.dp, 1920.dp) fills exactly 1080×1920 px and
+        // matches what the scaled preview in BottomSheet shows.
+        val densityOneCfg = Configuration(activity.resources.configuration).apply {
+            densityDpi = DisplayMetrics.DENSITY_DEFAULT   // 160 dpi → density 1.0
+        }
+        val cardCtx = activity.createConfigurationContext(densityOneCfg)
+        val composeView = ComposeView(cardCtx).apply {
             setViewTreeLifecycleOwner(activity as? androidx.lifecycle.LifecycleOwner)
             setViewTreeSavedStateRegistryOwner(activity as? androidx.savedstate.SavedStateRegistryOwner)
             setContent { content() }

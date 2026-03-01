@@ -21,7 +21,7 @@ import java.util.zip.ZipInputStream
  *
  * Expected zip structure:
  * ```
- * template.png              # 1080×1350 background image
+ * template.png              # 1080×1920 background image
  * card_template_spec.json   # see [CardTemplateSpec]
  * ```
  *

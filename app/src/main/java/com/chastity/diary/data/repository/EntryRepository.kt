@@ -53,6 +53,16 @@ class EntryRepository(
     override fun getEntryByDateFlow(date: LocalDate): Flow<DailyEntry?> {
         return dao.getByDateFlow(date).map { it?.toDomainModel() }
     }
+
+    /** Like [getEntryByDateFlow] but also loads [DailyEntry.rotatingAnswers] from the attribute table. */
+    fun getEntryByDateWithAttributesFlow(date: LocalDate): Flow<DailyEntry?> {
+        return dao.getByDateWithAttributesFlow(date).map { result ->
+            result?.let {
+                val attrs = it.attributes.associate { a -> a.attributeKey to a.attributeValue }
+                it.entry.toDomainModel().copy(rotatingAnswers = attrs)
+            }
+        }
+    }
     
     override suspend fun insertEntry(entry: DailyEntry): Long {
         val id = dao.insert(entry.toEntity())

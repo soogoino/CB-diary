@@ -7,9 +7,6 @@ import java.time.LocalDate
  *
  * Combines today's [DailyEntry] fields with 7-day rolling averages from the dashboard
  * and streak info from [StreakRepository].
- *
- * Fields marked "sensitive" are hidden by default and only included when
- * [showSensitiveData] = true (user opt-in in card bottom-sheet).
  */
 data class CardData(
     val date: LocalDate,
@@ -21,21 +18,31 @@ data class CardData(
     // ── Today fields ─────────────────────────────────────────────────────────
     val morningMood: String?,        // emoji / label
     val morningEnergy: Int?,         // 1-10
-    val selfRating: Int?,            // 1-5 (Q23)
     val exercised: Boolean,
-    val exposedDevice: Boolean,      // sensitive – only shown when opt-in
 
-    // ── Rotating question answer (最新一題輪換題） ────────────────────────────
-    val rotatingQuestionLabel: String?,
-    val rotatingQuestionAnswer: String?,
+    // ── Photo (optional, user opt-in) ─────────────────────────────────────────
+    /** Absolute file path of today's photo, null if no photo was taken. */
+    val photoPath: String?,
+    /** Whether the user has opted to show the photo on the card. */
+    val showPhoto: Boolean = false,
+
+    // ── Rotating question answers (all answered questions for today) ──────────────
+    /**
+     * Raw (key, rawAnswer) pairs from [DailyEntry.rotatingAnswers].
+     * key = "R1" etc., rawAnswer = "true" / "false" / free text.
+     * String resolution to the current locale is done in the Composable layer.
+     */
+    val rotatingQuestions: List<Pair<String, String>> = emptyList(),
+
+    // ── Today's individual ratings ──────────────────────────────────────────
+    val todayDesire: Int?,           // Q8
+    val todayComfort: Int?,          // Q9
+    val todayFocus: Int?,            // Q18
+    val todaySleep: Int?,            // Q15
 
     // ── 7-day rolling averages ────────────────────────────────────────────────
     val avg7Desire: Float,           // Q8
     val avg7Comfort: Float,          // Q9
     val avg7Focus: Float,            // Q18
     val avg7Sleep: Float,            // Q15
-
-    // ── Privacy toggle ────────────────────────────────────────────────────────
-    /** When false, [exposedDevice] is masked in the rendered card. */
-    val showSensitiveData: Boolean = false
 )

@@ -6,11 +6,14 @@
 package com.chastity.diary.ui.screens
 
 import android.app.Activity
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.exifinterface.media.ExifInterface
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -30,14 +33,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import com.chastity.diary.domain.model.rotatingQuestionTitleRes
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -54,6 +60,7 @@ import com.chastity.diary.domain.model.CardTheme
 import com.chastity.diary.domain.model.PatternType
 import com.chastity.diary.domain.model.TextColorScheme
 import com.chastity.diary.ui.theme.CardThemes
+import com.chastity.diary.util.Constants
 import com.chastity.diary.viewmodel.CardViewModel
 import java.time.format.DateTimeFormatter
 import kotlin.math.PI
@@ -64,14 +71,14 @@ import kotlin.math.sqrt
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 private val CARD_RATIO_W = 1080f
-private val CARD_RATIO_H = 1350f
+private val CARD_RATIO_H = 1920f
 private val CARD_DATE_FMT = DateTimeFormatter.ofPattern("yyyy / MM / dd")
 
 // ── SummaryCardContent ────────────────────────────────────────────────────────
 
 /**
  * The full-resolution card Composable.
- * Designed at 1080×1350 logical pixels; wrap in a scaled [Box] for previews.
+ * Designed at 1080×1920 logical pixels; wrap in a scaled [Box] for previews.
  *
  * Layer structure:
  * ```
@@ -141,6 +148,13 @@ fun SummaryCardContent(
                 subColor = subTextColor
             )
 
+            // Today's photo (shown only when user opts in and photo exists)
+            PhotoSection(
+                data = data,
+                textColor = textColor,
+                subColor = subTextColor
+            )
+
             // 7-day averages
             AvgSection(
                 data = data,
@@ -153,7 +167,8 @@ fun SummaryCardContent(
             CheckInsSection(
                 data = data,
                 accentColor = theme.accentColor,
-                textColor = textColor
+                textColor = textColor,
+                subColor = subTextColor
             )
 
             // Footer
@@ -310,11 +325,11 @@ private fun CardHeader(data: CardData, textColor: Color, subColor: Color) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Icon(Icons.Default.Lock, null, tint = textColor, modifier = Modifier.size(20.dp))
-            Text("CB diary", color = textColor, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Icon(Icons.Default.Lock, null, tint = textColor, modifier = Modifier.size((40).dp))
+            Text("CB diary", color = textColor, fontWeight = FontWeight.Bold, fontSize = (36).sp)
         }
-        Text(data.date.format(CARD_DATE_FMT), color = subColor, fontSize = 14.sp)
+        Text(data.date.format(CARD_DATE_FMT), color = subColor, fontSize = (28).sp)
     }
 }
 
@@ -324,20 +339,20 @@ private fun StreakSection(data: CardData, accentColor: Color, textColor: Color, 
         // Streak ring
         Box(contentAlignment = Alignment.Center) {
             CircleRing(progress = (data.currentStreak.toFloat() / data.longestStreak.toFloat().coerceAtLeast(1f)).coerceIn(0f, 1f),
-                accentColor = accentColor, size = 140.dp)
+                accentColor = accentColor, size = 280.dp)
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("🔥", fontSize = 28.sp)
+                Text("🔥", fontSize = 56.sp)
                 Text(
                     data.currentStreak.toString(),
-                    color = textColor, fontSize = 36.sp, fontWeight = FontWeight.ExtraBold
+                    color = textColor, fontSize = 72.sp, fontWeight = FontWeight.ExtraBold
                 )
-                Text(stringResource(R.string.card_days_streak), color = subColor, fontSize = 12.sp)
+                Text(stringResource(R.string.card_days_streak), color = subColor, fontSize = 24.sp)
             }
         }
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(8.dp))
         Text(
             "${stringResource(R.string.card_longest)}: ${data.longestStreak} ${stringResource(R.string.card_days)}",
-            color = subColor, fontSize = 13.sp
+            color = subColor, fontSize = 26.sp
         )
     }
 }
@@ -346,7 +361,7 @@ private fun StreakSection(data: CardData, accentColor: Color, textColor: Color, 
 private fun CircleRing(progress: Float, accentColor: Color, size: Dp) {
     val animP by animateFloatAsState(progress, label = "ring")
     Canvas(modifier = Modifier.size(size)) {
-        val stroke = 10f
+        val stroke = 20f
         val inset = stroke / 2
         // Track
         drawArc(
@@ -372,42 +387,88 @@ private fun CircleRing(progress: Float, accentColor: Color, size: Dp) {
 
 @Composable
 private fun TodaySection(data: CardData, accentColor: Color, textColor: Color, subColor: Color) {
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.card_today), color = subColor, fontSize = 11.sp,
+    // Map stored mood key (from Constants.MOODS) to the current-locale display label
+    val moodKeys = Constants.MOODS
+    val moodLabels = stringArrayResource(R.array.moods_array).toList()
+    val moodKeyIndex = if (data.morningMood != null) moodKeys.indexOf(data.morningMood) else -1
+    val displayMood = if (moodKeyIndex >= 0) moodLabels.getOrNull(moodKeyIndex) ?: data.morningMood
+                      else data.morningMood
+
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(stringResource(R.string.card_today), color = subColor, fontSize = 22.sp,
             fontWeight = FontWeight.Medium)
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            // Mood
-            Column {
-                Text(stringResource(R.string.card_mood), color = subColor, fontSize = 10.sp)
-                Text(data.morningMood ?: "—", color = textColor, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            }
-            // Morning energy
-            Column(horizontalAlignment = Alignment.End) {
-                Text(stringResource(R.string.card_morning_energy), color = subColor, fontSize = 10.sp)
-                Text(
-                    if (data.morningEnergy != null) "${data.morningEnergy}/10" else "—",
-                    color = textColor, fontSize = 16.sp, fontWeight = FontWeight.Bold
-                )
+        // All 6 today-fields in one unified row: mood · energy · desire · comfort · focus · sleep
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            listOf(
+                stringResource(R.string.card_mood)           to (displayMood ?: "—"),
+                stringResource(R.string.card_morning_energy) to (if (data.morningEnergy != null) "${data.morningEnergy}" else "—"),
+                stringResource(R.string.card_avg_desire)     to (if (data.todayDesire  != null) "${data.todayDesire}"  else "—"),
+                stringResource(R.string.card_avg_comfort)    to (if (data.todayComfort != null) "${data.todayComfort}" else "—"),
+                stringResource(R.string.card_avg_focus)      to (if (data.todayFocus   != null) "${data.todayFocus}"   else "—"),
+                stringResource(R.string.card_avg_sleep)      to (if (data.todaySleep   != null) "${data.todaySleep}"   else "—"),
+            ).forEach { (label, value) ->
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(value, color = accentColor, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+                    Text(label, color = subColor, fontSize = 26.sp)
+                }
             }
         }
 
-        // Self rating stars
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(stringResource(R.string.card_self_rating), color = subColor, fontSize = 10.sp)
-            Spacer(Modifier.width(4.dp))
-            val stars = data.selfRating ?: 0
-            repeat(5) { i ->
-                Text(if (i < stars) "★" else "☆", color = accentColor, fontSize = 18.sp)
+        // Self rating stars — removed from card (selfRating is recorded but not shown on card)
+    }
+}
+
+@Composable
+private fun PhotoSection(data: CardData, textColor: Color, subColor: Color) {
+    if (!data.showPhoto || data.photoPath == null) return
+
+    // Load bitmap synchronously with EXIF-corrected rotation (runs on composition thread;
+    // remember() only re-runs when photoPath changes, so main-thread cost is a one-off).
+    val (imgBitmap, isLandscape) = remember(data.photoPath) {
+        runCatching {
+            val opts = BitmapFactory.Options().apply { inSampleSize = 2 } // limit memory
+            val raw = BitmapFactory.decodeFile(data.photoPath, opts)
+                ?: return@runCatching null
+            val exif = ExifInterface(data.photoPath)
+            val degrees = when (exif.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
+            )) {
+                ExifInterface.ORIENTATION_ROTATE_90  -> 90f
+                ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+                ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+                else                                 -> 0f
             }
-        }
+            val rotated = if (degrees == 0f) raw
+            else Bitmap.createBitmap(
+                raw, 0, 0, raw.width, raw.height,
+                Matrix().apply { postRotate(degrees) }, true
+            )
+            rotated.asImageBitmap() to (rotated.width > rotated.height)
+        }.getOrNull()
+    } ?: return
+
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            stringResource(R.string.card_photo_section),
+            color = subColor, fontSize = 22.sp, fontWeight = FontWeight.Medium
+        )
+        Image(
+            bitmap = imgBitmap,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(if (isLandscape) 440.dp else 760.dp)
+                .clip(RoundedCornerShape(24.dp))
+        )
     }
 }
 
 @Composable
 private fun AvgSection(data: CardData, accentColor: Color, textColor: Color, subColor: Color) {
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(stringResource(R.string.card_7d_average), color = subColor, fontSize = 11.sp,
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+        Text(stringResource(R.string.card_7d_average), color = subColor, fontSize = 22.sp,
             fontWeight = FontWeight.Medium)
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             listOf(
@@ -418,8 +479,8 @@ private fun AvgSection(data: CardData, accentColor: Color, textColor: Color, sub
             ).forEach { (label, value) ->
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("%.1f".format(value), color = accentColor,
-                        fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    Text(label, color = subColor, fontSize = 9.sp)
+                        fontSize = 32.sp, fontWeight = FontWeight.Bold)
+                    Text(label, color = subColor, fontSize = 26.sp)
                 }
             }
         }
@@ -427,9 +488,9 @@ private fun AvgSection(data: CardData, accentColor: Color, textColor: Color, sub
 }
 
 @Composable
-private fun CheckInsSection(data: CardData, accentColor: Color, textColor: Color) {
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+private fun CheckInsSection(data: CardData, accentColor: Color, textColor: Color, subColor: Color) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
             CheckChip(
                 icon = if (data.exercised) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
                 label = stringResource(R.string.card_exercised),
@@ -437,27 +498,36 @@ private fun CheckInsSection(data: CardData, accentColor: Color, textColor: Color
                 accentColor = accentColor,
                 textColor = textColor
             )
-            if (data.showSensitiveData) {
-                CheckChip(
-                    icon = if (data.exposedDevice) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
-                    label = stringResource(R.string.card_device_exposed),
-                    active = data.exposedDevice,
-                    accentColor = accentColor,
-                    textColor = textColor
-                )
-            }
         }
-        // Rotating question
-        if (data.rotatingQuestionLabel != null && data.rotatingQuestionAnswer != null) {
-            Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Icon(Icons.Default.AutoAwesome, null, tint = accentColor,
-                    modifier = Modifier.size(14.dp).padding(top = 2.dp))
+        // Rotating questions — resolve strings here (Composable context = correct locale)
+        data.rotatingQuestions.forEach { (key, rawValue) ->
+            val titleRes = rotatingQuestionTitleRes(key) ?: return@forEach
+            val label  = stringResource(titleRes)
+            val answer = when (rawValue) {
+                "true"  -> stringResource(R.string.chip_yes)
+                "false" -> stringResource(R.string.chip_no)
+                else    -> rawValue
+            }
+            Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Icon(Icons.Default.AutoAwesome, null, tint = accentColor,
+                        modifier = Modifier.size(28.dp))
+                    Text(
+                        label,
+                        color = subColor,
+                        fontSize = 24.sp,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
                 Text(
-                    "「${data.rotatingQuestionAnswer}」",
+                    "「${answer}」",
                     color = textColor,
-                    fontSize = 12.sp,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(start = 40.dp)
                 )
             }
         }
@@ -472,10 +542,10 @@ private fun CheckChip(
     accentColor: Color,
     textColor: Color
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Icon(icon, null, tint = if (active) accentColor else textColor.copy(alpha = 0.4f),
-            modifier = Modifier.size(16.dp))
-        Text(label, color = if (active) textColor else textColor.copy(alpha = 0.4f), fontSize = 11.sp)
+            modifier = Modifier.size(32.dp))
+        Text(label, color = if (active) textColor else textColor.copy(alpha = 0.4f), fontSize = 22.sp)
     }
 }
 
@@ -483,10 +553,24 @@ private fun CheckChip(
 private fun CardFooter(textColor: Color) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("CB Diary  •  chastity.diary", color = textColor, fontSize = 10.sp)
+        Text("CB Diary  •  chastity.diary", color = textColor, fontSize = 24.sp)
+        // QR code / app link placeholder — reserved for a future update
+        Canvas(modifier = Modifier.size(112.dp)) {
+            val dashOn = 6f; val dashOff = 4f
+            drawRoundRect(
+                color = textColor.copy(alpha = 0.35f),
+                cornerRadius = CornerRadius(6.dp.toPx()),
+                style = androidx.compose.ui.graphics.drawscope.Stroke(
+                    width = 1.dp.toPx(),
+                    pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(
+                        floatArrayOf(dashOn, dashOff)
+                    )
+                )
+            )
+        }
     }
 }
 
@@ -509,39 +593,13 @@ fun CardBottomSheet(
     val cardData by viewModel.cardData.collectAsState()
     val selectedTheme by viewModel.selectedTheme.collectAsState()
     val themes by viewModel.availableThemes.collectAsState()
-    val sponsorUnlocked by viewModel.sponsorUnlocked.collectAsState()
     val isRendering by viewModel.isRendering.collectAsState()
-
-    var showSponsorDialog by remember { mutableStateOf(false) }
-    var snackMessage by remember { mutableStateOf<String?>(null) }
-    val snackState = remember { SnackbarHostState() }
-
-    // Import launcher
-    val importLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri ?: return@rememberLauncherForActivityResult
-        viewModel.importTemplate(uri) { errResId ->
-            snackMessage = if (errResId == null)
-                context.getString(R.string.card_import_success)
-            else
-                context.getString(errResId)
-        }
-    }
-
-    LaunchedEffect(snackMessage) {
-        snackMessage?.let {
-            snackState.showSnackbar(it)
-            snackMessage = null
-        }
-    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ) {
-        Scaffold(snackbarHost = { SnackbarHost(snackState) },
-            containerColor = Color.Transparent) { padding ->
+        Scaffold(containerColor = Color.Transparent) { padding ->
             Column(
                 modifier = Modifier
                     .padding(padding)
@@ -559,28 +617,43 @@ fun CardBottomSheet(
 
                 // ── Card preview ─────────────────────────────────────────────
                 if (cardData != null) {
-                    Box(
+                    // Correct Compose scaling: the `layout` modifier reports the
+                    // SCALED dimensions to the layout system so no overflow occurs,
+                    // while placeWithLayer applies the visual scale from the top-left.
+                    BoxWithConstraints(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(CARD_RATIO_W / CARD_RATIO_H)
                             .padding(horizontal = 16.dp)
-                            .clip(RoundedCornerShape(16.dp)),
-                        contentAlignment = Alignment.Center
+                            .aspectRatio(CARD_RATIO_W / CARD_RATIO_H)
+                            .clip(RoundedCornerShape(16.dp))
                     ) {
-                        val previewScale = remember { mutableStateOf(1f) }
-                        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                            val scale = maxWidth.value / CARD_RATIO_W
-                            previewScale.value = scale
-                            Box(
-                                modifier = Modifier
-                                    .size(CARD_RATIO_W.dp, CARD_RATIO_H.dp)
-                                    .scale(scale)
-                            ) {
-                                SummaryCardContent(
-                                    data = cardData!!,
-                                    theme = selectedTheme
+                        val scaleFactor = maxWidth.value / CARD_RATIO_W
+                        Box(
+                            modifier = Modifier.layout { measurable, _ ->
+                                val cardWPx = (CARD_RATIO_W * density).toInt()
+                                val cardHPx = (CARD_RATIO_H * density).toInt()
+                                val placeable = measurable.measure(
+                                    androidx.compose.ui.unit.Constraints(
+                                        minWidth = cardWPx, maxWidth = cardWPx,
+                                        minHeight = cardHPx, maxHeight = cardHPx
+                                    )
                                 )
+                                layout(
+                                    (cardWPx * scaleFactor).toInt(),
+                                    (cardHPx * scaleFactor).toInt()
+                                ) {
+                                    placeable.placeWithLayer(0, 0) {
+                                        scaleX = scaleFactor
+                                        scaleY = scaleFactor
+                                        transformOrigin = TransformOrigin(0f, 0f)
+                                    }
+                                }
                             }
+                        ) {
+                            SummaryCardContent(
+                                data = cardData!!,
+                                theme = selectedTheme
+                            )
                         }
                     }
                 } else {
@@ -615,26 +688,18 @@ fun CardBottomSheet(
                         ThemeChip(
                             theme = theme,
                             selected = selectedTheme.id == theme.id,
-                            unlocked = sponsorUnlocked || !theme.isPremium,
-                            onSelect = {
-                                if (sponsorUnlocked || !theme.isPremium) {
-                                    viewModel.selectTheme(theme.id)
-                                } else {
-                                    showSponsorDialog = true
-                                }
-                            },
+                            unlocked = true,
+                            onSelect = { viewModel.selectTheme(theme.id) },
                             onDelete = theme.userTemplateId?.let {
                                 { viewModel.deleteUserTemplate(it) }
                             }
                         )
                     }
-                    // ＋ Import template button
-                    item {
-                        ImportThemeChip(onClick = { importLauncher.launch("application/zip") })
-                    }
                 }
 
-                // ── Sensitive data toggle ────────────────────────────────────
+                // ── Photo toggle ─────────────────────────────────────────────
+                val showPhoto by viewModel.showPhoto.collectAsState()
+                val hasPhoto = cardData?.photoPath != null
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -642,17 +707,17 @@ fun CardBottomSheet(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
-                        Text(stringResource(R.string.card_show_sensitive),
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(stringResource(R.string.card_show_photo),
                             style = MaterialTheme.typography.bodyMedium)
-                        Text(stringResource(R.string.card_show_sensitive_hint),
+                        Text(stringResource(R.string.card_show_photo_hint),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                    val showSensitive by viewModel.showSensitiveData.collectAsState()
                     Switch(
-                        checked = showSensitive,
-                        onCheckedChange = { viewModel.showSensitiveData.value = it }
+                        checked = showPhoto && hasPhoto,
+                        enabled = hasPhoto,
+                        onCheckedChange = { viewModel.showPhoto.value = it }
                     )
                 }
 
@@ -695,17 +760,6 @@ fun CardBottomSheet(
         }
     }
 
-    // ── Sponsor code dialog ───────────────────────────────────────────────────
-    if (showSponsorDialog) {
-        SponsorCodeDialog(
-            onDismiss = { showSponsorDialog = false },
-            onSubmit = { code ->
-                val ok = viewModel.submitSponsorCode(code)
-                if (ok) showSponsorDialog = false
-                ok
-            }
-        )
-    }
 }
 
 // ── ThemeChip ─────────────────────────────────────────────────────────────────

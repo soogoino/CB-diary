@@ -28,7 +28,7 @@ data class CardTemplateSpec(
     @SerializedName("overlay_opacity") val overlayOpacity: Float = 0f,
     @SerializedName("safe_zones") val safeZones: SafeZones = SafeZones()
 ) {
-    data class CanvasSize(val width: Int = 1080, val height: Int = 1350)
+    data class CanvasSize(val width: Int = 1080, val height: Int = 1920)
 
     data class SafeZones(
         val header: ZoneRect = ZoneRect(top = 60, left = 60, right = 60, height = 100),

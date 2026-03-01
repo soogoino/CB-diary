@@ -16,6 +16,7 @@ import com.chastity.diary.data.repository.StreakRepository
 import com.chastity.diary.domain.model.CardData
 import com.chastity.diary.domain.model.CardTheme
 import com.chastity.diary.domain.model.DailyEntry
+import com.chastity.diary.domain.model.rotatingQuestionTitleRes
 import com.chastity.diary.ui.screens.SummaryCardContent
 import com.chastity.diary.ui.theme.CardThemes
 import com.chastity.diary.util.CardRenderer
@@ -79,10 +80,10 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // ── Privacy toggle ─────────────────────────────────────────────────────────
+    // ── Photo toggle ────────────────────────────────────────────────────────
 
-    /** Whether to show sensitive fields (exposed device status) on the card. */
-    val showSensitiveData = MutableStateFlow(false)
+    /** Whether to include today’s photo on the generated card (user opt-in). */
+    val showPhoto = MutableStateFlow(false)
 
     // ── Card data ─────────────────────────────────────────────────────────────
 
@@ -91,14 +92,14 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
      * Re-emits automatically whenever the database or streak changes.
      */
     val cardData: StateFlow<CardData?> = combine(
-        entryRepo.getAllEntries(),
+        entryRepo.getAllEntries(),                                   // for 7-day averages
+        entryRepo.getEntryByDateWithAttributesFlow(LocalDate.now()), // today with rotatingAnswers
         streakRepo.currentStreak,
         streakRepo.longestStreak,
-        showSensitiveData
-    ) { allEntries, curStreak, longestStreak, showSensitive ->
+        showPhoto
+    ) { allEntries, todayEntryOrNull, curStreak, longestStreak, showPhoto ->
         val today = LocalDate.now()
-        val todayEntry: DailyEntry = allEntries.find { it.date == today }
-            ?: return@combine null
+        val todayEntry: DailyEntry = todayEntryOrNull ?: return@combine null
 
         // 7-day rolling window
         val sevenDaysAgo = today.minusDays(6)
@@ -107,8 +108,12 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
         fun List<DailyEntry>.avg(selector: (DailyEntry) -> Float?) =
             mapNotNull(selector).average().let { if (it.isNaN()) 0f else it.toFloat() }
 
-        // Rotating question: take the first answer from today's rotatingAnswers map
-        val rotatingPair = todayEntry.rotatingAnswers.entries.firstOrNull()
+        // Rotating questions: collect ALL answered questions for today.
+        // Store raw (key, rawValue) — string resolution happens in the Composable
+        // so it always uses the correct current-locale context.
+        val rotatingQuestions = todayEntry.rotatingAnswers.entries
+            .filter { (key, _) -> rotatingQuestionTitleRes(key) != null }  // skip unknown keys
+            .map { (key, value) -> key to value }
 
         CardData(
             date = today,
@@ -116,16 +121,18 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
             longestStreak = longestStreak,
             morningMood = todayEntry.morningMood,
             morningEnergy = todayEntry.morningEnergy,
-            selfRating = todayEntry.selfRating,
             exercised = todayEntry.exercised,
-            exposedDevice = todayEntry.exposedLock,
-            rotatingQuestionLabel = rotatingPair?.key,
-            rotatingQuestionAnswer = rotatingPair?.value,
+            photoPath = todayEntry.photoPath,
+            showPhoto = showPhoto,
+            rotatingQuestions = rotatingQuestions,
+            todayDesire = todayEntry.desireLevel,
+            todayComfort = todayEntry.comfortRating,
+            todayFocus = todayEntry.focusLevel,
+            todaySleep = todayEntry.sleepQuality,
             avg7Desire = recentEntries.avg { it.desireLevel?.toFloat() },
             avg7Comfort = recentEntries.avg { it.comfortRating?.toFloat() },
             avg7Focus = recentEntries.avg { it.focusLevel?.toFloat() },
             avg7Sleep = recentEntries.avg { it.sleepQuality?.toFloat() },
-            showSensitiveData = showSensitive
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
