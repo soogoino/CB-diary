@@ -61,6 +61,7 @@ import com.chastity.diary.domain.model.PatternType
 import com.chastity.diary.domain.model.TextColorScheme
 import com.chastity.diary.ui.theme.CardThemes
 import com.chastity.diary.util.Constants
+import com.chastity.diary.util.QrCodeUtil
 import com.chastity.diary.viewmodel.CardViewModel
 import java.time.format.DateTimeFormatter
 import kotlin.math.PI
@@ -551,26 +552,27 @@ private fun CheckChip(
 
 @Composable
 private fun CardFooter(textColor: Color) {
+    val qrBitmap = remember(textColor) {
+        QrCodeUtil.generateQrBitmap(
+            content = "https://soogoino.github.io/CB-diary/#",
+            size = 256,
+            foregroundColor = textColor.copy(alpha = 1f).toArgb(),
+            backgroundColor = android.graphics.Color.TRANSPARENT,
+            margin = 1,
+        )
+    }
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text("CB Diary  •  chastity.diary", color = textColor, fontSize = 24.sp)
-        // QR code / app link placeholder — reserved for a future update
-        Canvas(modifier = Modifier.size(112.dp)) {
-            val dashOn = 6f; val dashOff = 4f
-            drawRoundRect(
-                color = textColor.copy(alpha = 0.35f),
-                cornerRadius = CornerRadius(6.dp.toPx()),
-                style = androidx.compose.ui.graphics.drawscope.Stroke(
-                    width = 1.dp.toPx(),
-                    pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(
-                        floatArrayOf(dashOn, dashOff)
-                    )
-                )
-            )
-        }
+        Image(
+            bitmap = qrBitmap.asImageBitmap(),
+            contentDescription = "CB Diary QR Code",
+            modifier = Modifier.size(112.dp),
+            colorFilter = null,
+        )
     }
 }
 

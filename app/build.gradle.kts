@@ -161,6 +161,9 @@ dependencies {
 
     // Gson for JSON serialization
     implementation("com.google.code.gson:gson:2.10.1")
+
+    // ZXing — QR code generation (core only, no Android UI dependency)
+    implementation("com.google.zxing:core:3.5.3")
     
     // Testing
     testImplementation("junit:junit:4.13.2")
