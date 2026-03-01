@@ -40,7 +40,7 @@ app/google-services.json
 
 # Backup files
 *.bak
-.github/
+.github/prompts/
 
 # bisect tool artifacts
 .bisect*/
