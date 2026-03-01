@@ -43,7 +43,14 @@ Builds:
     gradle:
       - release
 
+  - versionName: 1.0.3
+    versionCode: 4
+    commit: v1.0.3
+    subdir: app
+    gradle:
+      - release
+
 AutoUpdateMode: Version v%v
 UpdateCheckMode: Tags ^v[0-9]+\.[0-9]+\.[0-9]+$
-CurrentVersion: 1.0.0
-CurrentVersionCode: 1
+CurrentVersion: 1.0.3
+CurrentVersionCode: 4

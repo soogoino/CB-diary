@@ -45,3 +45,5 @@ app/google-services.json
 # bisect tool artifacts
 .bisect*/
 .bisect_bad_element_*.xml
+
+promotion.md
