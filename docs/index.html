@@ -280,6 +280,26 @@
     .open-card p { color: var(--sub); font-size: .82rem; line-height: 1.55; }
 
     /* ── Footer ──────────────────────────────────────────────────────── */
+    /* ── Support ─────────────────────────────────────────────────────── */
+    #support { background: var(--bg); text-align: center; padding: 64px 32px; }
+    #support .section-sub { margin: 12px auto 36px; }
+    .donate-btns {
+      display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+    }
+    .donate-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 12px 24px; border-radius: 10px;
+      font-size: .9rem; font-weight: 700;
+      text-decoration: none; transition: transform .15s, box-shadow .15s;
+    }
+    .donate-btn:hover { transform: translateY(-2px); }
+    .donate-bmac { background: #ffdd00; color: #000; box-shadow: 0 4px 20px rgba(255,221,0,.3); }
+    .donate-bmac:hover { box-shadow: 0 6px 28px rgba(255,221,0,.5); }
+    .donate-kofi { background: #F16061; color: #fff; box-shadow: 0 4px 20px rgba(241,96,97,.3); }
+    .donate-kofi:hover { box-shadow: 0 6px 28px rgba(241,96,97,.5); }
+    .donate-afdian { background: #946CE6; color: #fff; box-shadow: 0 4px 20px rgba(148,108,230,.3); }
+    .donate-afdian:hover { box-shadow: 0 6px 28px rgba(148,108,230,.5); }
+
     footer {
       padding: 40px 32px; text-align: center;
       border-top: 1px solid var(--border);
@@ -583,6 +603,29 @@
   </div>
 </section>
 
+<!-- ── Support ──────────────────────────────────────────────────────────────── -->
+<section id="support">
+  <div class="container">
+    <div class="section-label" data-i18n="support.label"></div>
+    <div class="section-title" data-i18n="support.title"></div>
+    <p class="section-sub" data-i18n="support.sub"></p>
+    <div class="donate-btns">
+      <a href="https://buymeacoffee.com/soogoino" class="donate-btn donate-bmac"
+         target="_blank" rel="noopener">
+        ☕ Buy Me a Coffee
+      </a>
+      <a href="https://ko-fi.com/soogoino" class="donate-btn donate-kofi"
+         target="_blank" rel="noopener">
+        ❤ Ko-fi
+      </a>
+      <a href="https://afdian.com/a/soogoino" class="donate-btn donate-afdian"
+         target="_blank" rel="noopener">
+        ⚡ 爱发电
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- ── Footer ─────────────────────────────────────────────────────────────── -->
 <footer>
   <p>
@@ -684,7 +727,11 @@ const T = {
     "open.c3.desc":    "歡迎透過 Issue 回報問題或提出功能建議，也歡迎送出 Pull Request 一起改善這個 App。",
     "open.btn":        "查看 GitHub Repository ↗",
 
-    "footer.note":     "此應用為個人日記工具，所有資料僅儲存於你的裝置本機。"
+    "footer.note":     "此應用為個人日記工具，所有資料僅儲存於你的裝置本機。",
+
+    "support.label":   "支持開發",
+    "support.title":   "如果你覺得這個 App 有幫助",
+    "support.sub":     "CB Diary 永遠免費開源。若你想支持開發者繼續維護與改善這個專案，歡迎透過以下平台贊助 ☕"
   },
 
   en: {
@@ -775,7 +822,11 @@ const T = {
     "open.c3.desc":    "Open an Issue to report bugs or suggest features, or submit a Pull Request to help improve the app.",
     "open.btn":        "View GitHub Repository ↗",
 
-    "footer.note":     "This app is a personal journal tool. All data is stored locally on your device."
+    "footer.note":     "This app is a personal journal tool. All data is stored locally on your device.",
+
+    "support.label":   "Support Development",
+    "support.title":   "If CB Diary has been helpful to you",
+    "support.sub":     "CB Diary is and will always be free and open-source. If you'd like to support the developer, any contribution is deeply appreciated ☕"
   }
 };
 
