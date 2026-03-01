@@ -4,7 +4,7 @@
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/soogoino)
 [![Ko-Fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/soogoino)
-<!-- [![爱发电](https://afdian.moeci.com/YOUR_AFDIAN_USER_ID/YOUR_AFDIAN_TOKEN/badge.svg)](https://afdian.com/a/soogoino) -->
+[![爱发电](https://afdian.moeci.com/YOUR_AFDIAN_USER_ID/YOUR_AFDIAN_TOKEN/badge.svg)](https://afdian.com/a/soogoino)
 
 <!--START_SECTION:buy-me-a-coffee-->
 <!--END_SECTION:buy-me-a-coffee-->
