@@ -85,55 +85,71 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
     /** Whether to include today’s photo on the generated card (user opt-in). */
     val showPhoto = MutableStateFlow(false)
 
+    // ── Target date ───────────────────────────────────────────────────────────
+
+    /**
+     * The date for which the card should be generated.
+     * Defaults to today; updated by [setDate] when the user opens the sheet
+     * while viewing a non-today entry.
+     */
+    private val _targetDate = MutableStateFlow(LocalDate.now())
+
+    /** Update the card date; resets [showPhoto] to avoid stale state. */
+    fun setDate(date: LocalDate) {
+        _targetDate.value = date
+        showPhoto.value = false
+    }
+
     // ── Card data ─────────────────────────────────────────────────────────────
 
     /**
-     * Resolved card data for today, or null if no entry exists yet.
-     * Re-emits automatically whenever the database or streak changes.
+     * Resolved card data for [_targetDate], or null if no entry exists yet.
+     * Re-emits automatically whenever the database, streak or target date changes.
      */
-    val cardData: StateFlow<CardData?> = combine(
-        entryRepo.getAllEntries(),                                   // for 7-day averages
-        entryRepo.getEntryByDateWithAttributesFlow(LocalDate.now()), // today with rotatingAnswers
-        streakRepo.currentStreak,
-        streakRepo.longestStreak,
-        showPhoto
-    ) { allEntries, todayEntryOrNull, curStreak, longestStreak, showPhoto ->
-        val today = LocalDate.now()
-        val todayEntry: DailyEntry = todayEntryOrNull ?: return@combine null
+    val cardData: StateFlow<CardData?> = _targetDate.flatMapLatest { targetDate ->
+        combine(
+            entryRepo.getAllEntries(),                                        // for 7-day averages
+            entryRepo.getEntryByDateWithAttributesFlow(targetDate),           // target date entry
+            streakRepo.currentStreak,
+            streakRepo.longestStreak,
+            showPhoto
+        ) { allEntries, entryOrNull, curStreak, longestStreak, showPhoto ->
+            val entry: DailyEntry = entryOrNull ?: return@combine null
 
-        // 7-day rolling window
-        val sevenDaysAgo = today.minusDays(6)
-        val recentEntries = allEntries.filter { !it.date.isBefore(sevenDaysAgo) }
+            // 7-day rolling window
+            val sevenDaysAgo = targetDate.minusDays(6)
+            val recentEntries = allEntries.filter { !it.date.isBefore(sevenDaysAgo) }
 
-        fun List<DailyEntry>.avg(selector: (DailyEntry) -> Float?) =
-            mapNotNull(selector).average().let { if (it.isNaN()) 0f else it.toFloat() }
+            fun List<DailyEntry>.avg(selector: (DailyEntry) -> Float?) =
+                mapNotNull(selector).average().let { if (it.isNaN()) 0f else it.toFloat() }
 
-        // Rotating questions: collect ALL answered questions for today.
-        // Store raw (key, rawValue) — string resolution happens in the Composable
-        // so it always uses the correct current-locale context.
-        val rotatingQuestions = todayEntry.rotatingAnswers.entries
-            .filter { (key, _) -> rotatingQuestionTitleRes(key) != null }  // skip unknown keys
-            .map { (key, value) -> key to value }
+            // Rotating questions: collect ALL answered questions for the target date.
+            // Store raw (key, rawValue) — string resolution happens in the Composable
+            // so it always uses the correct current-locale context.
+            val rotatingQuestions = entry.rotatingAnswers.entries
+                .filter { (key, _) -> rotatingQuestionTitleRes(key) != null }  // skip unknown keys
+                .map { (key, value) -> key to value }
 
-        CardData(
-            date = today,
-            currentStreak = curStreak,
-            longestStreak = longestStreak,
-            morningMood = todayEntry.morningMood,
-            morningEnergy = todayEntry.morningEnergy,
-            exercised = todayEntry.exercised,
-            photoPath = todayEntry.photoPath,
-            showPhoto = showPhoto,
-            rotatingQuestions = rotatingQuestions,
-            todayDesire = todayEntry.desireLevel,
-            todayComfort = todayEntry.comfortRating,
-            todayFocus = todayEntry.focusLevel,
-            todaySleep = todayEntry.sleepQuality,
-            avg7Desire = recentEntries.avg { it.desireLevel?.toFloat() },
-            avg7Comfort = recentEntries.avg { it.comfortRating?.toFloat() },
-            avg7Focus = recentEntries.avg { it.focusLevel?.toFloat() },
-            avg7Sleep = recentEntries.avg { it.sleepQuality?.toFloat() },
-        )
+            CardData(
+                date = targetDate,
+                currentStreak = curStreak,
+                longestStreak = longestStreak,
+                morningMood = entry.morningMood,
+                morningEnergy = entry.morningEnergy,
+                exercised = entry.exercised,
+                photoPath = entry.photoPath,
+                showPhoto = showPhoto,
+                rotatingQuestions = rotatingQuestions,
+                todayDesire = entry.desireLevel,
+                todayComfort = entry.comfortRating,
+                todayFocus = entry.focusLevel,
+                todaySleep = entry.sleepQuality,
+                avg7Desire = recentEntries.avg { it.desireLevel?.toFloat() },
+                avg7Comfort = recentEntries.avg { it.comfortRating?.toFloat() },
+                avg7Focus = recentEntries.avg { it.focusLevel?.toFloat() },
+                avg7Sleep = recentEntries.avg { it.sleepQuality?.toFloat() },
+            )
+        }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     // ── Generate + share/save ─────────────────────────────────────────────────

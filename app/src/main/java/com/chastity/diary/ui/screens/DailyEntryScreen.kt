@@ -1300,7 +1300,7 @@ private fun DailyEntryTabContent(
 
     // ── Card bottom sheet ──────────────────────────────────────────────────────
     if (showCardSheet) {
-        CardBottomSheet(onDismiss = { showCardSheet = false })
+        CardBottomSheet(onDismiss = { showCardSheet = false }, date = selectedDate)
     }
 
     // ── Time pickers (morning only) ────────────────────────────────────────────

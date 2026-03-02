@@ -64,6 +64,7 @@ import com.chastity.diary.ui.theme.CardThemes
 import com.chastity.diary.util.Constants
 import com.chastity.diary.util.QrCodeUtil
 import com.chastity.diary.viewmodel.CardViewModel
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.PI
 import kotlin.math.cos
@@ -588,8 +589,12 @@ private fun CardFooter(textColor: Color) {
 @Composable
 fun CardBottomSheet(
     onDismiss: () -> Unit,
+    date: LocalDate = LocalDate.now(),
     viewModel: CardViewModel = viewModel()
 ) {
+    // Sync the target date into the ViewModel whenever the sheet opens for a different date.
+    LaunchedEffect(date) { viewModel.setDate(date) }
+
     val context = LocalContext.current
     val activity = LocalContext.current as? Activity
 
