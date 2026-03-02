@@ -1,0 +1,2 @@
+• Show toast prompt when toggling "show photo" in card sheet without a check-in photo
+• Fix: card sheet for past entries now correctly loads that day's photo and data
