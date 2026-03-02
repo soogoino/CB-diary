@@ -7,6 +7,7 @@ package com.chastity.diary.ui.screens
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.widget.Toast
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
@@ -702,25 +703,44 @@ fun CardBottomSheet(
                 // ── Photo toggle ─────────────────────────────────────────────
                 val showPhoto by viewModel.showPhoto.collectAsState()
                 val hasPhoto = cardData?.photoPath != null
-                Row(
+                val context = LocalContext.current
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(horizontal = 16.dp)
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(stringResource(R.string.card_show_photo),
-                            style = MaterialTheme.typography.bodyMedium)
-                        Text(stringResource(R.string.card_show_photo_hint),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(stringResource(R.string.card_show_photo),
+                                style = MaterialTheme.typography.bodyMedium)
+                            Text(stringResource(R.string.card_show_photo_hint),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        Switch(
+                            checked = showPhoto && hasPhoto,
+                            enabled = hasPhoto,
+                            onCheckedChange = { viewModel.showPhoto.value = it }
+                        )
                     }
-                    Switch(
-                        checked = showPhoto && hasPhoto,
-                        enabled = hasPhoto,
-                        onCheckedChange = { viewModel.showPhoto.value = it }
-                    )
+                    // 無照片時以透明覆蓋層攔截點擊，顯示提示 Toast
+                    if (!hasPhoto) {
+                        Spacer(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .clickable {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.card_photo_required),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                        )
+                    }
                 }
 
                 // ── Action buttons ───────────────────────────────────────────

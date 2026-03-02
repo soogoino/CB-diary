@@ -796,6 +796,7 @@
     <string name="card_import_template">匯入</string>
     <string name="card_show_photo">顯示今日照片</string>
     <string name="card_show_photo_hint">將今日照片加入卡片</string>
+    <string name="card_photo_required">請先拍照打卡，才能將照片加入卡片</string>
     <string name="card_save">儲存至相簿</string>
     <string name="card_share">分享</string>
     <string name="card_no_entry_today">今天尚無記錄\n請先填寫每日日記。</string>
