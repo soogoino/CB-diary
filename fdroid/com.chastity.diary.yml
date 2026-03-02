@@ -61,3 +61,7 @@ AutoUpdateMode: Version v%v
 UpdateCheckMode: Tags ^v[0-9]+\.[0-9]+\.[0-9]+$
 CurrentVersion: 1.0.4
 CurrentVersionCode: 5
+
+# Extract with: keytool -list -keystore <jks> -storepass <pass>
+# Then strip colons and lowercase.
+AllowedAPKSigningKeys: 70b36e3fee2ef41bb7218817370e5b5792a215d0afd2369efdc231df14938039

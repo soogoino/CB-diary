@@ -1,0 +1,5 @@
+• Add GitHub Pages website link badge to README (EN & ZH-TW)
+• Add QR code in summary card footer linking to project page
+• Add GitHub Actions release workflow (signed APK on tag push)
+• Landing page: sponsor support section with donation buttons
+• Landing page: bilingual ZH/EN toggle with nav quick-jump links

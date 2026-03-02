@@ -1,0 +1,5 @@
+• 在 README（EN & ZH-TW）加入 GitHub Pages 網站連結徽章
+• 在摘要卡片頁尾加入 QR Code，連結至專案頁面
+• 加入 GitHub Actions 發布流程（推送 tag 時自動建置簽署 APK）
+• 贊助者支援區塊與捐款按鈕
+• 登陸頁：雙語中英切換與快速跳轉導覽連結
