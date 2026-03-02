@@ -168,7 +168,8 @@ cd CB-diary-A
 - [ ] Unit tests / UI tests
 - [ ] Custom card layout styles
 - [ ] Home screen Widget
-
+- [ ] Lockbox integration
+- [ ] Social features (binding, community)
 ---
 
 ## Privacy & Security
