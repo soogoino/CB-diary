@@ -182,13 +182,24 @@ object TemplateImporter {
                         androidx.compose.ui.graphics.Color.Black,
                     textColorScheme = textScheme,
                     overlayOpacity = spec.overlayOpacity,
-                    userTemplateId = uuid
+                    userTemplateId = uuid,
+                    displayName = File(dir, "name.txt").takeIf { it.exists() }?.readText()?.trim()?.ifBlank { null }
                 )
             } catch (e: Exception) {
                 null // skip corrupted entries
             }
         } ?: emptyList()
     }
+
+    /**
+     * Renames a user-imported template by writing (or deleting) `name.txt` inside its directory.
+     * A blank [name] clears the stored name so the generic label is used.
+     */
+    suspend fun renameTemplate(context: Context, uuid: String, name: String) =
+        withContext(Dispatchers.IO) {
+            val nameFile = File(context.filesDir, "templates/$uuid/name.txt")
+            if (name.isBlank()) nameFile.delete() else nameFile.writeText(name.trim())
+        }
 
     /**
      * Imports a single PNG/JPG image as a card background.

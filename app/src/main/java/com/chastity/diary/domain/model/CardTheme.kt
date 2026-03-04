@@ -45,5 +45,7 @@ data class CardTheme(
     /** 0.0 = no overlay; >0 = semi-transparent black/white scrim for readability */
     val overlayOpacity: Float = 0f,
     /** null = built-in; non-null = user-imported template id stored in filesDir */
-    val userTemplateId: String? = null
+    val userTemplateId: String? = null,
+    /** User-given display name for custom templates; null = show generic string resource */
+    val displayName: String? = null
 )

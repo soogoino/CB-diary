@@ -56,6 +56,9 @@ import com.chastity.diary.util.Constants
 import com.chastity.diary.MainActivity
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import com.chastity.diary.viewmodel.DailyEntryViewModel
+import com.chastity.diary.viewmodel.CardViewModel
+import com.chastity.diary.domain.model.TextColorScheme
+import android.widget.Toast
 import com.chastity.diary.viewmodel.EntryFormState
 import com.chastity.diary.viewmodel.SettingsViewModel
 import java.io.File
@@ -1046,6 +1049,26 @@ private fun DailyEntryTabContent(
     val timeFmt = DateTimeFormatter.ofPattern("HH:mm")
     var showCardSheet by remember { mutableStateOf(false) }
 
+    // Image picker for card backgrounds — registered at this level (outside ModalBottomSheet)
+    // so the ActivityResult callback is never lost when the sheet is obscured by the picker UI.
+    val cardViewModel: CardViewModel = viewModel()
+    val cardPickerContext = LocalContext.current
+    val cardImagePickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) {
+            cardViewModel.importSingleImage(uri, TextColorScheme.LIGHT) { errorResId ->
+                if (errorResId != null) {
+                    Toast.makeText(
+                        cardPickerContext,
+                        cardPickerContext.getString(errorResId),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
     // ── Shared scrollable wrapper ──────────────────────────────────────────────
     Column(
         Modifier
@@ -1300,7 +1323,11 @@ private fun DailyEntryTabContent(
 
     // ── Card bottom sheet ──────────────────────────────────────────────────────
     if (showCardSheet) {
-        CardBottomSheet(onDismiss = { showCardSheet = false }, date = selectedDate)
+        CardBottomSheet(
+            onDismiss = { showCardSheet = false },
+            date = selectedDate,
+            onPickImage = { cardImagePickerLauncher.launch("image/*") }
+        )
     }
 
     // ── Time pickers (morning only) ────────────────────────────────────────────

@@ -268,6 +268,7 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
             val result = TemplateImporter.importSingleImage(getApplication(), imageUri, scheme)
             result.onSuccess { theme ->
                 _userTemplates.value = _userTemplates.value + theme
+                settingsRepo.updateCardThemeId(theme.id)  // auto-select the new theme
                 onResult(null)
             }.onFailure { err ->
                 val resId = (err as? TemplateImporter.ImportException)?.messageResId
@@ -286,6 +287,7 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
             val result = TemplateImporter.import(getApplication(), zipUri)
             result.onSuccess { theme ->
                 _userTemplates.value = _userTemplates.value + theme
+                settingsRepo.updateCardThemeId(theme.id)  // auto-select the new theme
                 onResult(null)
             }.onFailure { err ->
                 val resId = (err as? TemplateImporter.ImportException)?.messageResId
@@ -308,6 +310,22 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
                 settingsRepo.updateCardThemeId("midnight")
             }
             TemplateImporter.delete(getApplication(), userTemplateId)
+        }
+    }
+
+    /**
+     * Renames a user-imported template in-memory and persists the name to
+     * `templates/<uuid>/name.txt` via [TemplateImporter.renameTemplate].
+     * A blank [newName] clears the custom name (reverts to generic label).
+     */
+    fun renameUserTemplate(userTemplateId: String, newName: String) {
+        viewModelScope.launch {
+            val trimmed = newName.trim()
+            _userTemplates.value = _userTemplates.value.map { theme ->
+                if (theme.userTemplateId != userTemplateId) return@map theme
+                theme.copy(displayName = trimmed.ifBlank { null })
+            }
+            TemplateImporter.renameTemplate(getApplication(), userTemplateId, trimmed)
         }
     }
 

@@ -854,6 +854,13 @@
     <string name="card_show_photo_hint">Include today\'s photo on the card</string>
     <string name="card_text_backdrop">Text Background</string>
     <string name="card_text_backdrop_hint">Adds a translucent backdrop behind text on custom image cards</string>
+    <string name="card_template_name">Card Name</string>
+    <string name="card_template_name_hint">Untitled card</string>
+    <string name="card_template_name_save">Save name</string>
+    <string name="card_template_edit_title">Edit Card</string>
+    <string name="card_template_delete">Delete</string>
+    <string name="card_template_delete_confirm">Delete this card?</string>
+    <string name="card_template_delete_hint">This action cannot be undone.</string>
     <string name="card_photo_required">Take a check-in photo first before adding it to the card</string>
     <string name="card_save">Save</string>
     <string name="card_share">Share</string>

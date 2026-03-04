@@ -20,9 +20,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -619,6 +621,7 @@ private fun CardFooter(textColor: Color) {
 fun CardBottomSheet(
     onDismiss: () -> Unit,
     date: LocalDate = LocalDate.now(),
+    onPickImage: () -> Unit = {},
     viewModel: CardViewModel = viewModel()
 ) {
     // Sync the target date into the ViewModel whenever the sheet opens for a different date.
@@ -632,19 +635,10 @@ fun CardBottomSheet(
     val themes by viewModel.availableThemes.collectAsState()
     val isRendering by viewModel.isRendering.collectAsState()
     val textBackdropEnabled by viewModel.cardTextBackdropEnabled.collectAsState()
+    var editingTheme by remember { mutableStateOf<CardTheme?>(null) }
 
-    // ── Image import state ────────────────────────────────────────────────
-    var pendingImageUri by remember { mutableStateOf<Uri?>(null) }
-    // Default light text; user can toggle before confirming import
-    var pendingScheme by remember { mutableStateOf(TextColorScheme.LIGHT) }
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri ->
-        if (uri != null) {
-            pendingImageUri = uri
-            pendingScheme = TextColorScheme.LIGHT // reset to default each pick
-        }
-    }
+    // (Image import is handled via onPickImage callback in the parent composable,
+    //  keeping the launcher outside ModalBottomSheet to avoid lifecycle issues.)
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -732,7 +726,14 @@ fun CardBottomSheet(
                     style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
+                val themeRowState = rememberLazyListState()
+                // Scroll to the selected chip whenever selection or list size changes
+                LaunchedEffect(selectedTheme.id, themes.size) {
+                    val idx = themes.indexOfFirst { it.id == selectedTheme.id }
+                    if (idx >= 0) themeRowState.animateScrollToItem(idx)
+                }
                 LazyRow(
+                    state = themeRowState,
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
@@ -741,15 +742,32 @@ fun CardBottomSheet(
                             theme = theme,
                             selected = selectedTheme.id == theme.id,
                             unlocked = true,
+                            displayName = theme.displayName,
                             onSelect = { viewModel.selectTheme(theme.id) },
-                            onDelete = theme.userTemplateId?.let {
-                                { viewModel.deleteUserTemplate(it) }
-                            }
+                            onEdit = if (theme.userTemplateId != null) {
+                                { editingTheme = theme }
+                            } else null
                         )
                     }
                     item {
-                        ImportThemeChip { imagePickerLauncher.launch("image/*") }
+                        ImportThemeChip { onPickImage() }
                     }
+                }
+
+                // ── Custom card edit dialog (long-press) ────────────────────
+                if (editingTheme != null) {
+                    CardTemplateEditDialog(
+                        theme = editingTheme!!,
+                        onDismiss = { editingTheme = null },
+                        onSave = { newName ->
+                            viewModel.renameUserTemplate(editingTheme!!.userTemplateId!!, newName)
+                            editingTheme = editingTheme!!.copy(displayName = newName.ifBlank { null })
+                        },
+                        onDelete = {
+                            viewModel.deleteUserTemplate(editingTheme!!.userTemplateId!!)
+                            editingTheme = null
+                        }
+                    )
                 }
 
                 // ── Photo toggle ─────────────────────────────────────────────
@@ -795,57 +813,9 @@ fun CardBottomSheet(
                     }
                 }
 
-                // ── Pending import: text colour + confirm ─────────────────────
-                if (pendingImageUri != null) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            stringResource(R.string.card_import_pending_title),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            FilterChip(
-                                selected = pendingScheme == TextColorScheme.LIGHT,
-                                onClick = { pendingScheme = TextColorScheme.LIGHT },
-                                label = { Text(stringResource(R.string.card_import_text_light_short)) }
-                            )
-                            FilterChip(
-                                selected = pendingScheme == TextColorScheme.DARK,
-                                onClick = { pendingScheme = TextColorScheme.DARK },
-                                label = { Text(stringResource(R.string.card_import_text_dark_short)) }
-                            )
-                        }
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedButton(
-                                onClick = { pendingImageUri = null },
-                                modifier = Modifier.weight(1f)
-                            ) { Text(stringResource(R.string.cancel)) }
-                            Button(
-                                onClick = {
-                                    val uri = pendingImageUri!!
-                                    pendingImageUri = null
-                                    viewModel.importSingleImage(uri, pendingScheme) { errorResId ->
-                                        val msg = if (errorResId == null)
-                                            context.getString(R.string.card_import_image_success)
-                                        else
-                                            context.getString(errorResId)
-                                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                                    }
-                                },
-                                modifier = Modifier.weight(1f)
-                            ) { Text(stringResource(R.string.card_import_template)) }
-                        }
-                    }
-                }
-
                 // ── Text colour (live toggle for user-imported themes) ─────────
                 val userTemplateId = selectedTheme.userTemplateId
-                if (userTemplateId != null && pendingImageUri == null) {
+                if (userTemplateId != null) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -967,8 +937,9 @@ private fun ThemeChip(
     theme: CardTheme,
     selected: Boolean,
     unlocked: Boolean,
+    displayName: String? = null,
     onSelect: () -> Unit,
-    onDelete: (() -> Unit)?
+    onEdit: (() -> Unit)? = null
 ) {
     val bc = when (val src = theme.backgroundSource) {
         is BackgroundSource.Gradient -> src.colors.first()
@@ -980,7 +951,10 @@ private fun ThemeChip(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.clickable { onSelect() }
+            modifier = Modifier.combinedClickable(
+                onClick = onSelect,
+                onLongClick = onEdit
+            )
         ) {
             Box(
                 modifier = Modifier
@@ -1001,29 +975,112 @@ private fun ThemeChip(
                 }
             }
             Text(
-                stringResource(theme.nameResId),
+                text = displayName ?: stringResource(theme.nameResId),
                 style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.widthIn(max = 64.dp)
             )
         }
-        // Delete badge for user-imported templates
-        if (onDelete != null) {
-            IconButton(
-                onClick = onDelete,
+        // Long-press hint: show edit icon overlay for user templates
+        if (onEdit != null) {
+            Box(
                 modifier = Modifier
-                    .size(20.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.error)
+                    .size(18.dp)
                     .offset(x = 4.dp, y = (-4).dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
+                contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Default.Close, null, tint = Color.White,
-                    modifier = Modifier.size(12.dp))
+                Icon(
+                    Icons.Default.MoreVert, null,
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                    modifier = Modifier.size(11.dp)
+                )
             }
         }
     }
 }
+
+// ── CardTemplateEditDialog ────────────────────────────────────────────────────
+
+@Composable
+private fun CardTemplateEditDialog(
+    theme: CardTheme,
+    onDismiss: () -> Unit,
+    onSave: (String) -> Unit,
+    onDelete: () -> Unit
+) {
+    var nameInput by remember { mutableStateOf(theme.displayName ?: "") }
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+
+    if (showDeleteConfirm) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirm = false },
+            icon = {
+                Icon(Icons.Default.Delete, null,
+                    tint = MaterialTheme.colorScheme.error)
+            },
+            title = { Text(stringResource(R.string.card_template_delete_confirm)) },
+            text = { Text(stringResource(R.string.card_template_delete_hint)) },
+            confirmButton = {
+                TextButton(
+                    onClick = onDelete,
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
+                ) { Text(stringResource(R.string.card_template_delete)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirm = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+        return
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(Icons.Default.Edit, null,
+                tint = MaterialTheme.colorScheme.primary)
+        },
+        title = { Text(stringResource(R.string.card_template_edit_title)) },
+        text = {
+            OutlinedTextField(
+                value = nameInput,
+                onValueChange = { nameInput = it },
+                label = { Text(stringResource(R.string.card_template_name)) },
+                placeholder = { Text(stringResource(R.string.card_template_name_hint)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onSave(nameInput)
+                    onDismiss()
+                },
+                enabled = nameInput != (theme.displayName ?: "")
+            ) { Text(stringResource(R.string.card_template_name_save)) }
+        },
+        dismissButton = {
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                TextButton(onClick = { showDeleteConfirm = true },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
+                ) { Text(stringResource(R.string.card_template_delete)) }
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        }
+    )
+}
+
 
 @Composable
 private fun ImportThemeChip(onClick: () -> Unit) {
