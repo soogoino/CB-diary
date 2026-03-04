@@ -1,0 +1,9 @@
+• Custom card backgrounds — import any PNG/JPG as a card background (auto-scaled to 1080×1920)
+• Card management — long-press a custom card chip to rename or delete it; names persist across restarts
+• Text color scheme — per-card light/dark text toggle with live preview
+• Text backdrop — optional semi-transparent overlay behind card text for better readability
+• Nickname displayed at the top of the share card (if set in profile)
+• Total Days stat shown alongside Best Streak on the card
+• Fix: card background and photo images now load asynchronously, eliminating frame drops and ANR risks
+• Fix: gallery photo copy moved to background thread, preventing UI freeze on large images
+• Fix: protect against null external storage path on devices without SD cards
