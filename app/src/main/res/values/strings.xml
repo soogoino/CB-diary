@@ -889,6 +889,11 @@
     <string name="card_import_choose_text_color">Choose text colour</string>
     <string name="card_import_text_light">Light text (for dark backgrounds)</string>
     <string name="card_import_text_dark">Dark text (for light backgrounds)</string>
+    <string name="card_import_text_light_short">Light</string>
+    <string name="card_import_text_dark_short">Dark</string>
+    <string name="card_import_pending_title">Image ready — choose text colour</string>
+    <string name="card_text_color_scheme">Text colour</string>
+    <string name="card_text_color_scheme_hint">Visible in the preview above</string>
     <!-- Sponsor -->
     <string name="sponsor_dialog_title">Unlock Premium Themes</string>
     <string name="sponsor_dialog_body">Enter your sponsor redemption code to unlock all premium card themes.</string>

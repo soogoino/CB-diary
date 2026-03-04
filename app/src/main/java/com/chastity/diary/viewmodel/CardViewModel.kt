@@ -16,6 +16,8 @@ import com.chastity.diary.data.repository.StreakRepository
 import com.chastity.diary.domain.model.CardData
 import com.chastity.diary.domain.model.CardTheme
 import com.chastity.diary.domain.model.DailyEntry
+import com.chastity.diary.domain.model.BackgroundSource
+import com.chastity.diary.domain.model.CardTemplateSpec
 import com.chastity.diary.domain.model.TextColorScheme
 import com.chastity.diary.domain.model.rotatingQuestionTitleRes
 import com.chastity.diary.ui.screens.SummaryCardContent
@@ -23,8 +25,12 @@ import com.chastity.diary.ui.theme.CardThemes
 import com.chastity.diary.util.CardRenderer
 import com.chastity.diary.util.SponsorManager
 import com.chastity.diary.util.TemplateImporter
+import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.time.LocalDate
 
 /**
@@ -285,6 +291,44 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
                 settingsRepo.updateCardThemeId("midnight")
             }
             TemplateImporter.delete(getApplication(), userTemplateId)
+        }
+    }
+
+    /**
+     * Swaps the text colour scheme of a user-imported template in-memory and
+     * persists the updated spec to disk so the change survives restarts.
+     *
+     * The `_userTemplates` StateFlow update triggers a recomposition of the
+     * card preview immediately (live preview).
+     */
+    fun updateUserTemplateTextColor(userTemplateId: String, scheme: TextColorScheme) {
+        viewModelScope.launch {
+            val schemeStr = if (scheme == TextColorScheme.DARK) "dark" else "light"
+            val accent = if (scheme == TextColorScheme.LIGHT) Color.White else Color.Black
+
+            _userTemplates.value = _userTemplates.value.map { theme ->
+                if (theme.userTemplateId != userTemplateId) return@map theme
+                val updatedSrc = (theme.backgroundSource as? BackgroundSource.ExternalAsset)
+                    ?.let { it.copy(spec = it.spec.copy(textColorScheme = schemeStr)) }
+                    ?: theme.backgroundSource
+                theme.copy(
+                    backgroundSource = updatedSrc,
+                    textColorScheme = scheme,
+                    accentColor = accent
+                )
+            }
+
+            // Persist the new scheme to disk so loadUserTemplates() restores it correctly.
+            withContext(Dispatchers.IO) {
+                val specFile = File(
+                    getApplication<Application>().filesDir,
+                    "templates/$userTemplateId/card_template_spec.json"
+                )
+                if (specFile.exists()) {
+                    val spec = Gson().fromJson(specFile.readText(), CardTemplateSpec::class.java)
+                    specFile.writeText(Gson().toJson(spec.copy(textColorScheme = schemeStr)))
+                }
+            }
         }
     }
 }

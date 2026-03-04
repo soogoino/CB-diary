@@ -605,13 +605,14 @@ fun CardBottomSheet(
 
     // ── Image import state ────────────────────────────────────────────────
     var pendingImageUri by remember { mutableStateOf<Uri?>(null) }
-    var showColorDialog by remember { mutableStateOf(false) }
+    // Default light text; user can toggle before confirming import
+    var pendingScheme by remember { mutableStateOf(TextColorScheme.LIGHT) }
     val imagePickerLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri ->
         if (uri != null) {
             pendingImageUri = uri
-            showColorDialog = true
+            pendingScheme = TextColorScheme.LIGHT // reset to default each pick
         }
     }
 
@@ -720,28 +721,6 @@ fun CardBottomSheet(
                     }
                 }
 
-                // ── Image text-colour dialog ──────────────────────────────
-                if (showColorDialog && pendingImageUri != null) {
-                    ImageTextColorDialog(
-                        onDismiss = {
-                            showColorDialog = false
-                            pendingImageUri = null
-                        },
-                        onConfirm = { scheme ->
-                            showColorDialog = false
-                            val uri = pendingImageUri!!
-                            pendingImageUri = null
-                            viewModel.importSingleImage(uri, scheme) { errorResId ->
-                                val msg = if (errorResId == null)
-                                    context.getString(R.string.card_import_image_success)
-                                else
-                                    context.getString(errorResId)
-                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    )
-                }
-
                 // ── Photo toggle ─────────────────────────────────────────────
                 val showPhoto by viewModel.showPhoto.collectAsState()
                 val hasPhoto = cardData?.photoPath != null
@@ -782,6 +761,99 @@ fun CardBottomSheet(
                                     ).show()
                                 }
                         )
+                    }
+                }
+
+                // ── Pending import: text colour + confirm ─────────────────────
+                if (pendingImageUri != null) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            stringResource(R.string.card_import_pending_title),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            FilterChip(
+                                selected = pendingScheme == TextColorScheme.LIGHT,
+                                onClick = { pendingScheme = TextColorScheme.LIGHT },
+                                label = { Text(stringResource(R.string.card_import_text_light_short)) }
+                            )
+                            FilterChip(
+                                selected = pendingScheme == TextColorScheme.DARK,
+                                onClick = { pendingScheme = TextColorScheme.DARK },
+                                label = { Text(stringResource(R.string.card_import_text_dark_short)) }
+                            )
+                        }
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(
+                                onClick = { pendingImageUri = null },
+                                modifier = Modifier.weight(1f)
+                            ) { Text(stringResource(R.string.cancel)) }
+                            Button(
+                                onClick = {
+                                    val uri = pendingImageUri!!
+                                    pendingImageUri = null
+                                    viewModel.importSingleImage(uri, pendingScheme) { errorResId ->
+                                        val msg = if (errorResId == null)
+                                            context.getString(R.string.card_import_image_success)
+                                        else
+                                            context.getString(errorResId)
+                                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                                    }
+                                },
+                                modifier = Modifier.weight(1f)
+                            ) { Text(stringResource(R.string.card_import_template)) }
+                        }
+                    }
+                }
+
+                // ── Text colour (live toggle for user-imported themes) ─────────
+                val userTemplateId = selectedTheme.userTemplateId
+                if (userTemplateId != null && pendingImageUri == null) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                stringResource(R.string.card_text_color_scheme),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                stringResource(R.string.card_text_color_scheme_hint),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Spacer(Modifier.width(12.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            FilterChip(
+                                selected = selectedTheme.textColorScheme == TextColorScheme.LIGHT,
+                                onClick = {
+                                    viewModel.updateUserTemplateTextColor(
+                                        userTemplateId, TextColorScheme.LIGHT
+                                    )
+                                },
+                                label = { Text(stringResource(R.string.card_import_text_light_short)) }
+                            )
+                            FilterChip(
+                                selected = selectedTheme.textColorScheme == TextColorScheme.DARK,
+                                onClick = {
+                                    viewModel.updateUserTemplateTextColor(
+                                        userTemplateId, TextColorScheme.DARK
+                                    )
+                                },
+                                label = { Text(stringResource(R.string.card_import_text_dark_short)) }
+                            )
+                        }
                     }
                 }
 
@@ -921,69 +993,6 @@ private fun ImportThemeChip(onClick: () -> Unit) {
             modifier = Modifier.widthIn(max = 64.dp)
         )
     }
-}
-
-// ── ImageTextColorDialog ──────────────────────────────────────────────────────
-
-/**
- * Lets the user choose whether the card's text should render as light or dark
- * over the imported background image, then confirms the import.
- */
-@Composable
-private fun ImageTextColorDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (TextColorScheme) -> Unit,
-) {
-    var selected by remember { mutableStateOf(TextColorScheme.LIGHT) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.card_import_choose_text_color)) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickable { selected = TextColorScheme.LIGHT }
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    RadioButton(
-                        selected = selected == TextColorScheme.LIGHT,
-                        onClick = { selected = TextColorScheme.LIGHT }
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.card_import_text_light))
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickable { selected = TextColorScheme.DARK }
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    RadioButton(
-                        selected = selected == TextColorScheme.DARK,
-                        onClick = { selected = TextColorScheme.DARK }
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.card_import_text_dark))
-                }
-            }
-        },
-        confirmButton = {
-            Button(onClick = { onConfirm(selected) }) {
-                Text(stringResource(R.string.confirm))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.onboarding_skip))
-            }
-        }
-    )
 }
 
 // ── SponsorCodeDialog ─────────────────────────────────────────────────────────
