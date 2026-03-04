@@ -827,6 +827,12 @@
     <string name="card_import_error_invalid_spec">card_template_spec.json 格式無效。</string>
     <string name="card_import_error_unsupported_version">不支援的模板格式版本。</string>
     <string name="card_import_error_unknown">匯入時發生未知錯誤。</string>
+    <string name="card_import_error_unsupported_format">所選檔案無法解析為圖片。</string>
+    <!-- 單張圖片匯入 -->
+    <string name="card_import_image_success">背景已匯入，可在主題清單中找到。</string>
+    <string name="card_import_choose_text_color">選擇文字顏色</string>
+    <string name="card_import_text_light">淺色文字（適合深色背景）</string>
+    <string name="card_import_text_dark">深色文字（適合淺色背景）</string>
     <!-- 贊助 -->
     <string name="sponsor_dialog_title">解鎖進階主題</string>
     <string name="sponsor_dialog_body">輸入贊助兌換碼以解鎖所有進階卡片主題。</string>

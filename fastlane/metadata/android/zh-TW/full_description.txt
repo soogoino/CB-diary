@@ -1,49 +1,29 @@
-Chastity Diary is a private, offline-first Android app for tracking your chastity lifestyle. All data stays on your device — no internet connection is required or used.
+貞操日記是一款私密、完全離線的 Android 日記 App，專為貞操裝置佩戴者設計。所有資料完全儲存於你的裝置本機，不需要也不使用任何網路連線。
 
-## Features
+## 功能特色
 
-**Daily Logging**
-- Record whether you are wearing your device today
-- Track mood, desire level, comfort, and mental focus with intuitive sliders
-- Log sleep quality, bedtime and wake time
-- Record morning and night erection data
-- Optional daily photo check-in (stored locally, blurred by default in history view)
-- Rotating pool of 33 optional questions to keep your journaling fresh
-- Notes field for any additional thoughts
+**每日記錄**
+- 記錄今日是否佩戴裝置
+- 透過直覺式滑桿追蹤心情、性慾、舒適度與精神集中度
+- 記錄睡眠品質、就寢與起床時間
+- 記錄早晨與夜間勃起資料
+- 可選的每日照片打卡（本機儲存，在歷史記錄中預設以模糊遮罩保護）
+- 33 題輪替補充問題，讓每日記錄更有深度，避免千篇一律
+- 備註欄位，自由記錄任何想法
 
-**Streaks & Statistics**
-- Automatic streak tracking (longest streak, current streak)
-- Dashboard with charts: mood trends, desire levels, exercise frequency, and more
-- Heatmap view to visualise patterns over time
+**連續打卡與統計**
+- 自動追蹤連續打卡天數（目前連續 / 最長連續）
+- 儀表板圖表：心情趨勢、性慾指數、運動頻率等多項數據
+- 熱力圖視圖，直觀呈現一段時間內的規律與模式
 
-**Privacy & Security**
-- PIN protection with configurable length (4–6 digits)
-- Biometric unlock (fingerprint / face recognition)
-- App lock: authentication required on every launch
-- Photos blurred by default in history — tap to reveal
-- Zero analytics, zero crash reporting, zero network access
+**隱私與安全**
+- PIN 碼保護，可設定 4–6 位數
+- 生物辨識解鎖（指紋 / 臉部辨識）
+- App 鎖定：每次啟動皆需驗證身份
+- 歷史記錄中的照片預設模糊，點擊才顯示
+- 零分析、零崩潰回報、零網路存取
 
-**Data Management**
-- Export all entries to a CSV file (via Android file picker)
-- Import from CSV to restore or migrate data
-- Fully offline — data never leaves your device unless you export it yourself
-
-**Accessibility & Customisation**
-- Full English + Traditional Chinese (繁體中文) localisation
-- Dark / Light / System theme
-- Morning and evening configurable reminders (local notifications only)
-
-## Permissions Used
-
-| Permission | Reason |
-|---|---|
-| CAMERA | Optional photo check-in |
-| POST_NOTIFICATIONS | Daily and morning reminders |
-| USE_BIOMETRIC | Biometric unlock |
-| VIBRATE | Notification haptic feedback |
-
-No INTERNET permission is requested.
-
-## License
-
-MIT License — see LICENSE file.
+**資料管理**
+- 透過 Android 系統檔案選擇器將所有記錄匯出為 CSV 檔案
+- 從 CSV 匯入以還原或遷移資料
+- 完全離線 — 除非你主動匯出，資料不會離開你的裝置

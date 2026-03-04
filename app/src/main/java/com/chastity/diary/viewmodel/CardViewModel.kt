@@ -16,6 +16,7 @@ import com.chastity.diary.data.repository.StreakRepository
 import com.chastity.diary.domain.model.CardData
 import com.chastity.diary.domain.model.CardTheme
 import com.chastity.diary.domain.model.DailyEntry
+import com.chastity.diary.domain.model.TextColorScheme
 import com.chastity.diary.domain.model.rotatingQuestionTitleRes
 import com.chastity.diary.ui.screens.SummaryCardContent
 import com.chastity.diary.ui.theme.CardThemes
@@ -40,6 +41,14 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
     private val db = AppDatabase.getInstance(application)
     private val entryRepo = EntryRepository(db.dailyEntryDao(), db.dailyEntryAttributeDao())
     private val streakRepo = StreakRepository(preferencesManager)
+
+    init {
+        // Restore user-imported templates that survived process death.
+        viewModelScope.launch {
+            val persisted = TemplateImporter.loadUserTemplates(getApplication())
+            if (persisted.isNotEmpty()) _userTemplates.value = persisted
+        }
+    }
 
     // ── Settings ──────────────────────────────────────────────────────────────
 
@@ -222,6 +231,28 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // ── User template import ──────────────────────────────────────────────────
+
+    /**
+     * Imports a single PNG/JPG image as a card background.
+     * The image is scaled to 1080×1920 automatically; text layout uses [CardTemplateSpec.DEFAULT].
+     *
+     * @param imageUri SAF URI of the selected image.
+     * @param scheme   Text colour scheme to overlay on the background.
+     * @param onResult Called with null on success, or a string-resource id for the error message.
+     */
+    fun importSingleImage(imageUri: Uri, scheme: TextColorScheme, onResult: (Int?) -> Unit) {
+        viewModelScope.launch {
+            val result = TemplateImporter.importSingleImage(getApplication(), imageUri, scheme)
+            result.onSuccess { theme ->
+                _userTemplates.value = _userTemplates.value + theme
+                onResult(null)
+            }.onFailure { err ->
+                val resId = (err as? TemplateImporter.ImportException)?.messageResId
+                    ?: R.string.card_import_error_unknown
+                onResult(resId)
+            }
+        }
+    }
 
     /**
      * Imports a user-designed `.zip` template and appends it to [availableThemes].

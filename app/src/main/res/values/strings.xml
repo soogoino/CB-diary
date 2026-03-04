@@ -883,6 +883,12 @@
     <string name="card_import_error_invalid_spec">Invalid JSON in card_template_spec.json.</string>
     <string name="card_import_error_unsupported_version">Unsupported template format version.</string>
     <string name="card_import_error_unknown">An unknown error occurred during import.</string>
+    <string name="card_import_error_unsupported_format">The selected file could not be decoded as an image.</string>
+    <!-- Single-image import -->
+    <string name="card_import_image_success">Background imported. Find it in the theme list.</string>
+    <string name="card_import_choose_text_color">Choose text colour</string>
+    <string name="card_import_text_light">Light text (for dark backgrounds)</string>
+    <string name="card_import_text_dark">Dark text (for light backgrounds)</string>
     <!-- Sponsor -->
     <string name="sponsor_dialog_title">Unlock Premium Themes</string>
     <string name="sponsor_dialog_body">Enter your sponsor redemption code to unlock all premium card themes.</string>

@@ -603,6 +603,18 @@ fun CardBottomSheet(
     val themes by viewModel.availableThemes.collectAsState()
     val isRendering by viewModel.isRendering.collectAsState()
 
+    // ── Image import state ────────────────────────────────────────────────
+    var pendingImageUri by remember { mutableStateOf<Uri?>(null) }
+    var showColorDialog by remember { mutableStateOf(false) }
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) {
+            pendingImageUri = uri
+            showColorDialog = true
+        }
+    }
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -703,6 +715,31 @@ fun CardBottomSheet(
                             }
                         )
                     }
+                    item {
+                        ImportThemeChip { imagePickerLauncher.launch("image/*") }
+                    }
+                }
+
+                // ── Image text-colour dialog ──────────────────────────────
+                if (showColorDialog && pendingImageUri != null) {
+                    ImageTextColorDialog(
+                        onDismiss = {
+                            showColorDialog = false
+                            pendingImageUri = null
+                        },
+                        onConfirm = { scheme ->
+                            showColorDialog = false
+                            val uri = pendingImageUri!!
+                            pendingImageUri = null
+                            viewModel.importSingleImage(uri, scheme) { errorResId ->
+                                val msg = if (errorResId == null)
+                                    context.getString(R.string.card_import_image_success)
+                                else
+                                    context.getString(errorResId)
+                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    )
                 }
 
                 // ── Photo toggle ─────────────────────────────────────────────
@@ -884,6 +921,69 @@ private fun ImportThemeChip(onClick: () -> Unit) {
             modifier = Modifier.widthIn(max = 64.dp)
         )
     }
+}
+
+// ── ImageTextColorDialog ──────────────────────────────────────────────────────
+
+/**
+ * Lets the user choose whether the card's text should render as light or dark
+ * over the imported background image, then confirms the import.
+ */
+@Composable
+private fun ImageTextColorDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (TextColorScheme) -> Unit,
+) {
+    var selected by remember { mutableStateOf(TextColorScheme.LIGHT) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.card_import_choose_text_color)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { selected = TextColorScheme.LIGHT }
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    RadioButton(
+                        selected = selected == TextColorScheme.LIGHT,
+                        onClick = { selected = TextColorScheme.LIGHT }
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.card_import_text_light))
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { selected = TextColorScheme.DARK }
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    RadioButton(
+                        selected = selected == TextColorScheme.DARK,
+                        onClick = { selected = TextColorScheme.DARK }
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.card_import_text_dark))
+                }
+            }
+        },
+        confirmButton = {
+            Button(onClick = { onConfirm(selected) }) {
+                Text(stringResource(R.string.confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.onboarding_skip))
+            }
+        }
+    )
 }
 
 // ── SponsorCodeDialog ─────────────────────────────────────────────────────────
