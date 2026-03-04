@@ -344,25 +344,33 @@ private fun DrawScope.drawPattern(type: PatternType, color: Color, alpha: Float)
 
 @Composable
 private fun CardHeader(data: CardData, textColor: Color, subColor: Color) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            Icon(Icons.Default.Lock, null, tint = textColor, modifier = Modifier.size((40).dp))
-            Column {
-                Text("CB diary", color = textColor, fontWeight = FontWeight.Bold, fontSize = (36).sp)
-                if (!data.nickname.isNullOrBlank()) {
-                    Text(
-                        data.nickname,
-                        color = subColor,
-                        fontSize = (22).sp,
-                    )
-                }
-            }
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        // ── Nickname row: centered at the very top ────────────────────────
+        if (!data.nickname.isNullOrBlank()) {
+            Text(
+                text = data.nickname,
+                color = subColor,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+            )
         }
-        Text(data.date.format(CARD_DATE_FMT), color = subColor, fontSize = (28).sp)
+        // ── Brand + Date row ──────────────────────────────────────────────
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Icon(Icons.Default.Lock, null, tint = textColor, modifier = Modifier.size(34.dp))
+                Text("CB diary", color = textColor, fontWeight = FontWeight.Bold, fontSize = 36.sp)
+            }
+            Text(data.date.format(CARD_DATE_FMT), color = subColor, fontSize = 26.sp)
+        }
     }
 }
 

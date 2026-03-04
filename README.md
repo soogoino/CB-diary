@@ -28,8 +28,13 @@ A native Android journal app built with Kotlin + Jetpack Compose, designed speci
 ### Summary Card Sharing
 - **Daily Summary Card** — One-tap generation of a 1080×1920 px shareable PNG
 - **Multiple Themes** — Built-in Midnight, Crimson, Ocean, Forest, Minimal themes with gradients and geometric overlays
+- **Custom Card Backgrounds** — Import any PNG/JPG as a card background (auto-scaled to 1080×1920); manage multiple custom cards with individual names
+- **Card Management** — Long-press any custom card chip to rename or delete it via a contextual dialog
+- **Text Color Scheme** — Per-custom-card light/dark text toggle; live preview in bottom sheet
+- **Text Backdrop** — Optional semi-transparent backdrop behind generated text for improved legibility on image backgrounds
 - **Share / Save** — Share directly to other apps or save to device
 - **Embed Photo** — Optionally embed today's check-in photo in the card
+- **Nickname & Stats Header** — Nickname (if set) displayed centered at top; "CB diary" + date on the same row below
 
 ### Security
 - **Auto-Lock** — Triggers automatically when app moves to background (camera exempted)
@@ -157,16 +162,21 @@ cd CB-diary-A
 - [x] Live language switching (Traditional Chinese / English)
 
 #### Summary Card
-- [x] `CardData` — aggregates today's snapshot, 7-day averages, streak, rotating Q&A
+- [x] `CardData` — aggregates today's snapshot, 7-day averages, streak, rotating Q&A, nickname, total days
 - [x] `SummaryCardContent` — 1080×1920 full-res Composable (density=1 off-screen render)
 - [x] Multiple themes (Midnight / Crimson / Ocean / Forest / Minimal etc.), all free
+- [x] **Custom card background import** — single image (PNG/JPG, auto-scaled) via `TemplateImporter`
+- [x] **Custom card management** — naming, rename, delete via long-press dialog; persisted to `name.txt`
+- [x] **Text color scheme** — per-card light/dark toggle with live preview
+- [x] **Text backdrop** — semi-transparent overlay behind text (DataStore preference)
 - [x] Photo toggle (optionally embed today's check-in photo)
+- [x] Nickname shown centered at card top; total days shown beside best streak
 - [x] Share / Save PNG
 
 ### Planned 📋
 
 - [ ] Unit tests / UI tests
-- [ ] Custom card layout styles
+- [ ] Custom card layout styles (spec JSON + zip import)
 - [ ] Home screen Widget
 - [ ] Lockbox integration
 - [ ] Social features (binding, community)
@@ -185,4 +195,4 @@ Issues and Pull Requests are welcome!
 ---
 
 **Status**: Beta  
-**Last Updated**: 2026-03-01
+**Last Updated**: 2026-03-04
