@@ -860,6 +860,7 @@
     <string name="card_days_streak">days streak</string>
     <string name="card_longest">Best</string>
     <string name="card_days">days</string>
+    <string name="card_total">Total</string>
     <string name="card_today">TODAY</string>
     <string name="card_mood">Mood</string>
     <string name="card_morning_energy">Energy</string>

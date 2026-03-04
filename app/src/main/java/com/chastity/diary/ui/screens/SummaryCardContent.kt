@@ -330,7 +330,16 @@ private fun CardHeader(data: CardData, textColor: Color, subColor: Color) {
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             Icon(Icons.Default.Lock, null, tint = textColor, modifier = Modifier.size((40).dp))
-            Text("CB diary", color = textColor, fontWeight = FontWeight.Bold, fontSize = (36).sp)
+            Column {
+                Text("CB diary", color = textColor, fontWeight = FontWeight.Bold, fontSize = (36).sp)
+                if (!data.nickname.isNullOrBlank()) {
+                    Text(
+                        data.nickname,
+                        color = subColor,
+                        fontSize = (22).sp,
+                    )
+                }
+            }
         }
         Text(data.date.format(CARD_DATE_FMT), color = subColor, fontSize = (28).sp)
     }
@@ -354,7 +363,8 @@ private fun StreakSection(data: CardData, accentColor: Color, textColor: Color, 
         }
         Spacer(Modifier.height(8.dp))
         Text(
-            "${stringResource(R.string.card_longest)}: ${data.longestStreak} ${stringResource(R.string.card_days)}",
+            "${stringResource(R.string.card_longest)}: ${data.longestStreak} ${stringResource(R.string.card_days)}" +
+            "  ·  ${stringResource(R.string.card_total)}: ${data.totalDays} ${stringResource(R.string.card_days)}",
             color = subColor, fontSize = 26.sp
         )
     }

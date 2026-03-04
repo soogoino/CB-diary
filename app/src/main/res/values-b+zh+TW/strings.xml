@@ -803,8 +803,7 @@
     <!-- 卡片內容標籤 -->
     <string name="card_days_streak">天連續</string>
     <string name="card_longest">最長</string>
-    <string name="card_days">天</string>
-    <string name="card_today">今日</string>
+    <string name="card_days">天</string>    <string name="card_total">累計</string>    <string name="card_today">今日</string>
     <string name="card_mood">心情</string>
     <string name="card_morning_energy">晨間能量</string>
     <string name="card_self_rating">自我評分</string>

@@ -45,4 +45,11 @@ data class CardData(
     val avg7Comfort: Float,          // Q9
     val avg7Focus: Float,            // Q18
     val avg7Sleep: Float,            // Q15
+
+    // ── User profile ─────────────────────────────────────────────────────────
+    /** Optional display nickname; null / blank = not shown on card. */
+    val nickname: String? = null,
+
+    /** Total number of journal entries ever recorded. */
+    val totalDays: Int = 0,
 )

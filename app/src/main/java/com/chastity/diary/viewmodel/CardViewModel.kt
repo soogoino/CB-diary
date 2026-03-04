@@ -121,7 +121,12 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
      * Resolved card data for [_targetDate], or null if no entry exists yet.
      * Re-emits automatically whenever the database, streak or target date changes.
      */
-    val cardData: StateFlow<CardData?> = _targetDate.flatMapLatest { targetDate ->
+    private val _nickname: StateFlow<String?> = userSettings
+        .map { it?.nickname?.takeIf { n -> n.isNotBlank() } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    val cardData: StateFlow<CardData?> = combine(_targetDate, _nickname) { date, nick -> date to nick }
+        .flatMapLatest { (targetDate, nickname) ->
         combine(
             entryRepo.getAllEntries(),                                        // for 7-day averages
             entryRepo.getEntryByDateWithAttributesFlow(targetDate),           // target date entry
@@ -163,6 +168,8 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
                 avg7Comfort = recentEntries.avg { it.comfortRating?.toFloat() },
                 avg7Focus = recentEntries.avg { it.focusLevel?.toFloat() },
                 avg7Sleep = recentEntries.avg { it.sleepQuality?.toFloat() },
+                nickname = nickname,
+                totalDays = allEntries.size,
             )
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
