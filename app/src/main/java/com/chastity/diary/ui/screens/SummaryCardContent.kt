@@ -68,6 +68,8 @@ import com.chastity.diary.util.QrCodeUtil
 import com.chastity.diary.viewmodel.CardViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -236,15 +238,19 @@ private fun CardBackground(source: BackgroundSource, modifier: Modifier = Modifi
         }
 
         is BackgroundSource.ExternalAsset -> {
-            val bmp = remember(source.pngUri) {
-                runCatching {
-                    BitmapFactory.decodeFile(source.pngUri.path)
-                        ?.asImageBitmap()
-                }.getOrNull()
+            // Load on IO thread to avoid blocking the main thread (P0 fix).
+            val bmp by produceState<ImageBitmap?>(null, source.pngUri) {
+                value = withContext(Dispatchers.IO) {
+                    runCatching {
+                        BitmapFactory.decodeFile(source.pngUri.path)?.asImageBitmap()
+                    }.getOrNull()
+                }
             }
-            if (bmp != null) {
+            // Local val for smart-cast (delegate property cannot be smart-cast directly).
+            val loadedBmp = bmp
+            if (loadedBmp != null) {
                 Image(
-                    bitmap = bmp,
+                    bitmap = loadedBmp,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = modifier.fillMaxSize()
@@ -465,30 +471,32 @@ private fun TodaySection(data: CardData, accentColor: Color, textColor: Color, s
 private fun PhotoSection(data: CardData, textColor: Color, subColor: Color) {
     if (!data.showPhoto || data.photoPath == null) return
 
-    // Load bitmap synchronously with EXIF-corrected rotation (runs on composition thread;
-    // remember() only re-runs when photoPath changes, so main-thread cost is a one-off).
-    val (imgBitmap, isLandscape) = remember(data.photoPath) {
-        runCatching {
-            val opts = BitmapFactory.Options().apply { inSampleSize = 2 } // limit memory
-            val raw = BitmapFactory.decodeFile(data.photoPath, opts)
-                ?: return@runCatching null
-            val exif = ExifInterface(data.photoPath)
-            val degrees = when (exif.getAttributeInt(
-                ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
-            )) {
-                ExifInterface.ORIENTATION_ROTATE_90  -> 90f
-                ExifInterface.ORIENTATION_ROTATE_180 -> 180f
-                ExifInterface.ORIENTATION_ROTATE_270 -> 270f
-                else                                 -> 0f
-            }
-            val rotated = if (degrees == 0f) raw
-            else Bitmap.createBitmap(
-                raw, 0, 0, raw.width, raw.height,
-                Matrix().apply { postRotate(degrees) }, true
-            )
-            rotated.asImageBitmap() to (rotated.width > rotated.height)
-        }.getOrNull()
-    } ?: return
+    // Load bitmap asynchronously (IO thread) to avoid blocking the main thread (P0 fix).
+    val bitmapState by produceState<Pair<ImageBitmap, Boolean>?>(null, data.photoPath) {
+        value = withContext(Dispatchers.IO) {
+            runCatching {
+                val opts = BitmapFactory.Options().apply { inSampleSize = 2 } // limit memory
+                val raw = BitmapFactory.decodeFile(data.photoPath, opts)
+                    ?: return@runCatching null
+                val exif = ExifInterface(data.photoPath)
+                val degrees = when (exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
+                )) {
+                    ExifInterface.ORIENTATION_ROTATE_90  -> 90f
+                    ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+                    ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+                    else                                 -> 0f
+                }
+                val rotated = if (degrees == 0f) raw
+                else Bitmap.createBitmap(
+                    raw, 0, 0, raw.width, raw.height,
+                    Matrix().apply { postRotate(degrees) }, true
+                )
+                rotated.asImageBitmap() to (rotated.width > rotated.height)
+            }.getOrNull()
+        }
+    }
+    val (imgBitmap, isLandscape) = bitmapState ?: return
 
     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
@@ -593,14 +601,17 @@ private fun CheckChip(
 
 @Composable
 private fun CardFooter(textColor: Color) {
-    val qrBitmap = remember(textColor) {
-        QrCodeUtil.generateQrBitmap(
-            content = "https://soogoino.github.io/CB-diary/#",
-            size = 256,
-            foregroundColor = textColor.copy(alpha = 1f).toArgb(),
-            backgroundColor = android.graphics.Color.TRANSPARENT,
-            margin = 1,
-        )
+    // Generate QR code off the main thread (P0 fix).
+    val qrBitmap by produceState<android.graphics.Bitmap?>(null, textColor) {
+        value = withContext(Dispatchers.IO) {
+            QrCodeUtil.generateQrBitmap(
+                content = "https://soogoino.github.io/CB-diary/#",
+                size = 256,
+                foregroundColor = textColor.copy(alpha = 1f).toArgb(),
+                backgroundColor = android.graphics.Color.TRANSPARENT,
+                margin = 1,
+            )
+        }
     }
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -608,12 +619,16 @@ private fun CardFooter(textColor: Color) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text("CB Diary  •  chastity.diary", color = textColor, fontSize = 24.sp)
-        Image(
-            bitmap = qrBitmap.asImageBitmap(),
-            contentDescription = "CB Diary QR Code",
-            modifier = Modifier.size(112.dp),
-            colorFilter = null,
-        )
+        if (qrBitmap != null) {
+            Image(
+                bitmap = qrBitmap!!.asImageBitmap(),
+                contentDescription = "CB Diary QR Code",
+                modifier = Modifier.size(112.dp),
+                colorFilter = null,
+            )
+        } else {
+            Spacer(modifier = Modifier.size(112.dp))
+        }
     }
 }
 
@@ -735,8 +750,9 @@ fun CardBottomSheet(
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
                 val themeRowState = rememberLazyListState()
-                // Scroll to the selected chip whenever selection or list size changes
-                LaunchedEffect(selectedTheme.id, themes.size) {
+                // Scroll to the selected chip whenever selection or list content changes.
+                // Use a hash of the id list so delete-then-import (same size) still triggers scroll.
+                LaunchedEffect(selectedTheme.id, themes.map { it.id }.hashCode()) {
                     val idx = themes.indexOfFirst { it.id == selectedTheme.id }
                     if (idx >= 0) themeRowState.animateScrollToItem(idx)
                 }

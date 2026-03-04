@@ -11,6 +11,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -185,8 +186,9 @@ fun DailyEntryScreen(
     ) { granted ->
         if (granted) {
             val ts = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val dir = File(context.getExternalFilesDir("Pictures"), "").also { it.mkdirs() }
-            val file = File(dir, "PHOTO_$ts.jpg")
+            val externalDir = context.getExternalFilesDir("Pictures") ?: context.filesDir
+            externalDir.mkdirs()
+            val file = File(externalDir, "PHOTO_$ts.jpg")
             cameraImageFile = file
             val u = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
             cameraImageUri = u
@@ -201,19 +203,32 @@ fun DailyEntryScreen(
         { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) }
     }
 
+    val scope = rememberCoroutineScope()
     // Gallery picker — copies the selected image into app-private dir so we always have an
     // absolute path (content:// URIs are not guaranteed to remain accessible long-term).
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri ?: return@rememberLauncherForActivityResult
-        val ts = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val dir = File(context.getExternalFilesDir("Pictures"), "").also { it.mkdirs() }
-        val destFile = File(dir, "GALLERY_$ts.jpg")
-        context.contentResolver.openInputStream(uri)?.use { input ->
-            destFile.outputStream().use { output -> input.copyTo(output) }
+        // P0 fix: file copy (potentially 10-20 MB) must not run on the main thread.
+        scope.launch(Dispatchers.IO) {
+            try {
+                val ts = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                val picturesDir = context.getExternalFilesDir("Pictures") ?: context.filesDir
+                picturesDir.mkdirs()
+                val destFile = File(picturesDir, "GALLERY_$ts.jpg")
+                context.contentResolver.openInputStream(uri)?.use { input ->
+                    destFile.outputStream().use { output -> input.copyTo(output) }
+                } ?: return@launch  // stream unavailable (permission revoked)
+                if (destFile.exists()) {
+                    withContext(Dispatchers.Main) {
+                        viewModel.updateEntry { e -> e.copy(photoPath = destFile.absolutePath) }
+                    }
+                }
+            } catch (ignored: Exception) {
+                // Best-effort: silently skip; the photo path simply won't be updated.
+            }
         }
-        if (destFile.exists()) viewModel.updateEntry { e -> e.copy(photoPath = destFile.absolutePath) }
     }
     val onPickFromGalleryStable: () -> Unit = remember(galleryLauncher) {
         { galleryLauncher.launch("image/*") }

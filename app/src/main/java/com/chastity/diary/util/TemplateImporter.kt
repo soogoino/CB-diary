@@ -103,10 +103,21 @@ object TemplateImporter {
                         ImportException(R.string.card_import_error_unsupported_version)
                     )
                 }
+                // P3: validate overlayOpacity is in [0,1] to avoid undefined Compose behaviour
+                if (spec.overlayOpacity !in 0f..1f) {
+                    return@withContext Result.failure(
+                        ImportException(R.string.card_import_error_invalid_spec)
+                    )
+                }
 
-                // ── 4. Persist to filesDir/templates/<uuid>/ ─────────────────
+                // ── 4. Persist to filesDir/templates/<uuid>/ ─────────────────────────
                 val uuid = UUID.randomUUID().toString()
-                val dir = File(context.filesDir, "templates/$uuid").also { it.mkdirs() }
+                val dir = File(context.filesDir, "templates/$uuid")
+                if (!dir.mkdirs() && !dir.exists()) {
+                    return@withContext Result.failure(
+                        ImportException(R.string.card_import_error_cannot_read)
+                    )
+                }
 
                 val pngFile = File(dir, "template.png")
                 FileOutputStream(pngFile).use { it.write(pngBytes) }
@@ -158,7 +169,7 @@ object TemplateImporter {
         val templatesDir = File(context.filesDir, "templates")
         if (!templatesDir.exists()) return@withContext emptyList()
 
-        templatesDir.listFiles()?.mapNotNull { dir ->
+        templatesDir.listFiles()?.sortedBy { it.name }?.mapNotNull { dir ->
             if (!dir.isDirectory) return@mapNotNull null
             val uuid = dir.name
             val pngFile = File(dir, "template.png")
@@ -186,6 +197,7 @@ object TemplateImporter {
                     displayName = File(dir, "name.txt").takeIf { it.exists() }?.readText()?.trim()?.ifBlank { null }
                 )
             } catch (e: Exception) {
+                android.util.Log.w("TemplateImporter", "skip corrupted template: ${dir.name}", e)
                 null // skip corrupted entries
             }
         } ?: emptyList()
@@ -247,13 +259,22 @@ object TemplateImporter {
 
             // ── 4. Persist to filesDir/templates/<uuid>/ ─────────────────────
             val uuid = UUID.randomUUID().toString()
-            val dir = File(context.filesDir, "templates/$uuid").also { it.mkdirs() }
+            val dir = File(context.filesDir, "templates/$uuid")
+            if (!dir.mkdirs() && !dir.exists()) {
+                scaled.recycle()
+                return@withContext Result.failure(
+                    ImportException(R.string.card_import_error_cannot_read)
+                )
+            }
 
             val pngFile = File(dir, "template.png")
-            FileOutputStream(pngFile).use { out ->
-                scaled.compress(Bitmap.CompressFormat.PNG, 95, out)
+            try {
+                FileOutputStream(pngFile).use { out ->
+                    scaled.compress(Bitmap.CompressFormat.PNG, 95, out)
+                }
+            } finally {
+                scaled.recycle()  // P1: always recycle, even if compress throws (e.g. disk full)
             }
-            scaled.recycle()
 
             val specFile = File(dir, "card_template_spec.json")
             specFile.writeText(gson.toJson(spec))

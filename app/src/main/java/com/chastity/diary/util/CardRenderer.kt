@@ -76,8 +76,10 @@ object CardRenderer {
         }
         decor.addView(composeView, params)
 
-        // Give Compose one frame to compose + measure.
-        delay(200)
+        // Give Compose time to compose + measure + let async produceState blocks load
+        // their bitmaps (background image, photo EXIF, QR code). 600ms is conservative
+        // but ensures async IO operations finish before draw() is called.
+        delay(600)
 
         composeView.measure(
             View.MeasureSpec.makeMeasureSpec(CARD_W, View.MeasureSpec.EXACTLY),

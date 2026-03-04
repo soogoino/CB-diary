@@ -47,6 +47,7 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
     private val db = AppDatabase.getInstance(application)
     private val entryRepo = EntryRepository(db.dailyEntryDao(), db.dailyEntryAttributeDao())
     private val streakRepo = StreakRepository(preferencesManager)
+    private val gson = Gson()   // shared instance; Gson is thread-safe for reads
 
     init {
         // Restore user-imported templates that survived process death.
@@ -79,15 +80,13 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
     private val _userTemplates = MutableStateFlow<List<CardTheme>>(emptyList())
 
     /** All available themes: built-in + user-imported. */
-    val availableThemes: StateFlow<List<CardTheme>> = combine(
-        _userTemplates,
-        sponsorUnlocked
-    ) { userTemplates, unlocked ->
-        buildList {
-            addAll(CardThemes.ALL)
-            addAll(userTemplates)
-        }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, CardThemes.ALL)
+    val availableThemes: StateFlow<List<CardTheme>> = _userTemplates
+        .map { userTemplates ->
+            buildList {
+                addAll(CardThemes.ALL)
+                addAll(userTemplates)
+            }
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, CardThemes.ALL)
 
     val selectedTheme: StateFlow<CardTheme> = combine(
         userSettings,
@@ -197,12 +196,16 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
                 val bitmap = CardRenderer.renderToBitmap(activity) {
                     SummaryCardContent(data = data, theme = theme, textBackdropEnabled = textBackdrop)
                 }
-                val file = CardRenderer.saveToCache(activity, bitmap, data)
-                CardRenderer.shareCard(activity, file)
+                try {
+                    val file = CardRenderer.saveToCache(activity, bitmap, data)
+                    CardRenderer.shareCard(activity, file)
+                } finally {
+                    bitmap.recycle()  // P1: free ~8 MB immediately after use
+                }
             } catch (e: Exception) {
                 Toast.makeText(
-                    activity,
-                    activity.getString(R.string.card_render_error),
+                    getApplication(),  // P1: use Application ctx to avoid Activity leak
+                    getApplication<Application>().getString(R.string.card_render_error),
                     Toast.LENGTH_SHORT
                 ).show()
             } finally {
@@ -221,18 +224,22 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
                 val bitmap = CardRenderer.renderToBitmap(activity) {
                     SummaryCardContent(data = data, theme = theme, textBackdropEnabled = textBackdrop)
                 }
-                val file = CardRenderer.saveToCache(activity, bitmap, data)
-                val uri = CardRenderer.saveToGallery(activity, file, data)
-                Toast.makeText(
-                    activity,
-                    if (uri != null) activity.getString(R.string.card_saved_to_gallery)
-                    else activity.getString(R.string.card_render_error),
-                    Toast.LENGTH_SHORT
-                ).show()
+                try {
+                    val file = CardRenderer.saveToCache(activity, bitmap, data)
+                    val uri = CardRenderer.saveToGallery(activity, file, data)
+                    Toast.makeText(
+                        getApplication(),  // P1: Application ctx to avoid Activity leak
+                        if (uri != null) getApplication<Application>().getString(R.string.card_saved_to_gallery)
+                        else getApplication<Application>().getString(R.string.card_render_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } finally {
+                    bitmap.recycle()  // P1: free ~8 MB immediately after use
+                }
             } catch (e: Exception) {
                 Toast.makeText(
-                    activity,
-                    activity.getString(R.string.card_render_error),
+                    getApplication(),
+                    getApplication<Application>().getString(R.string.card_render_error),
                     Toast.LENGTH_SHORT
                 ).show()
             } finally {
@@ -360,8 +367,11 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
                     "templates/$userTemplateId/card_template_spec.json"
                 )
                 if (specFile.exists()) {
-                    val spec = Gson().fromJson(specFile.readText(), CardTemplateSpec::class.java)
-                    specFile.writeText(Gson().toJson(spec.copy(textColorScheme = schemeStr)))
+                    // P1: atomic write via temp-file + rename to avoid truncated JSON on crash
+                    val spec = gson.fromJson(specFile.readText(), CardTemplateSpec::class.java)
+                    val tmpFile = File(specFile.parentFile, "card_template_spec.json.tmp")
+                    tmpFile.writeText(gson.toJson(spec.copy(textColorScheme = schemeStr)))
+                    tmpFile.renameTo(specFile)
                 }
             }
         }
