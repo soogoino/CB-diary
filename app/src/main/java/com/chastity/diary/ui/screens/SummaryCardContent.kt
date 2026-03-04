@@ -96,7 +96,8 @@ private val CARD_DATE_FMT = DateTimeFormatter.ofPattern("yyyy / MM / dd")
 fun SummaryCardContent(
     data: CardData,
     theme: CardTheme,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    textBackdropEnabled: Boolean = false,
 ) {
     val textColor = if (theme.textColorScheme == TextColorScheme.LIGHT)
         Color.White else Color.Black
@@ -117,6 +118,24 @@ fun SummaryCardContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = theme.overlayOpacity))
+            )
+        }
+
+        // ── Layer 1.5: Text backdrop (custom-card legibility aid) ────────────
+        if (textBackdropEnabled && theme.backgroundSource is BackgroundSource.ExternalAsset) {
+            val backdropColor = if (theme.textColorScheme == TextColorScheme.LIGHT)
+                Color.Black.copy(alpha = 0.42f) else Color.White.copy(alpha = 0.52f)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        start = (spec.safeZones.header.left - 12).coerceAtLeast(0).dp,
+                        end = (spec.safeZones.header.right - 12).coerceAtLeast(0).dp,
+                        top = (spec.safeZones.header.top - 12).coerceAtLeast(0).dp,
+                        bottom = (spec.safeZones.footer.bottom - 12).coerceAtLeast(0).dp,
+                    )
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(backdropColor)
             )
         }
 
@@ -612,6 +631,7 @@ fun CardBottomSheet(
     val selectedTheme by viewModel.selectedTheme.collectAsState()
     val themes by viewModel.availableThemes.collectAsState()
     val isRendering by viewModel.isRendering.collectAsState()
+    val textBackdropEnabled by viewModel.cardTextBackdropEnabled.collectAsState()
 
     // ── Image import state ────────────────────────────────────────────────
     var pendingImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -683,7 +703,8 @@ fun CardBottomSheet(
                         ) {
                             SummaryCardContent(
                                 data = cardData!!,
-                                theme = selectedTheme
+                                theme = selectedTheme,
+                                textBackdropEnabled = textBackdropEnabled
                             )
                         }
                     }
@@ -862,6 +883,37 @@ fun CardBottomSheet(
                                     )
                                 },
                                 label = { Text(stringResource(R.string.card_import_text_dark_short)) }
+                            )
+                        }
+                    }
+                }
+
+                // ── Text backdrop toggle (custom image themes only) ──────────
+                if (selectedTheme.backgroundSource is BackgroundSource.ExternalAsset) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    stringResource(R.string.card_text_backdrop),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    stringResource(R.string.card_text_backdrop_hint),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            Switch(
+                                checked = textBackdropEnabled,
+                                onCheckedChange = { viewModel.setCardTextBackdropEnabled(it) }
                             )
                         }
                     }

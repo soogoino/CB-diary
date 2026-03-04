@@ -99,4 +99,8 @@ class SettingsRepository(private val preferencesManager: PreferencesManager) : I
     override suspend fun setSponsorUnlocked(unlocked: Boolean) {
         preferencesManager.setSponsorUnlocked(unlocked)
     }
+
+    override suspend fun updateCardTextBackdropEnabled(enabled: Boolean) {
+        preferencesManager.updateCardTextBackdropEnabled(enabled)
+    }
 }

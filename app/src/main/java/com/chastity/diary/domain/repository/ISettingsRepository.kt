@@ -56,4 +56,6 @@ interface ISettingsRepository {
     suspend fun updateCardThemeId(themeId: String)
 
     suspend fun setSponsorUnlocked(unlocked: Boolean)
+
+    suspend fun updateCardTextBackdropEnabled(enabled: Boolean)
 }

@@ -69,6 +69,7 @@ class PreferencesManager(private val context: Context) {
         // Summary card
         val CARD_THEME_ID = stringPreferencesKey("card_theme_id")
         val SPONSOR_UNLOCKED = booleanPreferencesKey("sponsor_unlocked")
+        val CARD_TEXT_BACKDROP_ENABLED = booleanPreferencesKey("card_text_backdrop_enabled")
     }
     
     val userSettingsFlow: Flow<UserSettings> = context.dataStore.data
@@ -124,7 +125,8 @@ class PreferencesManager(private val context: Context) {
 
                 // Summary card
                 selectedCardThemeId = preferences[PreferencesKeys.CARD_THEME_ID] ?: "midnight",
-                sponsorUnlocked = preferences[PreferencesKeys.SPONSOR_UNLOCKED] ?: false
+                sponsorUnlocked = preferences[PreferencesKeys.SPONSOR_UNLOCKED] ?: false,
+                cardTextBackdropEnabled = preferences[PreferencesKeys.CARD_TEXT_BACKDROP_ENABLED] ?: false,
             )
         }
     
@@ -295,6 +297,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setSponsorUnlocked(unlocked: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.SPONSOR_UNLOCKED] = unlocked
+        }
+    }
+
+    suspend fun updateCardTextBackdropEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.CARD_TEXT_BACKDROP_ENABLED] = enabled
         }
     }
 

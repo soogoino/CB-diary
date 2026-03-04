@@ -852,6 +852,8 @@
     <string name="card_import_template">Import</string>
     <string name="card_show_photo">Show Today\'s Photo</string>
     <string name="card_show_photo_hint">Include today\'s photo on the card</string>
+    <string name="card_text_backdrop">Text Background</string>
+    <string name="card_text_backdrop_hint">Adds a translucent backdrop behind text on custom image cards</string>
     <string name="card_photo_required">Take a check-in photo first before adding it to the card</string>
     <string name="card_save">Save</string>
     <string name="card_share">Share</string>

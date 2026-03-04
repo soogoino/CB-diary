@@ -36,7 +36,8 @@ data class UserSettings(
 
     // Summary card
     val selectedCardThemeId: String = "midnight",
-    val sponsorUnlocked: Boolean = false
+    val sponsorUnlocked: Boolean = false,
+    val cardTextBackdropEnabled: Boolean = false,
 )
 
 enum class Gender {

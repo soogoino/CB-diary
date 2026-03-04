@@ -796,6 +796,8 @@
     <string name="card_import_template">匯入</string>
     <string name="card_show_photo">顯示今日照片</string>
     <string name="card_show_photo_hint">將今日照片加入卡片</string>
+    <string name="card_text_backdrop">文字底圖</string>
+    <string name="card_text_backdrop_hint">在自訂圖片卡片的文字後方加上半透明底圖</string>
     <string name="card_photo_required">請先拍照打卡，才能將照片加入卡片</string>
     <string name="card_save">儲存至相簿</string>
     <string name="card_share">分享</string>

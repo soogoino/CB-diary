@@ -65,6 +65,14 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
         .map { it?.sponsorUnlocked ?: false }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
+    val cardTextBackdropEnabled: StateFlow<Boolean> = userSettings
+        .map { it?.cardTextBackdropEnabled ?: false }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    fun setCardTextBackdropEnabled(enabled: Boolean) {
+        viewModelScope.launch { settingsRepo.updateCardTextBackdropEnabled(enabled) }
+    }
+
     // ── Theme selection ───────────────────────────────────────────────────────
 
     /** User-imported templates added via [importTemplate]. */
@@ -182,11 +190,12 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
     fun generateAndShare(activity: Activity) {
         val data = cardData.value ?: return
         val theme = selectedTheme.value
+        val textBackdrop = cardTextBackdropEnabled.value
         viewModelScope.launch {
             _isRendering.value = true
             try {
                 val bitmap = CardRenderer.renderToBitmap(activity) {
-                    SummaryCardContent(data = data, theme = theme)
+                    SummaryCardContent(data = data, theme = theme, textBackdropEnabled = textBackdrop)
                 }
                 val file = CardRenderer.saveToCache(activity, bitmap, data)
                 CardRenderer.shareCard(activity, file)
@@ -205,11 +214,12 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
     fun generateAndSave(activity: Activity) {
         val data = cardData.value ?: return
         val theme = selectedTheme.value
+        val textBackdrop = cardTextBackdropEnabled.value
         viewModelScope.launch {
             _isRendering.value = true
             try {
                 val bitmap = CardRenderer.renderToBitmap(activity) {
-                    SummaryCardContent(data = data, theme = theme)
+                    SummaryCardContent(data = data, theme = theme, textBackdropEnabled = textBackdrop)
                 }
                 val file = CardRenderer.saveToCache(activity, bitmap, data)
                 val uri = CardRenderer.saveToGallery(activity, file, data)
