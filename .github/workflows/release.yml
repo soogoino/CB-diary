@@ -97,10 +97,12 @@ jobs:
             fi
           done
           if [[ -n "$CHANGELOG_FILE" ]]; then
-            # Use a random delimiter to avoid collision with changelog content
+            # Use a random delimiter to avoid collision with changelog content.
+            # printf ensures a newline after the file content even if the file
+            # has no trailing newline, so the closing delimiter is on its own line.
             DELIM="CHANGELOG_$(openssl rand -hex 8)"
             echo "BODY<<${DELIM}" >> "$GITHUB_OUTPUT"
-            cat "$CHANGELOG_FILE" >> "$GITHUB_OUTPUT"
+            printf '%s\n' "$(cat "$CHANGELOG_FILE")" >> "$GITHUB_OUTPUT"
             echo "${DELIM}" >> "$GITHUB_OUTPUT"
           else
             echo "BODY=No changelog found for ${VER} (code ${CODE})." >> $GITHUB_OUTPUT
