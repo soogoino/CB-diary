@@ -97,11 +97,12 @@ jobs:
             fi
           done
           if [[ -n "$CHANGELOG_FILE" ]]; then
-            # Preserve newlines through GITHUB_OUTPUT using multiline delimiter
+            # Use a random delimiter to avoid collision with changelog content
+            DELIM="CHANGELOG_$(openssl rand -hex 8)"
             {
-              echo 'BODY<<EOF'
+              echo "BODY<<${DELIM}"
               cat "$CHANGELOG_FILE"
-              echo 'EOF'
+              echo "${DELIM}"
             } >> $GITHUB_OUTPUT
           else
             echo "BODY=No changelog found for ${VER} (code ${CODE})." >> $GITHUB_OUTPUT
