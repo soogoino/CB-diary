@@ -65,6 +65,7 @@
     <!-- Errors -->
     <string name="error_biometric_failed">辨識失敗，請重試</string>
     <string name="error_pin_incorrect">PIN 碼錯誤</string>
+    <string name="error_pin_blocked">嘗試次數過多，請 %d 秒後再試。</string>
     <string name="error_prefix">錯誤: %s</string>
 
     <!-- Lock Screen -->
@@ -165,6 +166,7 @@
     <string name="settings_language_system">跟隨系統</string>
     <string name="settings_language_english">English</string>
     <string name="settings_language_traditional_chinese">繁體中文</string>
+    <string name="settings_language_simplified_chinese">簡體中文</string>
     <string name="settings_data_management">資料管理</string>
     <string name="settings_export_csv">匯出資料 (CSV)</string>
     <string name="settings_import_csv">匯入資料 (CSV)</string>
@@ -245,6 +247,7 @@
     <string name="unsaved_changes_title">有未儲存的變更</string>
     <string name="unsaved_changes_message">切換日期將放棄目前尚未儲存的內容，確定要繼續？</string>
     <string name="unsaved_changes_confirm">直接切換</string>
+    <string name="unsaved_changes_save_and_switch">儲存並切換</string>
     <string name="section_notes">備註</string>
     <string name="section_notes_subtitle">任何想補充的想法</string>
     <string name="notes_placeholder">輸入備註...</string>

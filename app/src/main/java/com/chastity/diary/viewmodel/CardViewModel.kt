@@ -23,7 +23,6 @@ import com.chastity.diary.domain.model.rotatingQuestionTitleRes
 import com.chastity.diary.ui.screens.SummaryCardContent
 import com.chastity.diary.ui.theme.CardThemes
 import com.chastity.diary.util.CardRenderer
-import com.chastity.diary.util.SponsorManager
 import com.chastity.diary.util.TemplateImporter
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -251,11 +250,10 @@ class CardViewModel(application: Application) : AndroidViewModel(application) {
     // ── Sponsor code ──────────────────────────────────────────────────────────
 
     /**
-     * Validates [code] and, if correct, persists the unlocked state.
-     * @return `true` if the code was valid.
+     * Persists the sponsor-unlocked state (code validation removed — logic deprecated).
+     * @return always `true`.
      */
     fun submitSponsorCode(code: String): Boolean {
-        if (!SponsorManager.isValidCode(code)) return false
         viewModelScope.launch { settingsRepo.setSponsorUnlocked(true) }
         return true
     }

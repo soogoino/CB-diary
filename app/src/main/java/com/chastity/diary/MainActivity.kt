@@ -2,6 +2,8 @@ package com.chastity.diary
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,11 +45,16 @@ class MainActivity : AppCompatActivity() {
     private val _isLocked = MutableStateFlow(false)
     private val isLocked: StateFlow<Boolean> = _isLocked
 
+    // S-1: track PIN failures for exponential backoff brute-force protection
+    private var pinFailCount = 0
+    private var pinBlockedUntilMs = 0L
+
     companion object {
         /**
          * 拍照前設為 true，讓 ON_STOP 不觸發鎖定。
          * 相機返回後的 ON_START 自動重置。
          */
+        @Volatile
         var isCameraLaunching: Boolean = false
     }
 
@@ -135,7 +142,13 @@ class MainActivity : AppCompatActivity() {
                     // startupData is null only while SplashScreen is showing — render nothing
                     val data = startupData ?: return@Surface
 
-                    if (!data.onboardingCompleted) {
+                    // U-5: Crossfade between onboarding and main app — eliminates the abrupt flash
+                    Crossfade(
+                        targetState = data.onboardingCompleted,
+                        animationSpec = tween(durationMillis = 400),
+                        label = "onboarding_main_crossfade"
+                    ) { onboardingDone ->
+                    if (!onboardingDone) {
                         // B-1: onboarding not done — show onboarding only
                         OnboardingScreen(
                             onComplete = {
@@ -174,12 +187,25 @@ class MainActivity : AppCompatActivity() {
                                             )
                                         },
                                         onUnlockWithPin = { pin ->
-                                            val savedPin = encryptedPrefs.getString(Constants.KEY_PIN_CODE, "")
-                                            if (pin == savedPin) {
-                                                _isLocked.value = false
-                                                errorMessage = null
+                                            val now = System.currentTimeMillis()
+                                            if (now < pinBlockedUntilMs) {
+                                                val remainSec = ((pinBlockedUntilMs - now + 999) / 1000).toInt()
+                                                errorMessage = getString(R.string.error_pin_blocked, remainSec)
                                             } else {
-                                                errorMessage = getString(R.string.error_pin_incorrect)
+                                                val savedPin = encryptedPrefs.getString(Constants.KEY_PIN_CODE, "")
+                                                if (pin == savedPin) {
+                                                    _isLocked.value = false
+                                                    errorMessage = null
+                                                    pinFailCount = 0
+                                                } else {
+                                                    pinFailCount++
+                                                    if (pinFailCount >= 5) {
+                                                        // Exponential backoff: 2^(n-5) seconds, capped at 5 min
+                                                        val delaySec = minOf(1L shl (pinFailCount - 5), 300L)
+                                                        pinBlockedUntilMs = System.currentTimeMillis() + delaySec * 1000L
+                                                    }
+                                                    errorMessage = getString(R.string.error_pin_incorrect)
+                                                }
                                             }
                                         },
                                         biometricAvailable = biometricHelper.isBiometricAvailable(),
@@ -189,6 +215,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
+                    } // end Crossfade
                 }
             }
         }

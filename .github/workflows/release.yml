@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history needed for git describe
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -28,58 +30,108 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+      # ── Extract version info from build.gradle.kts ─────────────────────────
+      - name: Extract version info
+        id: version
+        run: |
+          VERSION_CODE=$(grep -m1 'versionCode\s*=' app/build.gradle.kts | grep -oP '\d+')
+          VERSION_NAME=$(grep -m1 'versionName\s*=' app/build.gradle.kts | grep -oP '["'"'"']\K[^"'"'"']+')
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            TAG_VERSION="${GITHUB_REF_NAME#v}"
+            echo "VERSION_NAME=${TAG_VERSION}" >> $GITHUB_OUTPUT
+            echo "IS_TAG=true" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_OUTPUT
+            echo "IS_TAG=false" >> $GITHUB_OUTPUT
+          fi
+          echo "VERSION_CODE=${VERSION_CODE}" >> $GITHUB_OUTPUT
+          echo "APK_NAME=ChastityDiary-${VERSION_NAME:-$VERSION_CODE}" >> $GITHUB_OUTPUT
+
+      # ── Decode & validate keystore ─────────────────────────────────────────
       - name: Decode keystore
         run: |
           printf '%s' "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > /tmp/cb-diary-release.jks
-          # Verify the decoded file is a valid JKS/PKCS12
-          keytool -list -keystore /tmp/cb-diary-release.jks \
-            -storepass "${{ secrets.KEYSTORE_PASS }}" 2>&1 | head -5
+          # Fail fast if the keystore cannot be read with the provided password
+          keytool -list \
+            -keystore /tmp/cb-diary-release.jks \
+            -storepass "${{ secrets.KEYSTORE_PASS }}" \
+            -noprompt
+          echo "Keystore OK"
 
+      # ── Build ──────────────────────────────────────────────────────────────
       - name: Build release APK
         env:
           KEYSTORE_PATH: /tmp/cb-diary-release.jks
           KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASS: ${{ secrets.KEY_PASS }}
-        run: ./gradlew assembleRelease --no-daemon
-
-      - name: Get version from tag
-        id: version
+          KEY_ALIAS:     ${{ secrets.KEY_ALIAS }}
+          KEY_PASS:      ${{ secrets.KEY_PASS }}
         run: |
-          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
-            echo "IS_TAG=true" >> $GITHUB_OUTPUT
-          else
-            echo "VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-            echo "IS_TAG=false" >> $GITHUB_OUTPUT
-          fi
+          ./gradlew assembleRelease \
+            --no-daemon \
+            --build-cache \
+            -Dorg.gradle.parallel=true
 
+      # ── Rename APK ─────────────────────────────────────────────────────────
       - name: Rename APK
         run: |
-          mv app/build/outputs/apk/release/app-release.apk \
-             app/build/outputs/apk/release/ChastityDiary-${{ steps.version.outputs.VERSION }}.apk
+          APK_SRC="app/build/outputs/apk/release/app-release.apk"
+          APK_DST="app/build/outputs/apk/release/${{ steps.version.outputs.APK_NAME }}.apk"
+          mv "$APK_SRC" "$APK_DST"
+          echo "APK_PATH=${APK_DST}" >> $GITHUB_ENV
 
-      - name: Upload APK artifact (workflow_dispatch)
+      # ── Read changelog ─────────────────────────────────────────────────────
+      - name: Read changelog
+        id: changelog
+        if: steps.version.outputs.IS_TAG == 'true'
+        run: |
+          VER="${{ steps.version.outputs.VERSION_NAME }}"
+          CODE="${{ steps.version.outputs.VERSION_CODE }}"
+          # Try version name first (e.g. 1.1.0.txt), then version code (e.g. 6.txt)
+          CHANGELOG_FILE=""
+          for f in \
+            "fastlane/metadata/android/en-US/changelogs/${VER}.txt" \
+            "fastlane/metadata/android/en-US/changelogs/${CODE}.txt"; do
+            if [[ -f "$f" ]]; then
+              CHANGELOG_FILE="$f"
+              break
+            fi
+          done
+          if [[ -n "$CHANGELOG_FILE" ]]; then
+            # Preserve newlines through GITHUB_OUTPUT using multiline delimiter
+            {
+              echo 'BODY<<EOF'
+              cat "$CHANGELOG_FILE"
+              echo 'EOF'
+            } >> $GITHUB_OUTPUT
+          else
+            echo "BODY=No changelog found for ${VER} (code ${CODE})." >> $GITHUB_OUTPUT
+          fi
+
+      # ── Upload artifact (manual trigger / no tag) ─────────────────────────
+      - name: Upload APK artifact
         if: steps.version.outputs.IS_TAG == 'false'
         uses: actions/upload-artifact@v4
         with:
-          name: ChastityDiary-${{ steps.version.outputs.VERSION }}
-          path: app/build/outputs/apk/release/ChastityDiary-*.apk
+          name: ${{ steps.version.outputs.APK_NAME }}
+          path: ${{ env.APK_PATH }}
           retention-days: 7
 
+      # ── Create GitHub Release (tag push only) ──────────────────────────────
       - name: Create GitHub Release
         if: steps.version.outputs.IS_TAG == 'true'
         uses: softprops/action-gh-release@v2
         with:
           name: "Chastity Diary ${{ github.ref_name }}"
           body: |
-            ## Chastity Diary ${{ github.ref_name }}
+            ## What's new in ${{ github.ref_name }}
 
-            See [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/fastlane/metadata/android/en-US/changelogs/${{ steps.version.outputs.VERSION }}.txt) for details.
+            ${{ steps.changelog.outputs.BODY }}
 
+            ---
             ### Install
-            Download the APK below and install it on your Android device (minSdk 24 / Android 7.0+).
-            You may need to enable "Install from unknown sources" in your device settings.
-          files: app/build/outputs/apk/release/ChastityDiary-*.apk
+            Download the APK below and sideload on Android 7.0+ (minSdk 24).
+            You may need to enable **Install from unknown sources** in Settings.
+          files: ${{ env.APK_PATH }}
+          generate_release_notes: false
           draft: false
-          prerelease: false
+          prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') }}

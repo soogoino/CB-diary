@@ -27,6 +27,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CBDiary"
+        android:localeConfig="@xml/locales_config"
         tools:targetApi="34">
         
         <activity

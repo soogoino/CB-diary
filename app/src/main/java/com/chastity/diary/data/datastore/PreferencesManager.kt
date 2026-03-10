@@ -203,6 +203,11 @@ class PreferencesManager(private val context: Context) {
         .map { preferences ->
             preferences[PreferencesKeys.LONGEST_STREAK] ?: 0
         }
+
+    val lastEntryDateFlow: Flow<LocalDate?> = context.dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.LAST_ENTRY_DATE]?.let { LocalDate.parse(it) }
+        }
     
     // Personal profile update methods
     

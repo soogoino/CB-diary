@@ -1,0 +1,18 @@
+• Fix: streak counter now correctly reads the last entry date from DataStore instead of always returning 1
+• Fix: PIN brute-force protection — exponential back-off (up to 5 min) after 5 failed attempts
+• Fix: CSV import path-traversal check — imported photo paths are now validated against app's files directory
+• Fix: backup config now correctly excludes the Room database and references the right SharedPreferences file name
+• Fix: morning reminder no longer fires when the morning check is already completed
+• Fix: notification channel is now created in Application.onCreate() instead of ViewModel, preventing a potential race condition
+• Fix: trend chart Y-axis now starts at 1 (not 0), keeping data points from being crowded at the top
+• Fix: metric legend in trend chart wraps on narrow screens instead of being cut off
+• Fix: energy average in summary correctly shows "/ 10" (was incorrectly "/ 5")
+• Fix: mood trend chart Y-axis fixed to 1–5 integer scale
+• UI: smooth Crossfade transition between onboarding and main screen
+• UI: PIN error card now shakes on wrong input
+• UI: lock screen respects system gesture navigation bar insets
+• UI: unsaved-changes dialog now offers "Save & switch" in addition to "Switch anyway" and "Cancel"
+• UI: language selector chips in Settings wrap to multiple lines on small screens
+• Engineering: Room schema export enabled — migration history now tracked in version control
+• Engineering: non-transitive R class enabled for faster builds
+• Engineering: CI workflow improvements — changelog auto-embedded in GitHub Release body, keystore validation is fail-fast, pre-release tags auto-detected

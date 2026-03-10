@@ -445,6 +445,7 @@ fun DailyEntryScreen(
 
     // C-1: Unsaved changes guard — shown when user taps the calendar icon with a dirty form
     if (showUnsavedChangesDialog) {
+        // U-2: Three-option dialog — Save & switch | Switch anyway | Cancel
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showUnsavedChangesDialog = false },
             title = { Text(stringResource(R.string.unsaved_changes_title)) },
@@ -452,12 +453,19 @@ fun DailyEntryScreen(
             confirmButton = {
                 TextButton(onClick = {
                     showUnsavedChangesDialog = false
+                    viewModel.saveEntry()
                     showDatePicker = true
-                }) { Text(stringResource(R.string.unsaved_changes_confirm)) }
+                }) { Text(stringResource(R.string.unsaved_changes_save_and_switch)) }
             },
             dismissButton = {
-                TextButton(onClick = { showUnsavedChangesDialog = false }) {
-                    Text(stringResource(R.string.cancel))
+                Row {
+                    TextButton(onClick = {
+                        showUnsavedChangesDialog = false
+                        showDatePicker = true
+                    }) { Text(stringResource(R.string.unsaved_changes_confirm)) }
+                    TextButton(onClick = { showUnsavedChangesDialog = false }) {
+                        Text(stringResource(R.string.cancel))
+                    }
                 }
             }
         )

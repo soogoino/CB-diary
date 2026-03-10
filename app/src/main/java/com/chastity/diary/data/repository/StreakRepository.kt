@@ -19,16 +19,11 @@ class StreakRepository(private val preferencesManager: PreferencesManager) : ISt
         val currentStreakValue = preferencesManager.currentStreakFlow.first()
         val longestStreakValue = preferencesManager.longestStreakFlow.first()
         
-        val lastEntryDateStr = try {
-            preferencesManager.userSettingsFlow.first().let { settings ->
-                // Get last entry date from settings or use a placeholder
-                null as String? // We'll need to add this to PreferencesManager
-            }
+        val lastEntryDate = try {
+            preferencesManager.lastEntryDateFlow.first()
         } catch (e: Exception) {
             null
         }
-        
-        val lastEntryDate = lastEntryDateStr?.let { LocalDate.parse(it) }
         
         val newStreak = when {
             lastEntryDate == null -> 1 // First entry

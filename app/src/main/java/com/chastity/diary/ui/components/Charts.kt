@@ -18,7 +18,6 @@ import com.chastity.diary.ui.theme.HeatmapLevel3
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.res.stringResource
 import com.chastity.diary.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
@@ -33,6 +32,7 @@ import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
+import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.entryOf
@@ -48,6 +48,8 @@ fun TrendLineChart(
     data: List<Float>,
     labels: List<String> = emptyList(),
     intYAxis: Boolean = false,
+    minY: Float? = null,
+    maxY: Float? = null,
     modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier.fillMaxWidth()) {
@@ -83,7 +85,11 @@ fun TrendLineChart(
                         value.toInt().toString()
                     }
                     Chart(
-                        chart = lineChart(),
+                        chart = lineChart(
+                            axisValuesOverrider = AxisValuesOverrider.fixed(
+                                minY = minY, maxY = maxY
+                            )
+                        ),
                         chartModelProducer = producer,
                         startAxis = if (intYAxis) rememberStartAxis(valueFormatter = intFormatter)
                                     else rememberStartAxis(),
@@ -388,6 +394,7 @@ fun ActionHeatmapSection(
  * Multi-series line chart for comparing numeric metrics on the same 1–10 scale.
  * [series]: list of Triple(label, color, list of (LocalDate, Float) pairs)
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MultiTrendLineChart(
     title: String,
@@ -434,7 +441,8 @@ fun MultiTrendLineChart(
                 ProvideChartStyle {
                     Chart(
                         chart = lineChart(
-                            lines = series.map { (_, color, _) -> lineSpec(lineColor = color) }
+                            lines = series.map { (_, color, _) -> lineSpec(lineColor = color) },
+                            axisValuesOverrider = AxisValuesOverrider.fixed(minY = 1f, maxY = 10f)
                         ),
                         chartModelProducer = producer,
                         startAxis = rememberStartAxis(valueFormatter = intFormatter),
@@ -445,10 +453,11 @@ fun MultiTrendLineChart(
                     )
                 }
 
-                // Legend row
-                Row(
+                // Legend row — FlowRow auto-wraps on narrow screens
+                FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     series.forEach { (label, color, _) ->
                         Row(

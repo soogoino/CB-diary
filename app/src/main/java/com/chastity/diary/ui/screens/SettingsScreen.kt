@@ -44,7 +44,7 @@ import com.chastity.diary.viewmodel.SettingsViewModel
 /**
  * Settings screen
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel = viewModel(),
@@ -602,18 +602,21 @@ fun SettingsScreen(
                     val langOptions = listOf(
                         AppLanguage.SYSTEM              to stringResource(R.string.settings_language_system),
                         AppLanguage.ENGLISH             to stringResource(R.string.settings_language_english),
-                        AppLanguage.TRADITIONAL_CHINESE to stringResource(R.string.settings_language_traditional_chinese)
+                        AppLanguage.TRADITIONAL_CHINESE to stringResource(R.string.settings_language_traditional_chinese),
+                        AppLanguage.SIMPLIFIED_CHINESE  to stringResource(R.string.settings_language_simplified_chinese)
                     )
-                    Row(
+                    // F-4: FlowRow wraps automatically on small screens (< 360 dp)
+                    // instead of squeezing 4 chips into a single Row where long labels truncate.
+                    FlowRow(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         langOptions.forEach { (lang, label) ->
                             FilterChip(
                                 selected = userSettings.language == lang,
                                 onClick = { viewModel.updateLanguage(lang) },
-                                label = { Text(label, maxLines = 1) },
-                                modifier = Modifier.weight(1f),
+                                label = { Text(label) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = MaterialTheme.colorScheme.primary,
                                     selectedLabelColor = MaterialTheme.colorScheme.onPrimary,

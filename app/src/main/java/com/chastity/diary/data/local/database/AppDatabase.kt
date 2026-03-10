@@ -18,7 +18,7 @@ import com.chastity.diary.util.Constants
 @Database(
     entities = [DailyEntryEntity::class, DailyEntryAttributeEntity::class],
     version = Constants.DATABASE_VERSION,
-    exportSchema = false
+    exportSchema = true   // E-2: enables schema JSON export for MigrationTestHelper
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

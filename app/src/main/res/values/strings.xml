@@ -65,6 +65,7 @@
     <!-- Errors -->
     <string name="error_biometric_failed">Authentication failed, please try again</string>
     <string name="error_pin_incorrect">Incorrect PIN</string>
+    <string name="error_pin_blocked">Too many attempts. Try again in %d seconds.</string>
     <string name="error_prefix">Error: %s</string>
 
     <!-- Lock Screen -->
@@ -175,6 +176,7 @@
     <string name="settings_language_system">System</string>
     <string name="settings_language_english">English</string>
     <string name="settings_language_traditional_chinese">zh-TW</string>
+    <string name="settings_language_simplified_chinese">Simplified Chinese</string>
 
 
     <!-- Onboarding -->
@@ -248,6 +250,7 @@
     <string name="unsaved_changes_title">Unsaved changes</string>
     <string name="unsaved_changes_message">Switching date will discard unsaved changes. Continue?</string>
     <string name="unsaved_changes_confirm">Switch anyway</string>
+    <string name="unsaved_changes_save_and_switch">Save &amp; switch</string>
     <string name="section_notes">Notes</string>
     <string name="section_notes_subtitle">Anything to add</string>
     <string name="notes_placeholder">Enter notes…</string>

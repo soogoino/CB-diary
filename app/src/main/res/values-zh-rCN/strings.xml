@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">贞操日记</string>
+
+    <!-- Navigation -->
+    <string name="nav_daily_entry">每日记录</string>
+    <string name="nav_dashboard">仪表板</string>
+    <string name="nav_history">历史记录</string>
+    <string name="nav_settings">设置</string>
+
+    <!-- Common -->
+    <string name="save">保存</string>
+    <string name="cancel">取消</string>
+    <string name="delete">删除</string>
+    <string name="confirm">确认</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="confirm_ok">确定</string>
+    <string name="not_set">未设置</string>
+
+    <!-- Daily Entry Questions -->
+    <string name="q1_mood">今天的心情如何？</string>
+    <string name="q2_porn">今天是否主动接触色情内容？</string>
+    <string name="q2_duration">看了多久？</string>
+    <string name="q3_erection">今天是否勃起？</string>
+    <string name="q4_exercise">是否运动了？</string>
+    <string name="q4_type">做了什么运动？</string>
+    <string name="q5_unlocked">是否解锁？</string>
+    <string name="q5_masturbated">是否自慰了？</string>
+    <string name="q6_exposed">是否露出锁？</string>
+    <string name="q6_locations">在哪里？</string>
+    <string name="q7_photo">打卡照片</string>
+    <string name="q8_desire">今天的性欲强度如何？</string>
+    <string name="q9_comfort">佩戴舒适度评估</string>
+    <string name="q10_discomfort">是否有不适或疼痛？</string>
+    <string name="q11_cleaned">是否清洁了贞操锁？</string>
+    <string name="q12_leakage">是否有泄漏情况？</string>
+    <string name="q13_edging">是否进行边缘训练/挑逗？</string>
+    <string name="q14_keyholder">与Keyholder/伴侣的互动</string>
+    <string name="q15_sleep">昨晚睡眠质量如何？</string>
+    <string name="q16_removed">今天是否短暂取下过？</string>
+    <string name="q17_night_erection">夜间勃起情况</string>
+    <string name="q18_focus">专注度影响</string>
+    <string name="q19_tasks">今天完成的挑战/任务</string>
+    <string name="q20_emotions">今天的主要情绪</string>
+
+    <!-- Biometric -->
+    <string name="biometric_title">解锁应用</string>
+    <string name="biometric_subtitle">使用生物识别验证身份</string>
+    <string name="biometric_description">请验证以访问您的日记</string>
+    <string name="biometric_negative_button">使用 PIN</string>
+
+    <!-- Notifications - Daily -->
+    <string name="notification_channel_name">每日提醒</string>
+    <string name="notification_channel_description">提醒您记录今天的日记</string>
+    <string name="notification_title">今天还没记录哦！</string>
+    <string name="notification_text">别忘了打卡 📝</string>
+
+    <!-- Notifications - Morning -->
+    <string name="morning_notification_channel_name">早晨 Check-in</string>
+    <string name="morning_notification_channel_description">提醒您完成早晨睡眠与状态记录</string>
+    <string name="morning_notification_title">☀️ 早晨 Check-in</string>
+    <string name="morning_notification_text">记录昨晚睡眠与今晨状态，只需几秒钟！</string>
+
+    <!-- Errors -->
+    <string name="error_biometric_failed">识别失败，请重试</string>
+    <string name="error_pin_incorrect">PIN 码错误</string>
+    <string name="error_pin_blocked">尝试次数过多，请 %d 秒后再试。</string>
+    <string name="error_prefix">错误: %s</string>
+
+    <!-- Lock Screen -->
+    <string name="lock_screen_title">贞操日记已锁定</string>
+    <string name="lock_icon_desc">锁定</string>
+    <string name="lock_biometric_button">使用生物识别解锁</string>
+    <string name="lock_or_pin">或使用 PIN 码</string>
+    <string name="lock_pin_label">PIN 码</string>
+    <string name="lock_unlock_button">解锁</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">仪表板</string>
+    <string name="time_range_week">本周</string>
+    <string name="time_range_month">本月</string>
+    <string name="time_range_3months">3个月</string>
+    <string name="time_range_all">全部</string>
+    <string name="stat_total_days">总佩戴天数</string>
+    <string name="stat_completion_rate">记录完成率</string>
+    <string name="stat_streak">连续打卡</string>
+    <string name="stat_longest_streak">最长连续</string>
+    <string name="chart_mood_trend">心情趋势 (1=挫折 → 5=开心)</string>
+    <string name="chart_metric_trend">身心指标趋势 (1–10)</string>
+    <string name="section_summary">统计摘要</string>
+    <string name="summary_avg_desire">平均性欲强度</string>
+    <string name="summary_avg_comfort">平均舒适度</string>
+    <string name="summary_masturbation_count">自慰次数（总计）</string>
+    <string name="summary_exercise_count">运动次数</string>
+
+    <!-- History Screen -->
+    <string name="history_title">历史记录</string>
+    <string name="history_all_records">所有记录</string>
+    <string name="history_has_record">有记录</string>
+    <string name="history_no_record">未记录</string>
+
+    <!-- Daily Entry Screen -->
+    <string name="save_success">保存成功！</string>
+    <string name="morning_save_success">☀️ 早晨记录已保存！</string>
+    <string name="delete_success">删除成功！</string>
+    <string name="edit_mode">编辑模式</string>
+    <string name="tab_morning">☀️ 早晨</string>
+    <string name="tab_evening">🌙 晚间</string>
+    <string name="delete_dialog_title">确认删除</string>
+    <string name="delete_dialog_message">确定要删除 %s 的记录吗？\n\n此操作无法撤销。</string>
+    <string name="morning_done_title">早晨记录已完成 ☀️</string>
+    <string name="morning_done_subtitle">可随时更新早晨记录</string>
+    <string name="save_button_update_morning">更新早晨记录</string>
+    <string name="save_button_complete_morning">完成早晨记录</string>
+    <string name="entry_created_prefix">创建：%s</string>
+    <string name="entry_updated_prefix">更新：%s</string>
+    <string name="entry_today_title">今日记录</string>
+    <string name="date_pattern">yyyy年MM月dd日</string>
+    <string name="date_short_pattern">MM月dd日</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">设置</string>
+    <string name="settings_version_format">贞操日记 v%s</string>
+    <string name="settings_profile">个人资料</string>
+    <string name="settings_no_profile">尚未设置个人资料</string>
+    <string name="settings_edit">编辑</string>
+    <string name="settings_nickname_prefix">昵称: %s</string>
+    <string name="settings_start_date_prefix">开始日期: %s</string>
+    <string name="settings_start_date_not_set">未设置</string>
+    <string name="settings_gender">生理性别</string>
+    <string name="settings_gender_male">男性 ♂</string>
+    <string name="settings_gender_female">女性 ♀</string>
+    <string name="settings_gender_other">其他</string>
+    <string name="settings_height_format">身高: %s cm</string>
+    <string name="settings_weight_format">体重: %s kg</string>
+    <string name="settings_device_format">贞操锁: %s</string>
+    <string name="settings_morning_reminder">☀️ 早安提醒</string>
+    <string name="settings_reminder_icon_desc">早安提醒</string>
+    <string name="settings_reminder_enabled">已启用</string>
+    <string name="settings_reminder_disabled">已停用</string>
+    <string name="settings_reminder_time_prefix">提醒时间: %s</string>
+    <string name="settings_goodnight_reminder_icon_desc">晚安提醒</string>
+    <string name="settings_goodnight_reminder">🌙 晚安提醒</string>
+    <string name="settings_security">安全设置</string>
+    <string name="settings_time_icon_desc">设置时间</string>
+    <string name="settings_biometric_unlock">生物识别解锁</string>
+    <string name="settings_biometric_desc">使用指纹或面部识别</string>
+    <string name="settings_biometric_cd">生物识别</string>
+    <string name="settings_biometric_unsupported">设备不支持生物识别</string>
+    <string name="settings_pin_lock">PIN 码锁定</string>
+    <string name="settings_pin_cd">PIN 码</string>
+    <string name="settings_pin_change">修改 PIN 码</string>
+    <string name="settings_pin_set">已设置</string>
+    <string name="settings_pin_not_set">未设置</string>
+    <string name="settings_lock_desc">应用已启用锁定保护，每次进入时需要验证</string>
+    <string name="settings_photo_blur">照片默认模糊</string>
+    <string name="settings_photo_blur_desc">浏览记录时打卡照片自动模糊</string>
+    <string name="settings_photo_blur_cd">照片模糊</string>
+    <string name="settings_ui">界面设置</string>
+    <string name="settings_theme">显示主题</string>
+    <string name="settings_theme_light">浅色</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_theme_system">跟随系统</string>
+    <string name="settings_language">语言</string>
+    <string name="settings_language_system">跟随系统</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_traditional_chinese">繁体中文</string>
+    <string name="settings_language_simplified_chinese">简体中文</string>
+    <string name="settings_data_management">数据管理</string>
+    <string name="settings_export_csv">导出数据 (CSV)</string>
+    <string name="settings_import_csv">导入数据 (CSV)</string>
+    <string name="settings_about">关于</string>
+    <string name="biometric_unavailable_title">生物识别不可用</string>
+    <string name="biometric_unavailable_message">您的设备不支持生物识别功能，或未设置指纹/面部识别。请先在系统设置中设置生物识别。</string>
+    <string name="save_button_update">更新记录</string>
+    <string name="save_button_save_today">保存今日记录</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_new_upgrade">全新升级 ✨</string>
+    <string name="onboarding_upgrade_features">• 每日记录 — 渐进式卡片设计\n• 每日轮换题目（33 题池）\n• 即时反馈与情绪追踪\n• CSV 导出 / 导入\n• 个人资料与昵称</string>
+    <string name="onboarding_get_started">进入应用</string>
+    <string name="onboarding_skip">跳过</string>
+    <string name="onboarding_back">上一步</string>
+    <string name="onboarding_next">下一步</string>
+    <string name="onboarding_finish">完成设置！</string>
+    <string name="welcome_title">欢迎使用\nChastity Diary</string>
+    <string name="welcome_subtitle">记录你的贞操佩戴旅程\n追踪每日感受与成长</string>
+    <string name="welcome_feat_daily">每日追踪</string>
+    <string name="welcome_feat_streak">连续记录</string>
+    <string name="welcome_feat_private">安全私密</string>
+    <string name="profile_page_title">个人身份</string>
+    <string name="profile_page_subtitle">让我们认识你一点（可跳过此页）</string>
+    <string name="profile_nickname">昵称</string>
+    <string name="profile_nickname_hint">例如：小锁</string>
+    <string name="profile_gender">性别</string>
+    <string name="profile_body_section">体型数据（选填）</string>
+    <string name="profile_height">身高</string>
+    <string name="profile_weight">体重</string>
+    <string name="device_page_title">贞操锁</string>
+    <string name="device_page_subtitle">记录你的锁信息（可跳过此页）</string>
+    <string name="device_lock_name">锁名称</string>
+    <string name="device_lock_name_hint">例如：CB-6000、Bon4 ...</string>
+    <string name="device_start_date">锁定开始日期</string>
+    <string name="device_tap_to_set_date">点击选择日期</string>
+    <string name="device_wearing_days">已佩戴 %d 天 🎉</string>
+    <string name="device_starting_soon">即将开始！</string>
+    <string name="security_page_title">安全与隐私</string>
+    <string name="security_page_subtitle">保护你的记录（可跳过此页）</string>
+    <string name="security_biometric">生物识别锁定</string>
+    <string name="security_biometric_desc">使用指纹或面部识别解锁</string>
+    <string name="security_pin">PIN 码锁定</string>
+    <string name="security_pin_desc">使用数字密码解锁（可在设置中设置）</string>
+    <string name="security_note">详细的安全设置可在设置页面调整</string>
+    <string name="reminder_page_title">每日提醒</string>
+    <string name="reminder_page_subtitle">设置每日记录提醒时间</string>
+    <string name="reminder_enable">启用每日提醒</string>
+    <string name="reminder_enable_desc">每天在选定时间提醒你记录</string>
+    <string name="reminder_time">提醒时间</string>
+
+    <!-- ViewModel status messages -->
+    <string name="status_generating_test_data">正在生成测试数据…</string>
+    <string name="status_generated_test_data">成功生成 %d 条测试数据！</string>
+    <string name="status_generate_failed">生成失败: %s</string>
+    <string name="status_exporting">正在导出…</string>
+    <string name="status_export_success">导出成功！共 %d 条记录</string>
+    <string name="status_export_failed">导出失败: %s</string>
+    <string name="status_importing">正在导入…</string>
+    <string name="error_file_open">无法打开文件</string>
+    <string name="error_import_invalid">导入失败: 没有有效数据或格式不符</string>
+    <string name="status_import_success">导入成功！共导入 %d 条记录</string>
+    <string name="status_import_failed">导入失败: %s</string>
+    <string name="error_load_failed">加载失败</string>
+    <string name="error_load_failed_detail">加载失败: %s</string>
+
+    <!-- DailyEntryScreen sections and chips -->
+    <string name="section_core_questions">核心问题</string>
+    <string name="section_rotating_questions">今日轮换题</string>
+    <string name="section_rotating_daily_label">每日更替</string>
+    <string name="chip_yes">有</string>
+    <string name="chip_no">没有</string>
+    <string name="entry_no_record_prompt">尚未开始记录（可填 %d 题）</string>
+    <string name="entry_completion_status">核心题目完成 %1$d / %2$d</string>
+    <string name="entry_narrative_title">📝 今日摘要</string>
+    <string name="entry_record_info_title">记录信息</string>
+    <string name="entry_close">关闭</string>
+    <string name="unsaved_changes_title">有未保存的变更</string>
+    <string name="unsaved_changes_message">切换日期将放弃目前尚未保存的内容，确定要继续？</string>
+    <string name="unsaved_changes_confirm">直接切换</string>
+    <string name="unsaved_changes_save_and_switch">保存并切换</string>
+    <string name="section_notes">备注</string>
+    <string name="section_notes_subtitle">任何想补充的想法</string>
+    <string name="notes_placeholder">输入备注...</string>
+    <string name="notes_expand">我想记录更多 →</string>
+    <string name="notes_collapse">收起备注</string>
+    <string name="notes_optional">选填</string>
+    <string name="section_sleep_record">睡眠记录</string>
+    <string name="section_body_status">身体状况</string>
+    <string name="section_morning_wakeup">起床状态</string>
+    <string name="topbar_delete_cd">删除</string>
+    <string name="topbar_calendar_cd">选择日期</string>
+    <string name="ok_thumbs_up">好的 👍</string>
+
+    <!-- Core Questions Card -->
+    <string name="section_core_daily_required">每日必填</string>
+    <string name="q_device_worn">今天有佩戴锁吗？</string>
+    <string name="chip_worn_yes">✓ 有佩戴</string>
+    <string name="chip_worn_no">✗ 没有</string>
+    <string name="q_mood_title">今天的心情状态</string>
+    <string name="q_mood_subtitle">选一个最接近的情绪</string>
+    <string name="q_desire_title">今日性欲强度</string>
+    <string name="q_desire_subtitle">1 = 很低   10 = 很强烈</string>
+    <string name="q_desire_label">性欲强度</string>
+    <string name="q_comfort_title">佩戴舒适度</string>
+    <string name="q_comfort_subtitle">1 = 非常不舒适  10 = 非常舒适</string>
+    <string name="q_comfort_label">舒适度</string>
+    <string name="q_focus_title">今日专注度</string>
+    <string name="q_focus_subtitle">1 = 完全分心   10 = 高度专注</string>
+    <string name="q_focus_label">专注度</string>
+    <string name="q_photo_title">打卡照片</string>
+    <string name="q_photo_subtitle_optional">可选 · 视觉纪念</string>
+    <string name="q_photo_taken">✓ 已拍摄</string>
+    <string name="action_take_photo">拍照</string>
+    <string name="q_photo_tap_to_view">点击查看照片</string>
+    <string name="action_retake_photo">重新拍摄</string>
+    <string name="action_delete_photo">删除照片</string>
+    <string name="action_pick_from_gallery">相册</string>
+    <string name="error_photo_missing">⚠️ 照片文件已丢失</string>
+    <string name="action_clear_record">清除记录</string>
+    <string name="q_exercise_title">是否运动？</string>
+    <string name="q_exercise_label">有运动</string>
+    <string name="q_cleaning_title">今天是否清洁了贞操锁？</string>
+
+    <!-- Sleep Record Card -->
+    <string name="q_bedtime_title">就寝时间</string>
+    <string name="q_wake_time_title">起床时间</string>
+    <string name="action_set">设置</string>
+    <string name="sleep_duration_hours">睡眠：%d 小时</string>
+    <string name="sleep_duration_hours_minutes">睡眠：%1$d 小时 %2$d 分</string>
+    <string name="q_sleep_quality_title">睡眠质量</string>
+    <string name="q_sleep_quality_subtitle">1 = 很差   10 = 极佳</string>
+    <string name="q_sleep_quality_label">睡眠质量</string>
+    <string name="q_woke_from_device_title">因佩戴锁而醒来？</string>
+    <string name="q_woke_from_device_label">因佩戴锁而醒来</string>
+    <string name="q_erotic_dream_title">昨晚有春梦？</string>
+    <string name="q_erotic_dream_label">昨晚有春梦</string>
+
+    <!-- Body Status Card -->
+    <string name="q_morning_erection_title">晨勃</string>
+    <string name="q_morning_erection_label">有晨勃</string>
+    <string name="q_night_erection_title">昨晚夜间勃起</string>
+    <string name="q_night_erection_subtitle">大概的感受即可</string>
+    <string name="q_woke_from_night_erection_title">因夜间勃起而醒来？</string>
+    <string name="q_woke_from_night_erection_label">因夜间勃起而醒来</string>
+
+    <!-- Morning State Card -->
+    <string name="q_morning_mood_title">起床后心情</string>
+    <string name="q_morning_energy_title">起床能量指数</string>
+    <string name="q_morning_energy_subtitle">1 = 极度疲惫   10 = 精力充沛</string>
+    <string name="q_morning_energy_label">起床能量</string>
+
+    <!-- Masturbation Card -->
+    <string name="section_masturbation">💧 自慰小记</string>
+    <string name="q_masturbated_title">今天是否有自慰？</string>
+    <string name="q_masturbated_label">有自慰</string>
+    <string name="q_masturbation_count">次数：</string>
+    <string name="cd_decrease">减少</string>
+    <string name="cd_increase">增加</string>
+
+    <!-- YesNoToggle chips -->
+    <string name="yes_chip">是</string>
+    <string name="no_chip">否</string>
+
+    <!-- Duration picker time unit suffixes -->
+    <string name="unit_min">分</string>
+    <string name="unit_hr">小时</string>
+
+    <!-- Daily narrative sentences -->
+    <string name="narrative_mood">今天心情是 %s</string>
+    <string name="narrative_desire_high">性欲强度 %1$d/10，今天是高峰日——但你撑过来了 💪</string>
+    <string name="narrative_desire_low">性欲强度 %1$d/10，今天异常平静 😌</string>
+    <string name="narrative_desire_normal">性欲强度 %1$d/10，处于正常范围</string>
+    <string name="narrative_comfort_high">佩戴舒适度 %1$d/10，状况很好！</string>
+    <string name="narrative_comfort_low">佩戴舒适度 %1$d/10，记得调整佩戴方式。</string>
+    <string name="narrative_comfort_normal">佩戴舒适度 %1$d/10。</string>
+    <string name="narrative_not_worn">今天没有佩戴贞操锁。</string>
+    <string name="narrative_exercised">有运动，自律 +1 🏃</string>
+    <string name="narrative_exercised_with_duration">有运动（%d 分钟），自律 +1 🏃</string>
+    <string name="narrative_cleaning">清洁类型：%s 🧹</string>
+    <string name="narrative_keyholder">今天与 Keyholder 保持了联结 💬</string>
+    <string name="narrative_photo">📷 今天有留下打卡照片</string>
+    <string name="narrative_unlocked">今天解锁了——诚实记录是好事 🔓</string>
+    <string name="narrative_masturbated">今天有自慰 %d 次 💧</string>
+    <string name="narrative_edging">边缘训练完成，耐力值 UP 😈</string>
+    <string name="narrative_default">今日记录已保存，继续保持！</string>
+    <string name="narrative_cleaning_none">未清洁</string>
+
+    <!-- Rotating question feedbacks -->
+    <string-array name="daily_rotating_feedback_generic">
+        <item>你给出的答案，已悄然成为了下一个问题。</item>
+        <item>记录下来的，与真正感受到的之间，有什么尚未被命名。</item>
+        <item>每一个回应都是一扇门，而门后还有另一扇门。</item>
+        <item>你标记了这个时刻。这个时刻也标记了你。</item>
+        <item>被测量的，不一定就此被理解。</item>
+        <item>规律就在那里。它是否有意义，是另一回事。</item>
+        <item>这，也是数据的一部分。</item>
+        <item>已知悉。河流继续流淌。</item>
+    </string-array>
+
+    <!-- Rotating questions -->
+    <string name="rq_r1_title">今日是否有分泌物泄漏？</string>
+    <string name="rq_r1_feedback">不论有没有分泌物，记得别害羞地忽略清洁，身体会感谢你的。</string>
+    <string name="rq_r2_title">今日是否有主动顶锁/摩擦，寻求快感？</string>
+    <string name="rq_r2_feedback">不管有没有试探那份冲动，诚实面对自己就已经很勇敢了。</string>
+    <string name="rq_r3_title">今日是否进行边缘训练？</string>
+    <string name="rq_r3_feedback">无论你是逗留边缘还是退缩，能觉察这种诱惑本身就值得一点羞涩的笑。</string>
+    <string name="rq_r4_title">今日是否与Keyholder互动？</string>
+    <string name="rq_r4_feedback">不论有没有说出来，关系的细节常常比结果更值得回味。</string>
+    <string name="rq_r6_title">今日是否带着锁进入公众场合？</string>
+    <string name="rq_r6_feedback">在人前带着这个小秘密，不管敢不敢暴露，这种心跳都是你的奖励。</string>
+    <string name="rq_r7_title">今日是否曾短暂解除锁？</string>
+    <string name="rq_r7_feedback">不管有没有偷偷松开一秒，记得对自己诚实，并负起责任照顾好自己。</string>
+    <string name="rq_r8_title">今日是否有意展示或泄露锁踪迹？</string>
+    <string name="rq_r8_feedback">故意或不小心露出一点点，都会让你心里暗自发笑——接受这份小调皮吧。</string>
+    <string name="rq_r9_title">今日是否接触成人内容？</string>
+    <string name="rq_r9_feedback">有没有看，那种欲望的拉扯本身就值得你轻轻自嘲一下。</string>
+    <string name="rq_r10_title">今日是否解锁或进行自慰？</string>
+    <string name="rq_r10_feedback">不论今天怎么做，承认自己的感受比隐瞒更诚实，也更有疗愈力。</string>
+    <string name="rq_r11_title">今日是否进行乳头开发/玩弄？</string>
+    <string name="rq_r11_feedback">无论有没有逗弄，发现新的敏感点总让人又尴尬又好奇。</string>
+    <string name="rq_r12_title">今日是否进行后庭开发/探索？</string>
+    <string name="rq_r12_feedback">不管有没有探索，这类私密体验的存在本身就会让人面红心跳。</string>
+    <string name="rq_r13_title">今天你有没有感受到锁带来的不适或调整需求？</string>
+    <string name="rq_r13_feedback">有没有不舒服都要记下来，照顾好身体比硬撑更值得一点羞涩。</string>
+    <string name="rq_r14_title">今天佩戴锁是否让你感觉到内心的平静或成就？</string>
+    <string name="rq_r14_feedback">不论感觉如何，察觉到微妙的安心或不适都是成长的一部分。</string>
+    <string name="rq_r15_title">今天有没有想起Keyholder，并感受到联结的温暖？</string>
+    <string name="rq_r15_feedback">想或不想，这些小念头让你忍不住脸红，证明了情感的存在。</string>
+    <string name="rq_r16_title">今天锁是否已融入你的日常routine中，感觉自然？</string>
+    <string name="rq_r16_feedback">无论像不像日常，发现自己适应或反弹都是值得悄悄庆祝的事。</string>
+    <string name="rq_r17_title">今天有没有将欲望转向其他活动，如运动或创作？</string>
+    <string name="rq_r17_feedback">试图转移注意力成功与否，都是在跟自己较劲的一种小胜利。</string>
+    <string name="rq_r18_title">今天在人群中，你有没有特别注意到自己的隐秘状态？</string>
+    <string name="rq_r18_feedback">在人群里的那点心跳感，不管你有没有留意，都是你的秘密奢侈品。</string>
+    <string name="rq_r19_title">今天有没有进行放松活动来缓解可能的压力？</string>
+    <string name="rq_r19_feedback">不论有没有刻意放松，对自己好一点的念头本身就值得鼓励。</string>
+    <string name="rq_r20_title">今天醒来后，有没有回想起与锁相关的梦境？</string>
+    <string name="rq_r20_feedback">做或没做梦都无妨，梦里的那些画面只是偷偷告诉你内心的小秘密。</string>
+    <string name="rq_r21_title">今天其他感官（如触觉或听觉）是否变得更敏锐？</string>
+    <string name="rq_r21_feedback">感觉变细腻或平常无感，都是身体在跟你说话，别害羞听它说完。</string>
+    <string name="rq_r22_title">今天有没有与Keyholder分享你的感受或想法？</string>
+    <string name="rq_r22_feedback">说或不说都会让人脸红，能意识到想分享就是进步。</string>
+    <string name="rq_r23_title">今天在不同环境中，锁带来的感受如何？</string>
+    <string name="rq_r23_feedback">站着、坐着、走路时的那些小提醒，不管有没有注意到，都是真实的回响。</string>
+    <string name="rq_r24_title">今天有没有遇到让你犹豫或挣扎的时刻？</string>
+    <string name="rq_r24_feedback">犹豫过或没有，能回想起那瞬间就证明你还有人性（还有点可爱的弱点）。</string>
+    <string name="rq_r25_title">今天佩戴是否带来任何意外的正面体验？</string>
+    <string name="rq_r25_feedback">发现一点小乐子或完全没有，承认它们会让你觉得又羞又甜。</string>
+    <string name="rq_r26_title">今天有没有特别注意清洁或保湿等保养？</string>
+    <string name="rq_r26_feedback">不管做了没，对细节的在意其实是在偷偷宠自己，别不好意思接受。</string>
+    <string name="rq_r27_title">今天有没有透过写作或艺术表达你的体验？</string>
+    <string name="rq_r27_feedback">写或画出来会让自己脸红，但这种表达很疗愈，值得一点羞涩的骄傲。</string>
+    <string name="rq_r28_title">今天时间感觉过得快还是慢，受锁影响？</string>
+    <string name="rq_r28_feedback">时间感的拉扯不管你注意没注意，都在提醒你这段体验有趣又奇怪。</string>
+    <string name="rq_r29_title">今天有没有在匿名社群分享或阅读相关经验？</string>
+    <string name="rq_r29_feedback">偷看或分享都会让人心里有点小偷笑，这种联结感其实挺暖的。</string>
+    <string name="rq_r30_title">今天有没有在想万一锁取不下来该怎么办？</string>
+    <string name="rq_r30_feedback">想过或没想，准备备案本身就是成熟且有责任感的一步，给自己一个点赞。</string>
+    <string name="rq_r31_title">今天情绪是否有起伏，与锁相关？</string>
+    <string name="rq_r31_feedback">情绪忽上忽下不需要羞愧，能觉察就是在进步，带点自嘲也没关系。</string>
+    <string name="rq_r32_title">今天有没有想象未来继续佩戴的画面？</string>
+    <string name="rq_r32_feedback">想象或不想象都好，能看到未来的自己代表你在慢慢接受这件事。</string>
+    <string name="rq_r33_title">今日是否有剔除阴毛？</string>
+    <string name="rq_r33_feedback">不论有没有修整，这种私密的小事值得温柔对待和好好卫生照护。</string>
+
+    <!-- Option arrays -->
+    <string-array name="moods_array">
+        <item>😊 开心</item>
+        <item>😌 平静</item>
+        <item>😐 普通</item>
+        <item>😔 沮丧</item>
+        <item>😰 焦虑</item>
+        <item>😤 挫折</item>
+        <item>🥵 兴奋</item>
+        <item>😴 无聊</item>
+        <item>😳 羞耻</item>
+        <item>😎 自豪</item>
+        <item>🤩 期待</item>
+        <item>😬 紧张</item>
+        <item>🧘 放松</item>
+        <item>😕 困惑</item>
+        <item>💪 充实</item>
+        <item>😶 空虚</item>
+    </string-array>
+    <string-array name="exercise_types_array">
+        <item>跑步</item>
+        <item>健身</item>
+        <item>游泳</item>
+        <item>瑜伽</item>
+        <item>骑车</item>
+        <item>球类运动</item>
+        <item>散步</item>
+        <item>重训</item>
+        <item>有氧运动</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="exposed_locations_array">
+        <item>家中</item>
+        <item>健身房</item>
+        <item>游泳池</item>
+        <item>公共浴室</item>
+        <item>户外</item>
+        <item>更衣室</item>
+        <item>医院</item>
+        <item>朋友家</item>
+        <item>工作场所</item>
+        <item>其他公共场所</item>
+    </string-array>
+    <string-array name="discomfort_areas_array">
+        <item>阴茎</item>
+        <item>睾丸</item>
+        <item>会阴</item>
+        <item>大腿根部</item>
+        <item>耻骨</item>
+        <item>尿道</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="leakage_amounts_array">
+        <item>少量</item>
+        <item>中等</item>
+        <item>大量</item>
+    </string-array>
+    <string-array name="edging_methods_array">
+        <item>视觉刺激</item>
+        <item>触摸</item>
+        <item>声音</item>
+        <item>想象</item>
+        <item>阅读</item>
+        <item>视频</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="interaction_types_array">
+        <item>消息聊天</item>
+        <item>语音通话</item>
+        <item>视频</item>
+        <item>实体见面</item>
+        <item>任务指派</item>
+        <item>奖励</item>
+        <item>惩罚</item>
+        <item>检查</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="cleaning_types_array">
+        <item>未清洁</item>
+        <item>简单冲洗</item>
+        <item>深度清洁</item>
+        <item>完全取下清洁</item>
+    </string-array>
+    <string-array name="removal_reasons_array">
+        <item>清洁</item>
+        <item>医疗</item>
+        <item>工作需求</item>
+        <item>紧急状况</item>
+        <item>Keyholder允许</item>
+        <item>不适</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="social_activities_array">
+        <item>外出用餐</item>
+        <item>健身房</item>
+        <item>游泳</item>
+        <item>亲友聚会</item>
+        <item>工作会议</item>
+        <item>约会</item>
+        <item>购物</item>
+        <item>旅行</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="emotions_array">
+        <item>兴奋</item>
+        <item>焦虑</item>
+        <item>沮丧</item>
+        <item>平静</item>
+        <item>挫折</item>
+        <item>满足</item>
+        <item>羞耻</item>
+        <item>自豪</item>
+        <item>无聊</item>
+        <item>期待</item>
+        <item>紧张</item>
+        <item>放松</item>
+        <item>困惑</item>
+        <item>充实</item>
+        <item>空虚</item>
+    </string-array>
+    <string-array name="night_erection_options_array">
+        <item>无</item>
+        <item>偶尔</item>
+        <item>频繁</item>
+    </string-array>
+
+    <!-- Heatmap / chart labels -->
+    <string name="heatmap_section_title">行动热力图</string>
+    <string name="heatmap_period_7d">7 天</string>
+    <string name="heatmap_period_14d">14 天</string>
+    <string name="heatmap_period_30d">30 天</string>
+    <string name="heatmap_label_locked">已上锁</string>
+    <string name="heatmap_label_dream">春梦</string>
+    <string name="heatmap_label_morning">晨勃</string>
+    <string name="heatmap_label_exercise">运动</string>
+    <string name="heatmap_label_clean">清洁</string>
+    <string name="heatmap_label_photo">打卡照片</string>
+    <string name="heatmap_past7_title">过去 7 天记录完成情况</string>
+    <string name="heatmap_label_few">少</string>
+    <string name="heatmap_label_many">多</string>
+    <string name="heatmap_label_not_done">未做</string>
+    <string name="heatmap_label_done">完成</string>
+
+    <!-- 条件问题 -->
+    <string name="cq_followup_title">后续问题</string>
+    <string name="cq_followup_desc">根据你的情况回答，某些问题可能不适用</string>
+    <string name="cq_q1_title">1. 今天是否观看色情内容？</string>
+    <string name="cq_q1_subtitle">如果有,记录观看时长</string>
+    <string name="cq_q1_label">观看色情内容</string>
+    <string name="cq_q1_duration_label">观看时长</string>
+    <string name="cq_q2_title">2. 今天是否勃起？</string>
+    <string name="cq_q2_subtitle">如果有,记录勃起次数</string>
+    <string name="cq_q2_label">有勃起</string>
+    <string name="cq_q2_count_label">勃起次数</string>
+    <string name="cq_q2_count_placeholder">输入次数...</string>
+    <string name="cq_q3_title">3. 今天是否解锁？</string>
+    <string name="cq_q3_subtitle">如果解锁后自慰,记录详情</string>
+    <string name="cq_q3_label">有解锁</string>
+    <string name="cq_q3_after_unlock_question">解锁后有自慰？</string>
+    <string name="cq_q3_after_unlock_label">解锁后自慰</string>
+    <string name="cq_q3_masturbation_duration_label">自慰时长</string>
+    <string name="cq_q4_title">4. 今天是否感到不适或疼痛？</string>
+    <string name="cq_q4_subtitle">如果有,记录部位与程度</string>
+    <string name="cq_q4_label">有不适或疼痛</string>
+    <string name="cq_q4_discomfort_area_label">不适部位</string>
+    <string name="cq_q4_pain_level_label">疼痛程度 (1=轻微, 10=剧烈)</string>
+    <string name="cq_q5_title">5. 今天是否有泄漏情况？</string>
+    <string name="cq_q5_subtitle">如果有,评估泄漏程度</string>
+    <string name="cq_q5_label">有泄漏</string>
+    <string name="cq_q6_title">6. 今天是否进行边缘训练？</string>
+    <string name="cq_q6_subtitle">如果有,记录训练详情</string>
+    <string name="cq_q6_label">有边缘训练</string>
+    <string name="cq_q6_duration_label">训练时长</string>
+    <string name="cq_q6_methods_label">训练方式</string>
+    <string name="cq_q7_title">7. 今天是否临时取下锁？</string>
+    <string name="cq_q7_subtitle">如果有,记录取下详情</string>
+    <string name="cq_q7_label">有临时取下</string>
+    <string name="cq_q7_duration_label">取下时长</string>
+    <string name="cq_q7_reason_label">取下原因</string>
+    <string name="cq_q8_title">8. 昨晚是否有夜间勃起？</string>
+    <string name="cq_q8_subtitle">如果有,记录详情</string>
+    <string name="cq_q8_count_label">夜间勃起次数</string>
+    <string name="cq_q8_count_placeholder">输入次数 (0 表示没有)...</string>
+    <string name="cq_q8_woke_label">是否因勃起醒来</string>
+
+    <!-- 轮替问题 -->
+    <string name="rq_header_title">今日特别问题 🎲</string>
+    <string name="rq_header_subtitle">每天轮替一个不同的问题</string>
+    <string name="rq_invalid_question">无效的轮替问题</string>
+    <string name="rq_exercise_title">今天有运动吗？</string>
+    <string name="rq_exercise_subtitle">记录运动类型与时长</string>
+    <string name="rq_exercise_label">是否运动</string>
+    <string name="rq_exercise_type_label">运动类型</string>
+    <string name="rq_exercise_duration_label">运动时长</string>
+    <string name="rq_exposed_title">锁有在公共场合露出吗？</string>
+    <string name="rq_exposed_subtitle">记录露出的地点</string>
+    <string name="rq_exposed_label">是否露出</string>
+    <string name="rq_exposed_location_label">露出地点</string>
+    <string name="rq_keyholder_title">今天与 Keyholder 有互动吗？</string>
+    <string name="rq_keyholder_subtitle">记录互动类型</string>
+    <string name="rq_keyholder_label">是否互动</string>
+    <string name="rq_keyholder_types_label">互动类型</string>
+    <string name="rq_cleaning_title">今天如何清洁锁？</string>
+    <string name="rq_cleaning_subtitle">选择清洁方式</string>
+    <string name="rq_social_title">今天有参与社交活动吗？</string>
+    <string name="rq_social_subtitle">记录活动类型与焦虑程度</string>
+    <string name="rq_social_types_label">社交活动类型</string>
+    <string name="rq_social_anxiety_label">焦虑程度 (1=无焦虑, 10=极度焦虑)</string>
+
+    <!-- 核心问题 -->
+    <string name="core_section_title">核心问题</string>
+    <string name="core_section_subtitle">10 题 · 约 3 分钟</string>
+    <string name="core_q1_title">1. 今天的整体心情如何？</string>
+    <string name="core_q1_subtitle">选择最贴近你今天感受的心情</string>
+    <string name="core_q2_title">2. 今天的性欲强度？</string>
+    <string name="core_q2_subtitle">0 = 完全没有, 10 = 非常强烈</string>
+    <string name="core_label_desire">性欲强度</string>
+    <string name="core_q3_title">3. 佩戴锁的舒适度？</string>
+    <string name="core_q3_subtitle">0 = 非常不舒适, 10 = 非常舒适</string>
+    <string name="core_label_comfort">舒适度</string>
+    <string name="core_q4_title">4. 昨晚的睡眠质量？</string>
+    <string name="core_q4_subtitle">锁是否影响你的睡眠</string>
+    <string name="core_label_sleeped_well">昨晚有睡好吗？</string>
+    <string name="core_label_woke_due_to_lock">因为锁而醒来</string>
+    <string name="core_q5_title">5. 今天的专注度如何？</string>
+    <string name="core_q5_subtitle">1 = 完全无法专注, 10 = 非常专注</string>
+    <string name="core_label_focus">专注度</string>
+    <string name="core_q6_title">6. 装置检查</string>
+    <string name="core_q6_subtitle">检查装置佩戴与是否损坏</string>
+    <string name="core_status_ok">✓ 正常</string>
+    <string name="core_status_bad">✗ 异常</string>
+    <string name="core_q7_title">7. 今天的自我评价？</string>
+    <string name="core_q7_subtitle">你认为自己今天表现如何</string>
+    <string name="core_label_self_rating">自我评价</string>
+    <string name="core_q8_title">8. 照片打卡</string>
+    <string name="core_q8_subtitle">可选：记录今天的视觉纪念</string>
+    <string name="core_photo_taken">已拍摄照片</string>
+    <string name="core_remove_photo">移除照片</string>
+    <string name="core_take_photo">拍摄照片</string>
+    <string name="core_q9_title">9. 今天的细致情绪？</string>
+    <string name="core_q9_subtitle">可多选：更精确地描述你的情绪状态</string>
+    <string name="core_q10_title">10. 备注</string>
+    <string name="core_q10_subtitle">可选：记录任何想补充的想法或事件</string>
+    <string name="core_notes_placeholder">输入备注...</string>
+
+    <!-- PIN 对话框 -->
+    <string name="pin_title_change">修改 PIN 码</string>
+    <string name="pin_title_set">设置 PIN 码</string>
+    <string name="pin_current_prompt">请输入当前的 PIN 码</string>
+    <string name="pin_current_label">当前 PIN 码</string>
+    <string name="pin_new_prompt">请输入 PIN 码 (4-6 位数字)</string>
+    <string name="pin_new_prompt_change">请输入新的 PIN 码 (4-6 位数字)</string>
+    <string name="pin_label">PIN 码</string>
+    <string name="pin_new_label">新 PIN 码</string>
+    <string name="pin_confirm_label">确认 PIN 码</string>
+    <string name="pin_min_length_error">PIN 码至少需要 %1$d 位数字</string>
+    <string name="pin_confirm_mismatch">PIN 码不一致</string>
+    <string name="pin_show">显示</string>
+    <string name="pin_hide">隐藏</string>
+
+    <!-- 个人资料编辑对话框 -->
+    <string name="profile_edit_title">编辑个人资料</string>
+    <string name="error_invalid_number">请输入有效数字</string>
+    <string name="error_height_range">身高范围: 100-250 cm</string>
+    <string name="error_weight_range">体重范围: 30-200 kg</string>
+    <string name="optional_height_hint">选填，范围 100-250 cm</string>
+    <string name="optional_weight_hint">选填，范围 30-200 kg</string>
+    <string name="profile_device_size_label">贞操锁尺寸</string>
+    <string name="profile_device_size_placeholder">例如: S / M / 38mm</string>
+    <string name="profile_example_height">例如: 175</string>
+    <string name="profile_example_weight">例如: 70.5</string>
+    <string name="profile_optional">选填</string>
+    <string name="profile_optional_free_input">选填，自由输入</string>
+
+    <!-- 星期缩写 -->
+    <string-array name="weekdays_short">
+        <item>日</item>
+        <item>一</item>
+        <item>二</item>
+        <item>三</item>
+        <item>四</item>
+        <item>五</item>
+        <item>六</item>
+    </string-array>
+
+    <!-- 历史页面 -->
+    <string name="history_calendar_title">%s 心情日历</string>
+    <string name="history_total_records">共 %d 条</string>
+    <string name="history_load_more">加载更多（还有 %d 条）</string>
+    <string name="history_month_pattern_zh">yyyy年M月</string>
+
+    <!-- 指标格式 -->
+    <string name="metric_desire_format">欲望 %1$d/10</string>
+    <string name="metric_comfort_format">舒适 %1$d/10</string>
+    <string name="metric_sleep_format">睡眠 %1$d/10</string>
+    <string name="metric_self_rating_format">自评 %1$d/10</string>
+    <string name="metric_desire_label">欲望</string>
+    <string name="metric_comfort_label">舒适</string>
+    <string name="metric_focus_label">专注</string>
+    <string name="metric_sleep_label">睡眠</string>
+    <string name="metric_energy_label">能量</string>
+    <string name="summary_avg_focus">平均专注度</string>
+    <string name="summary_avg_sleep">平均睡眠质量</string>
+    <string name="summary_avg_energy">平均晨间能量</string>
+    <string name="chart_no_data">暂无数据</string>
+
+    <!-- 表单标签 -->
+    <string name="form_label_core">核心</string>
+    <string name="form_label_conditional">后续</string>
+    <string name="form_label_rotating">特别</string>
+    <string name="form_label_review">检视</string>
+    <string name="form_prev_button">上一步</string>
+    <string name="form_next_button">下一步</string>
+
+    <!-- 错误消息 -->
+    <string name="error_save_failed_detail">保存失败: %1$s</string>
+    <string name="error_morning_save_failed_detail">早晨记录失败: %1$s</string>
+    <string name="error_delete_failed_detail">删除失败: %1$s</string>
+
+    <!-- 连续天数 / 里程碑 -->
+    <string name="streak_title">成就徽章</string>
+    <string name="streak_longest_days">最长 %1$d 天</string>
+    <string name="streak_distance_to">距离「%1$s %2$s」</string>
+    <string name="streak_days_remaining">还差 %1$d 天</string>
+    <string name="streak_all_unlocked">🎉 所有里程碑已解锁！</string>
+    <string name="streak_days_count">%1$d天</string>
+    <string name="streak_label_beginner">初学者</string>
+    <string name="streak_label_progressing">进展中</string>
+    <string name="streak_label_one_month">一个月</string>
+    <string name="streak_label_two_months">两个月</string>
+    <string name="streak_label_hundred_days">百日勇士</string>
+    <string name="streak_label_one_year">一年达人</string>
+
+    <!-- 情绪标签 -->
+    <string name="mood_happy">开心</string>
+    <string name="mood_calm">平静</string>
+    <string name="mood_neutral">普通</string>
+    <string name="mood_depressed">沮丧</string>
+    <string name="mood_anxious">焦虑</string>
+    <string name="mood_frustrated">挫折</string>
+
+    <!-- 通用计数格式 -->
+    <string name="count_times">%1$d 次</string>
+
+    <!-- 仪表板连续天统计格式 -->
+    <string name="dashboard_streak_format">%1$d 天 🔥</string>
+    <string name="dashboard_longest_format">%1$d 天</string>
+    <!-- 个人资料日期提示 -->
+    <string name="profile_date_format_hint">格式: yyyy-MM-dd，例如 2024-01-15</string>
+
+    <!-- ══════════════ 摘要卡片 ══════════════ -->
+    <!-- 卡片主题 -->
+    <string name="card_theme_midnight">星夜</string>
+    <string name="card_theme_dawn">晨曦</string>
+    <string name="card_theme_forest">森林</string>
+    <string name="card_theme_crimson">深红</string>
+    <string name="card_theme_ocean">深海</string>
+    <string name="card_theme_minimal">极简</string>
+    <string name="card_theme_user_imported">自定义</string>
+    <!-- 卡片 UI 文字 -->
+    <string name="card_generate_button">生成今日卡片</string>
+    <string name="card_sheet_title">每日摘要卡片</string>
+    <string name="card_choose_theme">卡片主题</string>
+    <string name="card_import_template">导入</string>
+    <string name="card_show_photo">显示今日照片</string>
+    <string name="card_show_photo_hint">将今日照片加入卡片</string>
+    <string name="card_text_backdrop">文字底图</string>
+    <string name="card_text_backdrop_hint">在自定义图片卡片的文字后方加上半透明底图</string>
+    <string name="card_template_name">卡片名称</string>
+    <string name="card_template_name_hint">未命名卡片</string>
+    <string name="card_template_name_save">保存名称</string>
+    <string name="card_template_edit_title">编辑卡片</string>
+    <string name="card_template_delete">删除</string>
+    <string name="card_template_delete_confirm">确定删除此卡片？</string>
+    <string name="card_template_delete_hint">此操作无法撤销。</string>
+    <string name="card_photo_required">请先拍照打卡，才能将照片加入卡片</string>
+    <string name="card_save">保存至相册</string>
+    <string name="card_share">分享</string>
+    <string name="card_no_entry_today">今天尚无记录\n请先填写每日日记。</string>
+    <!-- 卡片内容标签 -->
+    <string name="card_days_streak">天连续</string>
+    <string name="card_longest">最长</string>
+    <string name="card_days">天</string>    <string name="card_total">累计</string>    <string name="card_today">今日</string>
+    <string name="card_mood">心情</string>
+    <string name="card_morning_energy">晨间能量</string>
+    <string name="card_self_rating">自我评分</string>
+    <string name="card_7d_average">7日平均</string>
+    <string name="card_avg_desire">欲望</string>
+    <string name="card_avg_comfort">舒适</string>
+    <string name="card_avg_focus">专注</string>
+    <string name="card_avg_sleep">睡眠</string>
+    <string name="card_exercised">有运动</string>
+    <string name="card_photo_section">今日照片</string>
+    <!-- 卡片操作 -->
+    <string name="card_render_error">生成卡片失败，请重试。</string>
+    <string name="card_saved_to_gallery">卡片已保存至相册。</string>
+    <!-- 模板导入 -->
+    <string name="card_import_success">模板导入成功。</string>
+    <string name="card_import_error_cannot_read">无法读取所选文件。</string>
+    <string name="card_import_error_missing_png">Zip 中缺少 template.png。</string>
+    <string name="card_import_error_missing_spec">Zip 中缺少 card_template_spec.json。</string>
+    <string name="card_import_error_wrong_size">图片尺寸必须为 1080×1920 像素。</string>
+    <string name="card_import_error_invalid_spec">card_template_spec.json 格式无效。</string>
+    <string name="card_import_error_unsupported_version">不支持的模板格式版本。</string>
+    <string name="card_import_error_unknown">导入时发生未知错误。</string>
+    <string name="card_import_error_unsupported_format">所选文件无法解析为图片。</string>
+    <!-- 单张图片导入 -->
+    <string name="card_import_image_success">背景已导入，可在主题列表中找到。</string>
+    <string name="card_import_choose_text_color">选择文字颜色</string>
+    <string name="card_import_text_light">浅色文字（适合深色背景）</string>
+    <string name="card_import_text_dark">深色文字（适合浅色背景）</string>
+    <string name="card_import_text_light_short">浅色</string>
+    <string name="card_import_text_dark_short">深色</string>
+    <string name="card_import_pending_title">图片已准备 — 选择文字颜色</string>
+    <string name="card_text_color_scheme">文字色调</string>
+    <string name="card_text_color_scheme_hint">可在上方预览即时查看</string>
+    <string name="sponsor_dialog_title">解锁进阶主题</string>
+    <string name="sponsor_dialog_body">输入赞助兑换码以解锁所有进阶卡片主题。</string>
+    <string name="sponsor_code_hint">兑换码</string>
+    <string name="sponsor_code_invalid">无效的兑换码，请确认后重试。</string>
+    <string name="sponsor_dialog_confirm">解锁</string>
+    <!-- 设置页赞助区段 -->
+    <string name="settings_sponsor_title">支持开发者</string>
+    <string name="settings_sponsor_description">赞助本项目即可解锁进阶卡片主题，所有代码仍会保持开源。</string>
+    <string name="settings_sponsor_enter_code">输入兑换码</string>
+    <string name="settings_sponsor_unlocked">✓ 进阶主题已解锁，感谢您的支持！</string>
+</resources>

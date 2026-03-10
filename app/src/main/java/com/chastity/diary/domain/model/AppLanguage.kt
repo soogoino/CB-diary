@@ -7,5 +7,6 @@ package com.chastity.diary.domain.model
 enum class AppLanguage(val tag: String) {
     SYSTEM(""),                  // Follow device locale (empty tag → system default)
     ENGLISH("en"),
-    TRADITIONAL_CHINESE("zh-TW")
+    TRADITIONAL_CHINESE("zh-TW"),
+    SIMPLIFIED_CHINESE("zh-CN")
 }

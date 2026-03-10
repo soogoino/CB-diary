@@ -15,8 +15,8 @@ android {
         applicationId = "com.chastity.diary"
         minSdk = 24
         targetSdk = 34
-        versionCode = 6
-        versionName = "1.1.0"
+        versionCode = 7
+        versionName = "1.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
@@ -68,7 +68,17 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    
+
+    // E-2: Export Room schema so MigrationTestHelper can validate migrations in CI.
+    // Schema JSON files are committed to version control under app/schemas/.
+    kapt {
+        arguments {
+            arg("room.schemaLocation", "$projectDir/schemas")
+            arg("room.incremental", "true")
+        }
+        correctErrorTypes = true
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true

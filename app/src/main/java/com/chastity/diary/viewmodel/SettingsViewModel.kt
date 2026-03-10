@@ -334,7 +334,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                         BufferedReader(InputStreamReader(stream, Charsets.UTF_8))
                             .readText()
                     } ?: throw IllegalStateException(getApplication<Application>().getString(R.string.error_file_open))
-                val entries = CsvHelper.fromCsv(csvContent)
+                val entries = CsvHelper.fromCsv(csvContent, getApplication<Application>().filesDir)
                 if (entries.isEmpty()) {
                     _exportImportMessage.value = getApplication<Application>().getString(R.string.error_import_invalid)
                     return@launch

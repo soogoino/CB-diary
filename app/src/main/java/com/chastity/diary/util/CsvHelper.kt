@@ -1,6 +1,7 @@
 package com.chastity.diary.util
 
 import com.chastity.diary.domain.model.DailyEntry
+import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -126,8 +127,12 @@ object CsvHelper {
     /**
      * Parses CSV content and returns a list of DailyEntry objects.
      * Rows that fail to parse are silently skipped.
+     *
+     * @param filesDir The app’s private files directory (e.g. [Context.getFilesDir]).
+     *   Photo paths that escape this directory are rejected (path-traversal guard).
      */
-    fun fromCsv(csvContent: String): List<DailyEntry> {
+    fun fromCsv(csvContent: String, filesDir: File): List<DailyEntry> {
+        val appFilesRoot = filesDir.canonicalPath
         val lines = csvContent.lines().filter { it.isNotBlank() }
         if (lines.size < 2) return emptyList()
         // Validate header
@@ -137,14 +142,14 @@ object CsvHelper {
 
         return lines.drop(1).mapNotNull { line ->
             try {
-                rowToEntry(parseCsvLine(line), colIndex)
+                rowToEntry(parseCsvLine(line), colIndex, appFilesRoot)
             } catch (e: Exception) {
                 null
             }
         }
     }
 
-    private fun rowToEntry(cols: List<String>, idx: Map<String, Int>): DailyEntry {
+    private fun rowToEntry(cols: List<String>, idx: Map<String, Int>, appFilesRoot: String): DailyEntry {
         fun col(name: String): String = cols.getOrElse(idx[name] ?: -1) { "" }
         fun bool(name: String, default: Boolean = false) = col(name).toBooleanStrictOrNull() ?: default
         fun int(name: String): Int? = col(name).toIntOrNull()
@@ -169,7 +174,10 @@ object CsvHelper {
             masturbationCount = int("masturbationCount"),
             exposedLock = bool("exposedLock"),
             exposedLocations = list("exposedLocations"),
-            photoPath = col("photoPath").ifBlank { null },
+            photoPath = col("photoPath").ifBlank { null }?.let { path ->
+                // S-3: reject paths that escape the app’s private files directory
+                if (File(path).canonicalPath.startsWith(appFilesRoot)) path else null
+            },
             desireLevel = int("desireLevel"),
             comfortRating = int("comfortRating"),
             hasDiscomfort = bool("hasDiscomfort"),

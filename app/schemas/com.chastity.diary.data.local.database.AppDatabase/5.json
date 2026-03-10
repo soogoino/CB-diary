@@ -1,0 +1,395 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 5,
+    "identityHash": "9363ca3d9bb399e3d23734bd3b9f931f",
+    "entities": [
+      {
+        "tableName": "daily_entries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` TEXT NOT NULL, `mood` TEXT, `viewedPorn` INTEGER NOT NULL, `pornDuration` INTEGER, `hadErection` INTEGER NOT NULL, `erectionCount` INTEGER, `exercised` INTEGER NOT NULL, `exerciseTypes` TEXT, `exerciseDuration` INTEGER, `unlocked` INTEGER NOT NULL, `masturbated` INTEGER NOT NULL, `masturbationDuration` INTEGER, `masturbationCount` INTEGER, `exposedLock` INTEGER NOT NULL, `exposedLocations` TEXT, `photoPath` TEXT, `desireLevel` INTEGER, `comfortRating` INTEGER, `hasDiscomfort` INTEGER NOT NULL, `discomfortAreas` TEXT, `discomfortLevel` INTEGER, `cleaningType` TEXT, `hadLeakage` INTEGER NOT NULL, `leakageAmount` TEXT, `hadEdging` INTEGER NOT NULL, `edgingDuration` INTEGER, `edgingMethods` TEXT, `keyholderInteraction` INTEGER NOT NULL, `interactionTypes` TEXT, `sleepQuality` INTEGER, `wokeUpDueToDevice` INTEGER NOT NULL, `temporarilyRemoved` INTEGER NOT NULL, `removalDuration` INTEGER, `removalReasons` TEXT, `nightErections` INTEGER, `wokeUpFromErection` INTEGER NOT NULL, `focusLevel` INTEGER, `completedTasks` TEXT, `emotions` TEXT, `deviceCheckPassed` INTEGER NOT NULL, `socialActivities` TEXT, `socialAnxiety` INTEGER, `selfRating` INTEGER, `notes` TEXT, `bedtime` TEXT, `wakeTime` TEXT, `morningMood` TEXT, `morningEnergy` INTEGER, `morningErection` INTEGER NOT NULL, `morningCheckDone` INTEGER NOT NULL, `hadEroticDream` INTEGER NOT NULL, `createdAt` TEXT NOT NULL, `updatedAt` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mood",
+            "columnName": "mood",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "viewedPorn",
+            "columnName": "viewedPorn",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pornDuration",
+            "columnName": "pornDuration",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "hadErection",
+            "columnName": "hadErection",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "erectionCount",
+            "columnName": "erectionCount",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "exercised",
+            "columnName": "exercised",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exerciseTypes",
+            "columnName": "exerciseTypes",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "exerciseDuration",
+            "columnName": "exerciseDuration",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "unlocked",
+            "columnName": "unlocked",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "masturbated",
+            "columnName": "masturbated",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "masturbationDuration",
+            "columnName": "masturbationDuration",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "masturbationCount",
+            "columnName": "masturbationCount",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "exposedLock",
+            "columnName": "exposedLock",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exposedLocations",
+            "columnName": "exposedLocations",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "photoPath",
+            "columnName": "photoPath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "desireLevel",
+            "columnName": "desireLevel",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "comfortRating",
+            "columnName": "comfortRating",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "hasDiscomfort",
+            "columnName": "hasDiscomfort",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "discomfortAreas",
+            "columnName": "discomfortAreas",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "discomfortLevel",
+            "columnName": "discomfortLevel",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cleaningType",
+            "columnName": "cleaningType",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "hadLeakage",
+            "columnName": "hadLeakage",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "leakageAmount",
+            "columnName": "leakageAmount",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "hadEdging",
+            "columnName": "hadEdging",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "edgingDuration",
+            "columnName": "edgingDuration",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "edgingMethods",
+            "columnName": "edgingMethods",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "keyholderInteraction",
+            "columnName": "keyholderInteraction",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "interactionTypes",
+            "columnName": "interactionTypes",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sleepQuality",
+            "columnName": "sleepQuality",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "wokeUpDueToDevice",
+            "columnName": "wokeUpDueToDevice",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temporarilyRemoved",
+            "columnName": "temporarilyRemoved",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "removalDuration",
+            "columnName": "removalDuration",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "removalReasons",
+            "columnName": "removalReasons",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nightErections",
+            "columnName": "nightErections",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "wokeUpFromErection",
+            "columnName": "wokeUpFromErection",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "focusLevel",
+            "columnName": "focusLevel",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "completedTasks",
+            "columnName": "completedTasks",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "emotions",
+            "columnName": "emotions",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "deviceCheckPassed",
+            "columnName": "deviceCheckPassed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "socialActivities",
+            "columnName": "socialActivities",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "socialAnxiety",
+            "columnName": "socialAnxiety",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "selfRating",
+            "columnName": "selfRating",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "bedtime",
+            "columnName": "bedtime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "wakeTime",
+            "columnName": "wakeTime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "morningMood",
+            "columnName": "morningMood",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "morningEnergy",
+            "columnName": "morningEnergy",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "morningErection",
+            "columnName": "morningErection",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "morningCheckDone",
+            "columnName": "morningCheckDone",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hadEroticDream",
+            "columnName": "hadEroticDream",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_daily_entries_date",
+            "unique": true,
+            "columnNames": [
+              "date"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_daily_entries_date` ON `${TABLE_NAME}` (`date`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "daily_entry_attributes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`entryId` INTEGER NOT NULL, `attributeKey` TEXT NOT NULL, `attributeValue` TEXT NOT NULL, PRIMARY KEY(`entryId`, `attributeKey`))",
+        "fields": [
+          {
+            "fieldPath": "entryId",
+            "columnName": "entryId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attributeKey",
+            "columnName": "attributeKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attributeValue",
+            "columnName": "attributeValue",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "entryId",
+            "attributeKey"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9363ca3d9bb399e3d23734bd3b9f931f')"
+    ]
+  }
+}

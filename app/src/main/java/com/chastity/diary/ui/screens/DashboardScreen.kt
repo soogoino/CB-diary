@@ -197,7 +197,10 @@ fun DashboardScreen(
                             TrendLineChart(
                                 title = stringResource(R.string.chart_mood_trend),
                                 data = moodPairs.map { it.second },
-                                labels = moodLabels
+                                labels = moodLabels,
+                                intYAxis = true,
+                                minY = 1f,
+                                maxY = 5f
                             )
                         }
 
@@ -231,7 +234,7 @@ fun DashboardScreen(
                                 StatRow(stringResource(R.string.summary_avg_comfort), String.format("%.1f / 10", state.averageComfortRating))
                                 StatRow(stringResource(R.string.summary_avg_focus), String.format("%.1f / 10", state.averageFocusLevel))
                                 StatRow(stringResource(R.string.summary_avg_sleep), String.format("%.1f / 10", state.averageSleepQuality))
-                                StatRow(stringResource(R.string.summary_avg_energy), String.format("%.1f / 5", state.averageMorningEnergy))
+                                StatRow(stringResource(R.string.summary_avg_energy), String.format("%.1f / 10", state.averageMorningEnergy))
                                     StatRow(stringResource(R.string.summary_masturbation_count), stringResource(R.string.count_times, state.masturbationCount))
                                     StatRow(stringResource(R.string.summary_exercise_count), stringResource(R.string.count_times, state.exerciseCount))
                             }
